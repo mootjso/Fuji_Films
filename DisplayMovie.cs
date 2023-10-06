@@ -28,8 +28,6 @@
                 DisplayMovieDetails(selection);
             }
             firstTitleIndex = pageSize * pageNumber;
-            //if (firstTitleIndex > 0)
-             //   firstTitleIndex--;
             // Prevent Error when page has less than 10 entries
             endIndex = menuOptionsFull.Count % 10;
             if (endIndex != 0 && pageNumber == maxPages - 1)
