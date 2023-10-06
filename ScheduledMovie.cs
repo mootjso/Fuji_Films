@@ -1,14 +1,16 @@
 ﻿public class ScheduledMovie
 {
-    public int Id = 0;
+    public static int Counter = 0;
+    public int Id;
     public DateTime StartTime;
-    public DateTime EndTime; // TODO Automatically set Endtime to the starttime + runtime
+    public DateTime EndTime;
     public int Room = 0; // TODO Add the specific cinema room
     public Movie Movie;
 
     public ScheduledMovie(Movie movie, DateTime startTime)
     {
-        Id++;
+        Counter++;
+        Id = Counter;
         StartTime = startTime;
         EndTime = startTime.AddMinutes(movie.Runtime);
         Movie = movie;

@@ -16,7 +16,7 @@ public static class JSONMethods
     {
         StreamReader reader = new(fileName);
         string content = reader.ReadToEnd();
-        List<ScheduledMovie> movies = JsonConvert.DeserializeObject<List<ScheduledMovie>>(content);
+        List<ScheduledMovie> movies = JsonConvert.DeserializeObject<List<ScheduledMovie>>(content)!;
         reader.Close();
         return movies;
     }

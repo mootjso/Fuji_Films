@@ -55,8 +55,12 @@ public static class AddMovieToSchedule
             // -------------------------------------------------------------------------------
 
             // Confirm or cancel selection
-            ScheduledMovie scheduledMovie = new(movieToAdd, resultDateTime);
-            ConfirmSelection(scheduledMovie);
+            ScheduledMovie newMovie = new(movieToAdd, resultDateTime);
+            int selection = ConfirmSelection(newMovie);
+            if (selection == 0)
+                MovieSchedule.Movies.Add(newMovie);
+            else
+                continue;
 
             List<string> menuOptions;
             menuOptions = new() { "Add a new movie to the schedule  ", "Back" };
@@ -116,13 +120,12 @@ public static class AddMovieToSchedule
         return dateString[..10];
     }
 
-    private static void ConfirmSelection(ScheduledMovie movie)
+    private static int ConfirmSelection(ScheduledMovie movie)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
         string confirmationMessage = $"Movie: {movie.Movie.Title}\n" +
             $"Date: {movie.StartTime.Date.ToString()[..10]}\n" +
             $"Time: {movie.StartTime.TimeOfDay.ToString()[..5]} - {movie.EndTime.TimeOfDay.ToString()[..5]}\n";
-        int selection = Menu.Start(confirmationMessage, menuOptions);
-        MovieSchedule.Movies.Add(movie);
+        return Menu.Start(confirmationMessage, menuOptions);
     }
 }

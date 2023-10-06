@@ -5,12 +5,11 @@
     string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
     List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
 
-    bool loggedIn = true;  // SET TO TRUE FOR TESTING PURPOSES
+    bool loggedIn = false;
     while (!loggedIn)
     {
-        //DisplayAsciiArt.Standby();
-        //DisplayAsciiArt.OpeningLogo();
-        
+        DisplayAsciiArt.Standby();
+        DisplayAsciiArt.OpeningLogo();
 
         int selection = Menu.Start(menuText, menuOptions);
         switch (selection)
@@ -47,7 +46,7 @@
     menuOptions = new() { "Current Movies", "Movie Schedule", "My Reservations", "Log Out" };
     while (loggedIn)
     {
-        
+
         // FOR TESTING PURPOSES --------------------------------------------------
         //AddMovieToSchedule.Start();
         // -----------------------------------------------------------------------

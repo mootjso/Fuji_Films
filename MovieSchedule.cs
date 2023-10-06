@@ -44,7 +44,14 @@
                         dates.Add(date);
                 }
             }
+
+            dates.Add("Back");
             int index = Menu.Start("Select a date to see the movies for that day\n", dates);
+            if (index == dates.Count - 1)
+            {
+                inMenu = false;
+                break;
+            }
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
 
