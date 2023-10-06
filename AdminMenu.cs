@@ -1,4 +1,4 @@
-public static class Menu
+public static class AdminMenu
 {
     static int selectedOption = 0;
 
