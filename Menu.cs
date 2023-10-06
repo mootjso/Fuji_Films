@@ -6,7 +6,7 @@
  * 
  * Call Menu.Start(text, options).
  * When the user selects an option the method returns an integer that corresponds to the position in the list.
- * The Menu Automatically displays the header at the top.
+ * NOTE: The Menu Automatically displays the header at the top.
  */
 public static class Menu
 {
@@ -61,7 +61,7 @@ public static class Menu
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.BackgroundColor = ConsoleColor.Black;
             }
-            Console.WriteLine($"  {options[i].PadRight(25)}");
+            Console.WriteLine($"  {options[i].PadRight(20)}");
         }
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
