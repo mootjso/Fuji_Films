@@ -50,7 +50,7 @@
         {
             Console.Write($"{genre}; ");
         }
-        Console.WriteLine($"Language: {movie.Language}");
+        Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
         Console.WriteLine($"IsAdult: {movie.IsAdult}");
         Console.WriteLine("\nPress any key to go back");
