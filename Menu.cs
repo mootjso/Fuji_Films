@@ -11,7 +11,6 @@
 public static class Menu
 {
     static int selectedOption = 0;
-
     static ConsoleKeyInfo keyInfo;
 
     public static int Start(string text, List<string> options)
@@ -40,7 +39,11 @@ public static class Menu
                 case ConsoleKey.Enter:
                     inMenu = false;
                     return selectedOption;
+                case ConsoleKey.LeftArrow: // Added to let user go to previous screen without adding extra menu option
+                    inMenu = false;
+                    return options.Count;
             }
+            Console.Clear();
         }
         return -1;
     }
@@ -66,7 +69,7 @@ public static class Menu
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select");
+        Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select and left arrow to go back");
         Console.ResetColor();
     }
 
