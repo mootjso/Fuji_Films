@@ -2,11 +2,6 @@
 {
     public static void Main()
     {
-
-        Admin.StartMenu();
-    }
-}
-
         while (true)
         {
             // Login Menu

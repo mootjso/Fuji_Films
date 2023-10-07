@@ -3,7 +3,7 @@ using System.Threading;
 
 class LoadingBar
 {
-    static void Main()
+    static void Start()
     {
         int consoleWidth = Console.WindowWidth;
         Console.CursorVisible = false;
