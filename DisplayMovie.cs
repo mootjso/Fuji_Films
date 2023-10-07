@@ -6,7 +6,7 @@
         string menuText = "List of Movies:";
         List<string> menuOptionsFull = movies.Select(movie => movie.Title).ToList();
         List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
-        menuOptions.AddRange(new List<string> { "Previous Page", "Next Page" });
+        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
@@ -34,7 +34,7 @@
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "Previous Page", "Next Page" });
+            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
         }
     }
 
@@ -43,15 +43,14 @@
         Console.Clear();
         DisplayAsciiArt.Header();
         Movie movie = movies[selection];
-        Console.WriteLine($"Title: {movie.Title}");
-        Console.WriteLine($"Language: {movie.Language}");
-        Console.WriteLine($"Description: {movie.Description}");
-        Console.Write("Genres: ");
+        Console.WriteLine($"{movie.Title}");
+        Console.WriteLine($"\nDescription:\n{movie.Description}");
+        Console.Write("\nGenres: ");
         foreach (var genre in movie.Genres)
         {
             Console.Write($"{genre}; ");
         }
-        Console.WriteLine();
+        Console.WriteLine($"Language: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
         Console.WriteLine($"IsAdult: {movie.IsAdult}");
         Console.WriteLine("\nPress any key to go back");
