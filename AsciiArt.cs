@@ -1,4 +1,5 @@
-public static class AsciiArt
+
+﻿public static class AsciiArt
 {
     public static string logo = @"                                                               
    d888888o.   8 8888        8  8 8888 8 888888888o     d888888o.   
@@ -28,6 +29,7 @@ public static class AsciiArt
 ( (` | |_| | | | |_) ( (`     / /`  | | | |\ | | |_  | |\/|  / /\  
 _)_) |_| | |_| |_|   _)_)     \_\_, |_| |_| \| |_|__ |_|  | /_/--\ 
 ";
+
     public static string AdminHeader = @"
     _       _           _       
    / \   __| |_ __ ___ (_)_ __  

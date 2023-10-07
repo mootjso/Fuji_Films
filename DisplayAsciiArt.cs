@@ -1,4 +1,6 @@
-public static class DisplayAsciiArt
+
+﻿public static class DisplayAsciiArt
+
 {
     public static void OpeningLogo()
     {
@@ -14,11 +16,13 @@ public static class DisplayAsciiArt
         Console.WriteLine("---------------------------------------------------------------------");
     }
 
+
     public static void AdminHeader()
     {
         Console.Write(AsciiArt.AdminHeader);
         Console.WriteLine("---------------------------------");
     }
+
     public static void Standby()
     {
         Console.ForegroundColor= ConsoleColor.DarkGray;
