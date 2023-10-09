@@ -60,7 +60,7 @@ public static class Admin
                     DisplayAsciiArt.AdminHeader();
                     Console.WriteLine("\nBon Voyage, Captain!");
                     Thread.Sleep(500);
-                    Console.WriteLine("\nMay your guidance bring us waves of cinematic success!");
+                    Console.WriteLine("\nMay your guidance bring us waves of cinematic success! ");
                     Thread.Sleep(2000);
                     break;
                 default:
