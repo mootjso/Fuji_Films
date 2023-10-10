@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading;
-
-class LoadingBar
+﻿public static class LoadingBar
 {
-    static void Start()
+    public static void Start()
     {
         int consoleWidth = Console.WindowWidth;
         Console.CursorVisible = false;
