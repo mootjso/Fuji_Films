@@ -20,7 +20,7 @@ public class Auditorium_1
     public static void DisplayLoadingBar()
     {
         Console.Clear();
-        StartLoadingBar();
+        //StartLoadingBar();
         Console.ResetColor();
         
     }
@@ -39,7 +39,7 @@ public class Auditorium_1
     static double totalAmount = 0.0;
     private static ConsoleKeyInfo key;
 
-    static void Main()
+    static void Start()
     {
         string jsonFilePath = @"SaveFileSeatSelectionAuditorium_1.json";
 
@@ -267,7 +267,7 @@ public class Auditorium_1
                     {
                         // User wants to go back to seat selection
                         Console.Clear();
-                        StartLoadingBar();
+                        //StartLoadingBar();
                     }
                     DisplayLoadingBar();
                     break;

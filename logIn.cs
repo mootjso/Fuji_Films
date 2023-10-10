@@ -15,7 +15,7 @@ namespace logger
     {
         private static List<Account> accounts;
 
-        public static void Main()
+        public static void Start()
         {
             LoadAccount();
             Console.WriteLine("Welkom bij Ships Cinema!\n1. Log in\n2. Maak een account\n");
