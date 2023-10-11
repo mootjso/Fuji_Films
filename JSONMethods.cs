@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 public static class JSONMethods
 {
@@ -26,7 +26,7 @@ public static class JSONMethods
         return new List<T>();
     }
 
-    public static void WriteToJSONSchedule(List<ScheduledMovie> movieList, string fileName)
+    public static void WriteToJSON<T>(List<T> movieList, string fileName)
     {
         StreamWriter writer = new(fileName);
         string ListToJson = JsonConvert.SerializeObject(movieList);
