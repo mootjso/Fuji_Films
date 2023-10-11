@@ -1,7 +1,7 @@
 ﻿public static class DisplayMovie
 {
-    static List<Movie> movies = JSONMethods.ReadJSON(JSONMethods.MovieFileName);
-    public static void DisplayMovieList()
+    static List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName);
+    public static void Start()
     {
         string menuText = "List of Movies:";
         List<string> menuOptionsFull = movies.Select(movie => movie.Title).ToList();
