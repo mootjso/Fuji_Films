@@ -1,24 +1,12 @@
 ﻿public static class MovieSchedule
 {
-    private static string FileName = "movie_schedule.json";
+    private const string FileName = "movie_schedule.json";
     // TODO Cannot read as ScheduledMovie, have to recast the Movie objects
     public static List<ScheduledMovie> Movies;
 
     static MovieSchedule()
     {
-        if (File.Exists(FileName))
-        {
-            long fileSize = new FileInfo(FileName).Length;
-            if (fileSize > 0)
-                Movies = JSONMethods.ReadJSONSchedule(FileName);
-            else
-                Movies = new List<ScheduledMovie>();
-        }
-        else
-        {
-            File.WriteAllText(FileName, "");
-            Movies = new List<ScheduledMovie>();
-        }
+        Movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
     }
 
     public static void Start()

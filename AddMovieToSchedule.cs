@@ -4,11 +4,11 @@ public static class AddMovieToSchedule
 
     // TODO IMPLEMENT A FUNCTION TO REMOVE MOVIES FROM SCHEDULE THAT ARE IN THE PAST
 {
-    private static string FileName = "movie_schedule.json";
+    private const string FileName = "movie_schedule.json";
 
     public static void Start()
     {
-        List<Movie> movies = JSONMethods.ReadJSON("movies.json");
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>("movies.json");
         
         bool inMenu = true;
         while (inMenu)
@@ -68,7 +68,7 @@ public static class AddMovieToSchedule
             if (option == 1)
                 inMenu = false;
         }
-        JSONMethods.WriteToJSONSchedule(MovieSchedule.Movies, FileName);
+        JSONMethods.WriteToJSON(MovieSchedule.Movies, FileName);
     }
 
     private static List<string> GetMovieTitles(List<Movie> movies)
