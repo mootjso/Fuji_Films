@@ -1,9 +1,10 @@
-﻿public class Program
+public class Program
 {
-    public static void Main()
+    private static void Main()
     {
         while (true)
         {
+
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
@@ -55,13 +56,12 @@
                     case 0:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        DisplayMovie.DisplayMovieList();
+                        Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
+                        Console.ReadKey();
                         break;
                     case 1:
                         Console.Clear();
-                        DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
-                        Console.ReadKey();
+                        MovieSchedule.Start();
                         break;
                     case 2:
                         Console.Clear();

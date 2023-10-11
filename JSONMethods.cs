@@ -1,13 +1,36 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 public static class JSONMethods
 {
     public static string MovieFileName = "movies.json";
-    public static List<Movie> ReadJSON(string fileName)
+    public static List<T> ReadJSON<T>(string fileName)
     {
-        StreamReader reader = new(fileName);
-        string content = reader.ReadToEnd();
-        List<Movie> movies = JsonConvert.DeserializeObject<List<Movie>>(content);
-        return movies;
+        if (File.Exists(fileName))
+        {
+            long fileSize = new FileInfo(fileName).Length;
+            if (fileSize > 0)
+            {
+                StreamReader reader = new(fileName);
+                string content = reader.ReadToEnd();
+                List<T> movies = JsonConvert.DeserializeObject<List<T>>(content)!;
+                reader.Close();
+
+                return movies;
+            }
+        }
+        else
+        {
+            File.WriteAllText(fileName, "[]");
+        }
+
+        return new List<T>();
+    }
+
+    public static void WriteToJSON<T>(List<T> movieList, string fileName)
+    {
+        StreamWriter writer = new(fileName);
+        string ListToJson = JsonConvert.SerializeObject(movieList);
+        writer.Write(ListToJson);
+        writer.Close();
     }
 }
