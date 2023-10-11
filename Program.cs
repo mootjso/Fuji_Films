@@ -55,9 +55,7 @@ public class Program
                 {
                     case 0:
                         Console.Clear();
-                        DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
-                        Console.ReadKey();
+                        DisplayMovie.Start();
                         break;
                     case 1:
                         Console.Clear();

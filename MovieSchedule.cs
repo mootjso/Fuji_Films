@@ -35,9 +35,9 @@
 
             dates.Add("Back");
             int index = Menu.Start("Select a date to see the movies for that day\n", dates);
-            if (index == dates.Count - 1)
+            if (index == dates.Count || index == dates.Count - 1)
             {
-                inMenu = false;
+                //inMenu = false;
                 break;
             }
             string dateString = dates[index];
@@ -59,7 +59,7 @@
             }
             movieMenuString.Add("Back");
             index = Menu.Start($"Date: {dateString}\n", movieMenuString);
-            if (index == movieMenuString.Count - 1)
+            if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
 
             // TODO IMPLEMENT Ticket reservation system ------------------------------------------------
