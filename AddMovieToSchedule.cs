@@ -5,6 +5,14 @@ public static class AddMovieToSchedule
     // TODO IMPLEMENT A FUNCTION TO REMOVE MOVIES FROM SCHEDULE THAT ARE IN THE PAST
 {
     private const string FileName = "movie_schedule.json";
+    private static int latestScheduledMovieID = 1;
+
+    static AddMovieToSchedule()
+    {
+        List<ScheduledMovie> scheduledMovies = JSONMethods.ReadJSON<ScheduledMovie>(FileName); ;
+
+        latestScheduledMovieID = scheduledMovies.MaxBy(sm => sm.Id).Id;
+    }
 
     public static void Start()
     {
@@ -13,7 +21,10 @@ public static class AddMovieToSchedule
         bool inMenu = true;
         while (inMenu)
         {
+            List<string> moviesList = GetMovieTitles(movies);
             int index = Menu.Start("Select a movie to add to the schedule:\n", GetMovieTitles(movies));
+            if (index == moviesList.Count)  // If user presses left arrow key
+                break;
             Movie movieToAdd = movies[index];
             Console.Clear();
             DisplayMovieInfo(movieToAdd);
@@ -21,6 +32,8 @@ public static class AddMovieToSchedule
             List<string> dates = CreateDatesList();
             index = Menu.Start("Select a date:\n", dates);
             // TODO Add option to enter a custom date
+            if (index == dates.Count)
+                continue;
             string dateString = dates[index];
 
 
@@ -55,20 +68,23 @@ public static class AddMovieToSchedule
             // -------------------------------------------------------------------------------
 
             // Confirm or cancel selection
-            ScheduledMovie newMovie = new(movieToAdd, resultDateTime);
+            ScheduledMovie newMovie = new(movieToAdd, resultDateTime) { Id = latestScheduledMovieID += 1 };
             int selection = ConfirmSelection(newMovie);
             if (selection == 0)
+            {
                 MovieSchedule.Movies.Add(newMovie);
+
+                JSONMethods.WriteToJSON(MovieSchedule.Movies, FileName);
+            }
             else
                 continue;
 
             List<string> menuOptions;
             menuOptions = new() { "Add a new movie to the schedule  ", "Back" };
             int option = Menu.Start("", menuOptions);
-            if (option == 1)
+            if (option == 1 || option == menuOptions.Count)
                 inMenu = false;
         }
-        JSONMethods.WriteToJSON(MovieSchedule.Movies, FileName);
     }
 
     private static List<string> GetMovieTitles(List<Movie> movies)

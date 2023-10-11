@@ -9,8 +9,6 @@
 
     public ScheduledMovie(Movie movie, DateTime startTime)
     {
-        Counter++;
-        Id = Counter;
         StartTime = startTime;
         EndTime = startTime.AddMinutes(movie.Runtime);
         Movie = movie;
