@@ -1,10 +1,9 @@
-public class Program
+﻿public class Program
 {
-    private static void Main()
+    public static void Main()
     {
         while (true)
         {
-            AddMovieToSchedule.Start();
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
@@ -21,14 +20,18 @@ public class Program
                     case 0:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  LOGGING IN NOT IMPLEMENTEND\n\nPRESS ANY KEY TO CONTINUE TO THE MAIN MENU");
+                        Console.WriteLine("\n\n  LOGGING TESTING\n\n);
+                        logIn loginInstance = new logIn();
+                        loginInstance.Login();
                         loggedIn = true;
                         Console.ReadKey();
                         break;
                     case 1:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  REGISTERING NOT IMPLEMENTEND\n\nPRESS ANY KEY TO CONTINUE TO THE MAIN MENU");
+                        Console.WriteLine("\n\n  REGISTERING TESTING\n\n");
+                        logIn registerInstance = new Register();
+                        registerInstance.Register();
                         loggedIn = true;
                         Console.ReadKey();
                         break;
@@ -55,11 +58,14 @@ public class Program
                 {
                     case 0:
                         Console.Clear();
-                        DisplayMovie.Start();
+                        DisplayAsciiArt.Header();
+                        DisplayMovie.DisplayMovieList();
                         break;
                     case 1:
                         Console.Clear();
-                        MovieSchedule.Start();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
+                        Console.ReadKey();
                         break;
                     case 2:
                         Console.Clear();
