@@ -1,10 +1,10 @@
-﻿public static class MovieScheduleHandlerAdmin
+﻿public static class ScheduleHandlerAdmin
 {
     private const string FileName = "movie_schedule.json";
     private static int latestScheduledMovieID = 1;
     private static List<ScheduledMovie> scheduledMovies;
 
-    static MovieScheduleHandlerAdmin()
+    static ScheduleHandlerAdmin()
     {
         // PUT THIS IN A SEPARATE FUNCTION TO REUSE WHEN NEEDED
         List<ScheduledMovie> scheduledMovies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
@@ -67,9 +67,9 @@
             int selection = ConfirmSelection(newMovie);
             if (selection == 0)
             {
-                MovieScheduleHandlerUser.Movies.Add(newMovie);
+                ScheduleHandlerUser.Movies.Add(newMovie);
 
-                JSONMethods.WriteToJSON(MovieScheduleHandlerUser.Movies, FileName);
+                JSONMethods.WriteToJSON(ScheduleHandlerUser.Movies, FileName);
             }
             else
                 continue;
@@ -85,7 +85,7 @@
     
     public static void RemoveMovieFromSchedule()
     {
-        List<string> dates = MovieScheduleHandlerUser.GetAllDates();
+        List<string> dates = ScheduleHandlerUser.GetAllDates();
         dates.Add("Back");
 
         bool inMenu = true;
@@ -99,8 +99,8 @@
 
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
-            List<ScheduledMovie> moviesForDate = MovieScheduleHandlerUser.GetMoviesByDate(selectedDate);
-            List<string> movieMenuStrings = MovieScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
+            List<ScheduledMovie> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
+            List<string> movieMenuStrings = ScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
 
             index = Menu.Start($"Date: {dateString}\n", movieMenuStrings);
             if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)

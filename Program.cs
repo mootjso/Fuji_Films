@@ -58,7 +58,7 @@ public class Program
                         break;
                     case 1:
                         Console.Clear();
-                        MovieScheduleHandlerUser.Start();
+                        ScheduleHandlerUser.Start();
                         break;
                     case 2:
                         Console.Clear();

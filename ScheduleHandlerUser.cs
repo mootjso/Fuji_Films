@@ -1,9 +1,9 @@
-﻿public static class MovieScheduleHandlerUser
+﻿public static class ScheduleHandlerUser
 {
     private const string FileName = "movie_schedule.json";
     public static List<ScheduledMovie> Movies;
 
-    static MovieScheduleHandlerUser()
+    static ScheduleHandlerUser()
     {
         Movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
     }
