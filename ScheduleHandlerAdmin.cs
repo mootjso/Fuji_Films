@@ -1,15 +1,14 @@
 ﻿public static class ScheduleHandlerAdmin
 {
     private const string FileName = "movie_schedule.json";
-    private static int latestScheduledMovieID = 1;
-    private static List<ScheduledMovie> scheduledMovies;
+    private static int LatestScheduledMovieID = 1;
+    private static List<ScheduledMovie> ScheduledMovies;
 
     static ScheduleHandlerAdmin()
     {
-        // PUT THIS IN A SEPARATE FUNCTION TO REUSE WHEN NEEDED
-        List<ScheduledMovie> scheduledMovies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
+        ScheduledMovies = ScheduleHandlerUser.Movies;
 
-        latestScheduledMovieID = scheduledMovies.MaxBy(sm => sm.Id).Id;
+        LatestScheduledMovieID = ScheduledMovies.MaxBy(sm => sm.Id).Id;
     }
     public static void Start()
     {
@@ -63,7 +62,7 @@
             DateTime selectedTime = TimeSelection(movieToAdd, dateString);
 
             // Confirm or cancel selection
-            ScheduledMovie newMovie = new(movieToAdd, selectedTime) { Id = latestScheduledMovieID += 1 };
+            ScheduledMovie newMovie = new(movieToAdd, selectedTime) { Id = LatestScheduledMovieID += 1 };
             int selection = ConfirmSelection(newMovie);
             if (selection == 0)
             {
@@ -99,6 +98,7 @@
 
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
+
             List<ScheduledMovie> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
             List<string> movieMenuStrings = ScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
 
@@ -109,6 +109,7 @@
             }
 
             ScheduledMovie movieToRemove = moviesForDate[index];
+            ScheduleHandlerUser.Movies.Remove(movieToRemove);
             RemoveFromJson(movieToRemove);
 
             // Confirmation message
@@ -223,7 +224,6 @@
 
     private static void RemoveFromJson(ScheduledMovie movieToRemove)
     {
-        // TODO PUT THIS IN A SEPARATE FUNCTION (THIS LINE IS ALSO IN THE CONSTRUCTOR)
         List<ScheduledMovie> movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
         List<ScheduledMovie> newMovies = new();
         foreach (ScheduledMovie movie in movies)

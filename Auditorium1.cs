@@ -1,53 +1,250 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq.Expressions;
-using Newtonsoft.Json;
-using static LoadingBar;
+﻿using Newtonsoft.Json;
 
 public class Auditorium_1
 {
-    public static void DisplaySelectedSeats()
+    private SeatDatabase SeatDb;
+    private static List<string> SelectedSeats = new List<string>();
+    public string Filename;
+    public List<Ticket> Tickets = new();
+
+    public Auditorium_1()
     {
-        Console.Clear();
-        Console.WriteLine("Selected Seats:");
-        foreach (var seat in selectedSeats)
+        SeatDb = GetSeatDatabase();
+        Filename = "SaveFileSeatSelectionAuditorium_1.json";
+    }
+
+    public List<Ticket> SelectSeats()
+    {
+        Console.CursorVisible = false;
+
+        int selectedRow = 0;
+        int selectedColumn = 0;
+        double totalPrice;
+        ConsoleKeyInfo keyInfo;
+
+        DisplayLoadingBar();
+
+        // Do-while loop draws the seating overview, allows the user to select seats and checkout using the arrow keys and Enter
+        do
         {
-            Console.WriteLine(seat);
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
+            Console.WriteLine("\nChoose your Seat :\n");
+
+            DrawSeats(selectedRow, selectedColumn);
+            DrawMovieScreen();
+            DisplayPriceInfo();
+
+            totalPrice = GetTotalPrice();
+            DisplaySelectedSeats();
+            Console.WriteLine($"\nTotal price of reservation: {totalPrice}\n");
+
+            keyInfo = Console.ReadKey(true);
+            switch (keyInfo.Key)
+            {
+                // User navigates through the seats
+                case ConsoleKey.UpArrow:
+                    if (selectedRow > 0)
+                        selectedRow--;
+                    break;
+
+                case ConsoleKey.DownArrow:
+                    if (selectedRow < 13)
+                        selectedRow++;
+                    break;
+
+                case ConsoleKey.LeftArrow:
+                    if (selectedColumn > 0)
+                        selectedColumn--;
+                    break;
+
+                case ConsoleKey.RightArrow:
+                    if (selectedColumn < 11)
+                        selectedColumn++;
+                    break;
+
+                // User selects a seat
+                case ConsoleKey.Enter:
+                    string selectedSeat = $"{Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1}";
+                    if (SeatDb.Seats[selectedRow, selectedColumn] == '■')
+                    {
+                        double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
+                        string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
+
+                        Ticket ticket = new(selectedSeat, seatPrice, seatColor);
+
+                        Console.WriteLine($"You have selected seat {ticket.Position}.");
+                        Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
+
+                        if (ConfirmSelection(ticket))
+                        {
+                            SeatDb.Seats[selectedRow, selectedColumn] = 'X';
+                            Tickets.Add(ticket);
+                        }
+                    }
+                    // Invalid seat selected
+                    else
+                    {
+                        Console.WriteLine($"Seat {selectedSeat} is already taken or cannot be chosen.");
+                        Console.WriteLine("Press any key to choose another seat.");
+                        Console.ReadKey();
+                    }
+                    break;
+
+                // Go to checkout
+                case ConsoleKey.C:
+                    DisplayLoadingBar();
+
+                    if (ConfirmCheckout())
+                        return Tickets;
+                    else
+                    {
+                        DisplayLoadingBar();
+                        break;
+                    }
+            }
+        }
+        while (keyInfo.Key != ConsoleKey.Q);
+
+        return Tickets;
+    }
+
+    // TODO Uncomment method when done with testing
+    public void DisplayLoadingBar()
+    {
+        //Console.Clear();
+        //LoadingBar.Start();
+        //Console.ResetColor();
+    }
+
+    public void DisplaySelectedSeats()
+    {
+        Console.Write("Selected seat(s): ");
+        List<string> seatPositions = new();
+        foreach (Ticket ticket in Tickets)
+            seatPositions.Add(ticket.Position);
+
+        Console.Write($"{string.Join(", ", seatPositions)}");
+    }
+
+    public void DrawSeats(int selectedRow, int selectedColumn)
+    {
+        // Write top line of numbers for the grid
+        Console.Write("   ");
+        for (int j = 1; j <= 12; j++)
+        {
+            Console.Write(j + " ");
+        }
+        Console.Write("\n");
+
+        char rowLabel = 'A';
+        for (int i = 0; i < 14; i++)
+        {
+            Console.Write(rowLabel + "  ");
+            rowLabel++;
+
+            // Change the font color for seats based on their position
+            for (int j = 0; j < 12; j++)
+            {
+                if (i == selectedRow && j == selectedColumn)
+                {
+                    Console.BackgroundColor = ConsoleColor.Red;
+                }
+                else if ((i >= 5 && i <= 8 && (j == 5 || j == 6)))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                else if ((i == 3 || i == 4 || i == 9 || i == 10) && (j == 5 || j == 6))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
+                else if ((i >= 4 && i <= 9) && (j == 4 || j == 7))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
+                else if ((i >= 5 && i <= 8) && (j == 3 || j == 8))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                }
+                else if ((i <= 13) && (j <= 11))
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                }
+
+                else if (SeatDb.Seats[i, j] == '■')
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+                Console.Write(SeatDb.Seats[i, j] + " ");
+                Console.ResetColor();
+            }
+
+            Console.WriteLine();
         }
     }
 
-    public static void DisplayLoadingBar()
+    public void DrawMovieScreen()
     {
-        Console.Clear();
-        LoadingBar.Start();
-        Console.ResetColor();
-        
-    }
-
-
-    
-    class SeatDatabase
-    {
-        public char[,] Seats { get; set; }
-        public double RedSeatPrice { get; set; }
-        public double YellowSeatPrice { get; set; }
-        public double BlueSeatPrice { get; set; }
-    }
-
-    static List<string> selectedSeats = new List<string>();
-    static double totalAmount = 0.0;
-    private static ConsoleKeyInfo key;
-
-    static void Start()
-    {
-        string jsonFilePath = @"SaveFileSeatSelectionAuditorium_1.json";
-
-        SeatDatabase seatDatabase;
-
-        if (File.Exists(jsonFilePath))
+        Console.WriteLine("");
+        for (int j = 0; j < 30; j++)
         {
-            string json = File.ReadAllText(jsonFilePath);
+            Console.Write("■");
+
+        }
+        Console.WriteLine("\n        Movie screen");
+    }
+
+    public double GetSelectedSeatPrice(int selectedRow, int selectedColumn)
+    {
+        double seatPrice;
+        if (selectedRow >= 5 && selectedRow <= 8 && (selectedColumn == 5 || selectedColumn == 6))
+        {
+            seatPrice = SeatDb.RedSeatPrice;
+        }
+        else if ((selectedRow == 3 || selectedRow == 4 || selectedRow == 9 || selectedRow == 10) && (selectedColumn == 5 || selectedColumn == 6))
+        {
+            seatPrice = SeatDb.YellowSeatPrice;
+        }
+        else if ((selectedRow >= 4 && selectedRow <= 9) && (selectedColumn == 4 || selectedColumn == 7))
+        {
+            seatPrice = SeatDb.YellowSeatPrice;
+        }
+        else if ((selectedRow >= 5 && selectedRow <= 8) && (selectedColumn == 3 || selectedColumn == 8))
+        {
+            seatPrice = SeatDb.YellowSeatPrice;
+        }
+        else
+        {
+            seatPrice = SeatDb.BlueSeatPrice;
+        }
+
+        return seatPrice;
+    }
+
+    public void DisplayPriceInfo()
+    {
+        Console.WriteLine("\n\t-Prices-");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write($"■ : {SeatDb.RedSeatPrice} EUR\t");
+
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write($"■ : {SeatDb.YellowSeatPrice} EUR\t");
+
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"■ : {SeatDb.BlueSeatPrice} EUR");
+        Console.WriteLine("\n");
+
+        Console.ResetColor();
+    }
+
+    public SeatDatabase GetSeatDatabase()
+    {
+        SeatDatabase? seatDatabase;
+
+        if (File.Exists(Filename))
+        {
+            string json = File.ReadAllText(Filename);
             seatDatabase = JsonConvert.DeserializeObject<SeatDatabase>(json);
         }
         else
@@ -59,225 +256,93 @@ public class Auditorium_1
                 YellowSeatPrice = 15.0,
                 BlueSeatPrice = 10.0
             };
-
-            for (int i = 0; i < 14; i++)
-            {
-                for (int j = 0; j < 12; j++)
-                {
-                    seatDatabase.Seats[i, j] = '■';
-                }
-            }
-
-            seatDatabase.Seats[0, 0] = seatDatabase.Seats[0, 1] = ' ';
-            seatDatabase.Seats[0, 10] = seatDatabase.Seats[0, 11] = ' ';
-            seatDatabase.Seats[1, 0] = seatDatabase.Seats[1, 11] = ' ';
-            seatDatabase.Seats[2, 0] = seatDatabase.Seats[2, 11] = ' ';
-            seatDatabase.Seats[11, 0] = seatDatabase.Seats[11, 11] = ' ';
-            seatDatabase.Seats[12, 0] = seatDatabase.Seats[12, 1] = ' ';
-            seatDatabase.Seats[12, 10] = seatDatabase.Seats[12, 11] = ' ';
-            seatDatabase.Seats[13, 0] = seatDatabase.Seats[13, 1] = ' ';
-            seatDatabase.Seats[13, 10] = seatDatabase.Seats[13, 11] = ' ';
         }
 
-        int selectedRow = 0;
-        int selectedColumn = 0;
-
-
-        DisplayLoadingBar();
-        do
+        // Replace all characters in 2d array with squares
+        for (int i = 0; i < 14; i++)
         {
-            Console.Clear();
-            Console.CursorVisible = false;
-            Console.WriteLine("Use arrow keys to move. Press Enter to select a seat. Press 'Q' to quit. Press 'C' for Checkout.");
-            Console.WriteLine("\nChoose your Seat :\n");
-
-            Console.Write("   ");
-            for (int j = 1; j <= 12; j++)
+            for (int j = 0; j < 12; j++)
             {
-                Console.Write(j + " ");
+                seatDatabase.Seats[i, j] = '■';
             }
-            Console.Write("\n");
+        }
 
-            char rowLabel = 'A';
+        // Replace the positions where there is no chair with empty spaces
+        seatDatabase.Seats[0, 0] = seatDatabase.Seats[0, 1] = ' ';
+        seatDatabase.Seats[0, 10] = seatDatabase.Seats[0, 11] = ' ';
+        seatDatabase.Seats[1, 0] = seatDatabase.Seats[1, 11] = ' ';
+        seatDatabase.Seats[2, 0] = seatDatabase.Seats[2, 11] = ' ';
+        seatDatabase.Seats[11, 0] = seatDatabase.Seats[11, 11] = ' ';
+        seatDatabase.Seats[12, 0] = seatDatabase.Seats[12, 1] = ' ';
+        seatDatabase.Seats[12, 10] = seatDatabase.Seats[12, 11] = ' ';
+        seatDatabase.Seats[13, 0] = seatDatabase.Seats[13, 1] = ' ';
+        seatDatabase.Seats[13, 10] = seatDatabase.Seats[13, 11] = ' ';
 
-            for (int i = 0; i < 14; i++)
-            {
-                Console.Write(rowLabel + "  ");
-                rowLabel++;
-
-                for (int j = 0; j < 12; j++)
-                {
-                    if (i == selectedRow && j == selectedColumn)
-                    {
-                        Console.BackgroundColor = ConsoleColor.Red;
-                    }
-                    else if ((i >= 5 && i <= 8 && (j == 5 || j == 6)))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                    }
-                    else if ((i == 3 || i == 4 || i == 9 || i == 10) && (j == 5 || j == 6))
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    }
-                    else if ((i >= 4 && i <= 9) && (j == 4 || j == 7))
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    }
-                    else if ((i >= 5 && i <= 8) && (j == 3 || j == 8))
-                    {
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    }
-                    else if ((i <= 13) && (j <= 11))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                    }
-
-                    else if (seatDatabase.Seats[i, j] == '■')
-                    {
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                    }
-                    Console.Write(seatDatabase.Seats[i, j] + " ");
-                    Console.ResetColor();
-                }
-
-                Console.WriteLine();
-            }
-
-            Console.WriteLine("");
-            for (int j = 0; j < 30; j++)
-            {
-                Console.Write("■");
-            }
-
-            Console.WriteLine("\n\n\t-Prices-");
-            Console.WriteLine($"Red    : {seatDatabase.RedSeatPrice} EUR");
-            Console.WriteLine($"Yellow : {seatDatabase.YellowSeatPrice} EUR");
-            Console.WriteLine($"Blue   : {seatDatabase.BlueSeatPrice} EUR");
-
-            key = Console.ReadKey(true);
-
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (selectedRow > 0)
-                    {
-                        selectedRow--;
-                    }
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (selectedRow < 13)
-                    {
-                        selectedRow++;
-                    }
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (selectedColumn > 0)
-                    {
-                        selectedColumn--;
-                    }
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (selectedColumn < 11)
-                    {
-                        selectedColumn++;
-                    }
-                    break;
-                case ConsoleKey.Enter:
-                    if (seatDatabase.Seats[selectedRow, selectedColumn] == '■' &&
-                        !(selectedRow == 0 && (selectedColumn == 0 || selectedColumn == 1 || selectedColumn == 10 || selectedColumn == 11)) &&
-                        !(selectedRow == 1 && (selectedColumn == 0 || selectedColumn == 11)) &&
-                        !(selectedRow == 2 && (selectedColumn == 0 || selectedColumn == 11)) &&
-                        !(selectedRow == 11 && (selectedColumn == 0 || selectedColumn == 11)) &&
-                        !(selectedRow == 12 && (selectedColumn == 0 || selectedColumn == 1 || selectedColumn == 10 || selectedColumn == 11)) &&
-                        !(selectedRow == 13 && (selectedColumn == 0 || selectedColumn == 1 || selectedColumn == 10 || selectedColumn == 11)))
-                    {
-                        seatDatabase.Seats[selectedRow, selectedColumn] = 'X';
-                        Console.WriteLine($"\nYou have selected seat {Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1}.");
-
-                        double seatPrice = 0.0;
-                        if (selectedRow >= 5 && selectedRow <= 8 && (selectedColumn == 5 || selectedColumn == 6))
-                        {
-                            seatPrice = seatDatabase.RedSeatPrice;
-                            Console.WriteLine($"Price: {seatPrice} EUR (Red Seat)");
-                        }
-                        else if ((selectedRow == 3 || selectedRow == 4 || selectedRow == 9 || selectedRow == 10) && (selectedColumn == 5 || selectedColumn == 6))
-                        {
-                            seatPrice = seatDatabase.YellowSeatPrice;
-                            Console.WriteLine($"Price: {seatPrice} EUR (Yellow Seat)");
-                        }
-                        else if ((selectedRow >= 4 && selectedRow <= 9) && (selectedColumn == 4 || selectedColumn == 7))
-                        {
-                            seatPrice = seatDatabase.YellowSeatPrice;
-                            Console.WriteLine($"Price: {seatPrice} EUR (Yellow Seat)");
-                        }
-                        else if ((selectedRow >= 5 && selectedRow <= 8) && (selectedColumn == 3 || selectedColumn == 8))
-                        {
-                            seatPrice = seatDatabase.YellowSeatPrice;
-                            Console.WriteLine($"Price: {seatPrice} EUR (Yellow Seat)");
-                        }
-                        else
-                        {
-                            seatPrice = seatDatabase.BlueSeatPrice;
-                            Console.WriteLine($"Price: {seatPrice} EUR (Blue Seat)");
-                        }
-
-                        Console.WriteLine("Are you sure you want to choose this seat? (Press Enter to confirm, any other key to cancel)");
-                        if (Console.ReadKey(true).Key == ConsoleKey.Enter)
-                        {
-                            Console.WriteLine("Seat selected.");
-                            selectedSeats.Add($"{Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1}");
-                            totalAmount += seatPrice;
-                            Console.WriteLine($"\nTotal Amount: {totalAmount} EUR");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Seat selection cancelled.");
-                            seatDatabase.Seats[selectedRow, selectedColumn] = '■'; 
-                            Console.ReadKey(true);
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Seat {Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1} is already taken or cannot be chosen.");
-                        Console.WriteLine("Press any key to choose another seat.");
-                        Console.ReadKey(true);
-                    }
-                    break;
-                case ConsoleKey.C:
-                    DisplayLoadingBar();
-                    Console.Clear();
-                    string updatedJson = JsonConvert.SerializeObject(seatDatabase);
-                    File.WriteAllText(jsonFilePath, updatedJson);
-                    Console.WriteLine($"\nTotal Amount: {totalAmount} EUR");
-                    Console.WriteLine("Press 'Enter' to continue or 'Backspace' to go back to seat selection.");
-
-                    key = Console.ReadKey(true);
-
-                    if (key.Key == ConsoleKey.Enter)
-                    {
-                        // Check if totalAmount is greater than 0
-                        if (totalAmount > 0)
-                        {
-                            Console.Clear();
-                            Console.WriteLine("Ending program.");
-                            return; // End the program
-                        }
-                    }
-                    else if (key.Key == ConsoleKey.Backspace)
-                    {
-                        // User wants to go back to seat selection
-                        Console.Clear();
-                        LoadingBar.Start();
-                    }
-                    DisplayLoadingBar();
-                    break;
-            }
-
-        } while (key.Key != ConsoleKey.Q);
-
-        Console.Clear();
-        Console.WriteLine("Quitted");
+        return seatDatabase;
     }
 
-    
+    public bool ConfirmSelection(Ticket ticket)
+    {
+        Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel)");
+        ConsoleKeyInfo keyInfo = Console.ReadKey();
+        if (keyInfo.Key == ConsoleKey.Enter)
+        {
+            Console.WriteLine("Seat selected.");
+            SelectedSeats.Add($"{ticket.Position}");
+
+            return true;
+        }
+        return false;
+    }
+
+    public double GetTotalPrice()
+    {
+        double totalPrice = 0;
+        foreach (Ticket ticket in Tickets)
+        {
+            totalPrice += ticket.Price;
+        }
+
+        return totalPrice;
+    }
+
+    public void WriteToJson(SeatDatabase seatDb)
+    {
+        string updatedJson = JsonConvert.SerializeObject(seatDb);
+        File.WriteAllText(Filename, updatedJson);
+    }
+
+    public bool ConfirmCheckout()
+    {
+        // No seats selected
+        if (Tickets.Count <= 0)
+        {
+            Console.WriteLine("Cannot checkout, you have not selected any seats.");
+            Console.WriteLine("Press any key to continue");
+
+            Console.ReadKey();
+            return false;
+        }
+
+        DisplaySelectedSeats();
+
+        double totalPrice = GetTotalPrice();
+        Console.WriteLine($"\nTotal price: {totalPrice} EUR");
+
+        Console.WriteLine("\nPress 'Enter' to continue to checkout, press any other key to go back to seat selection.");
+        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+
+        // User confirms their selection and continues to checkout
+        if (keyInfo.Key == ConsoleKey.Enter)
+        {
+            Console.Clear();
+            Console.WriteLine("Writing to json");
+            Console.ReadKey();
+            WriteToJson(SeatDb);
+
+            return true;
+        }
+
+        return false;
+    }
 }

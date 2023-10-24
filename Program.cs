@@ -4,6 +4,11 @@ public class Program
     {
         while (true)
         {
+            // CODE FOR TESTING PURPOSES
+            //Auditorium_1 auditorium_1 = new Auditorium_1();
+            //List<Ticket> tickets = auditorium_1.SelectSeats();
+            // ------------------------
+
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
@@ -11,8 +16,8 @@ public class Program
             bool loggedIn = false;
             while (!loggedIn)
             {
-                DisplayAsciiArt.Standby();
-                DisplayAsciiArt.OpeningLogo();
+                //DisplayAsciiArt.Standby();
+                //DisplayAsciiArt.OpeningLogo();
 
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
