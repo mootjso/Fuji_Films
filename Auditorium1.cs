@@ -95,7 +95,7 @@ public class Auditorium_1
                 case ConsoleKey.C:
                     DisplayLoadingBar();
 
-                    if (ConfirmCheckout())
+                    if (ConfirmSelection())
                         return Tickets;
                     else
                     {
@@ -312,7 +312,7 @@ public class Auditorium_1
         File.WriteAllText(Filename, updatedJson);
     }
 
-    public bool ConfirmCheckout()
+    public bool ConfirmSelection()
     {
         // No seats selected
         if (Tickets.Count <= 0)
@@ -335,9 +335,6 @@ public class Auditorium_1
         // User confirms their selection and continues to checkout
         if (keyInfo.Key == ConsoleKey.Enter)
         {
-            Console.Clear();
-            Console.WriteLine("Writing to json");
-            Console.ReadKey();
             WriteToJson(SeatDb);
 
             return true;

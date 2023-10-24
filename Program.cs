@@ -66,7 +66,9 @@ public class Program
                         if (selectedMovie is null)
                             continue;
                         var newAuditorium = new Auditorium_1(selectedMovie);
-                        newAuditorium.SelectSeats();
+                        List<Ticket> tickets = newAuditorium.SelectSeats();
+                        // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
+                        // add the tickets to the users reservations
                         break;
                     case 2:  // View all reservations
                         Console.Clear();
