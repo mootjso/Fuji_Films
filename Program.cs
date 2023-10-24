@@ -57,21 +57,24 @@ public class Program
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
-                    case 0:
+                    case 0:  // View all current movies
                         Console.Clear();
                         DisplayMovie.Start();
                         break;
-                    case 1:
-                        Console.Clear();
-                        ScheduleHandlerUser.Start();
+                    case 1:  // View schedule and make reservation
+                        ScheduledMovie? selectedMovie = ScheduleHandlerUser.SelectMovieFromSchedule();
+                        if (selectedMovie is null)
+                            continue;
+                        var newAuditorium = new Auditorium_1(selectedMovie);
+                        newAuditorium.SelectSeats();
                         break;
-                    case 2:
+                    case 2:  // View all reservations
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
                         Console.ReadKey();
                         break;
-                    case 3:
+                    case 3:  // Log out
                         loggedIn = false;
                         break;
                     default:

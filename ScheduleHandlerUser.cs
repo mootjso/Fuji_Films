@@ -8,7 +8,7 @@
         Movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
     }
 
-    public static void Start()
+    public static ScheduledMovie? SelectMovieFromSchedule()
     {
         bool inMenu = true;
         while (inMenu)
@@ -19,7 +19,7 @@
                 List<string> menuOption = new() { "Back" };
                 Menu.Start("There are no movies scheduled at the moment, please come back later.\n", menuOption);
 
-                return;
+                return null;
             }
 
             // Date selection
@@ -39,18 +39,10 @@
             index = Menu.Start($"Date: {dateString}\n", movieMenuString);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
-
-            // TODO IMPLEMENT Ticket reservation system ------------------------------------------------
-            //
-            //
-            //------------------------------------------------------------------------------------------
-
-            // NOT IMPLEMENTED Message
-            Console.Clear();
-            DisplayAsciiArt.Header();
-            Console.WriteLine("\n\n    TICKET RESERVATIONS NOT IMPLEMENTED YET\n\n   PRESS ANY KEY TO GO BACK");
-            Console.ReadKey();
+            
+            return moviesForDate[index];
         }
+        return null;
     }
 
     public static List<string> GetAllDates()

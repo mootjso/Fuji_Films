@@ -7,10 +7,10 @@ public class Auditorium_1
     public string Filename;
     public List<Ticket> Tickets = new();
 
-    public Auditorium_1()
+    public Auditorium_1(ScheduledMovie selectedMovie)
     {
+        Filename = $"seat_reservations_{selectedMovie.Id}.json";
         SeatDb = GetSeatDatabase();
-        Filename = "SaveFileSeatSelectionAuditorium_1.json";
     }
 
     public List<Ticket> SelectSeats()
@@ -24,8 +24,7 @@ public class Auditorium_1
 
         DisplayLoadingBar();
 
-        // Do-while loop draws the seating overview, allows the user to select seats and checkout using the arrow keys and Enter
-        do
+        do  // Do-while loop draws the seating overview, allows the user to select seats and checkout using the arrow keys and Enter
         {
             Console.Clear();
             DisplayAsciiArt.Header();
@@ -224,11 +223,10 @@ public class Auditorium_1
 
     public void DisplayPriceInfo()
     {
-        Console.WriteLine("\n\t-Prices-");
         Console.ForegroundColor = ConsoleColor.Red;
         Console.Write($"■ : {SeatDb.RedSeatPrice} EUR\t");
 
-        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.Write($"■ : {SeatDb.YellowSeatPrice} EUR\t");
 
         Console.ForegroundColor = ConsoleColor.Blue;
@@ -241,7 +239,6 @@ public class Auditorium_1
     public SeatDatabase GetSeatDatabase()
     {
         SeatDatabase? seatDatabase;
-
         if (File.Exists(Filename))
         {
             string json = File.ReadAllText(Filename);
@@ -258,12 +255,15 @@ public class Auditorium_1
             };
         }
 
-        // Replace all characters in 2d array with squares
+        // Replace all characters in 2d array with squares, except for 'X's which indicate reservered seats
         for (int i = 0; i < 14; i++)
         {
             for (int j = 0; j < 12; j++)
             {
-                seatDatabase.Seats[i, j] = '■';
+                if (!(seatDatabase.Seats[i, j] == 'X'))
+                {
+                    seatDatabase.Seats[i, j] = '■';
+                }
             }
         }
 
