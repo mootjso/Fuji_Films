@@ -6,7 +6,6 @@
 
     static ScheduleHandlerAdmin()
     {
-        // PUT THIS IN A SEPARATE FUNCTION TO REUSE WHEN NEEDED
         List<ScheduledMovie> scheduledMovies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
 
         if (scheduledMovies.Count > 0)
@@ -71,7 +70,6 @@
             if (selection == 0)
             {
                 ScheduleHandlerUser.Movies.Add(newMovie);
-
                 JSONMethods.WriteToJSON(ScheduleHandlerUser.Movies, FileName);
             }
             else
@@ -105,13 +103,14 @@
             List<ScheduledMovie> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
             List<string> movieMenuStrings = ScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
 
-            index = Menu.Start($"Date: {dateString}\n", movieMenuStrings);
+            index = Menu.Start($"Date: {dateString}\nSelect the movie you want to remove\n", movieMenuStrings);
             if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)
             {
                 continue;
             }
 
             ScheduledMovie movieToRemove = moviesForDate[index];
+            ScheduleHandlerUser.Movies.Remove(movieToRemove);
             RemoveFromJson(movieToRemove);
 
             // Confirmation message
