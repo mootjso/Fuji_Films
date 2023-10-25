@@ -22,7 +22,7 @@ public static class Menu
         {
             Console.Clear();
             DisplayAsciiArt.Header();
-            DisplayMenuLocation();
+            //DisplayMenuLocation();  TODO Implement menu bar functionality
 
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
@@ -75,8 +75,7 @@ public static class Menu
 
     private static void DisplayMenuLocation()
     {
-        Console.ForegroundColor= ConsoleColor.DarkGray;
-        Console.WriteLine("Main Menu > Current Movies [FUNCTIONALITY OF MENU BAR NOT IMPLEMENTED]\n");
-        Console.ResetColor();
+        Console.WriteLine("Main Menu > Current Movies [FUNCTIONALITY OF MENU BAR NOT IMPLEMENTED]");
+        Console.WriteLine("---------------------------------------------------------------------\n");
     }
 }

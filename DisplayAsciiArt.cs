@@ -25,10 +25,8 @@
 
     public static void Standby()
     {
-        Console.ForegroundColor= ConsoleColor.DarkGray;
         Console.CursorVisible = false;
         BlinkingEffect("\n\n\n\n         Press any key to start");
-        Console.ResetColor();
     }
 
     private static void FadeInEffect(string text)
