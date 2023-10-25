@@ -1,4 +1,6 @@
-﻿public static class ScheduleHandlerAdmin
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+public static class ScheduleHandlerAdmin
 {
     private const string FileName = "movie_schedule.json";
     private static int latestScheduledMovieID = 1;
@@ -78,7 +80,7 @@
             // 
             List<string> menuOptions;
             menuOptions = new() { "Add a new movie to the schedule  ", "Back" };
-            int option = Menu.Start("", menuOptions);
+            int option = Menu.Start("Movie Schedule", menuOptions);
             if (option == 1 || option == menuOptions.Count)
                 inMenu = false;
         }
@@ -88,6 +90,19 @@
     {
         List<string> dates = ScheduleHandlerUser.GetAllDates();
         dates.Add("Back");
+        if (dates.Count <= 1)
+        {
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            Console.WriteLine("\nMovie Schedule");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nThere are no movies in the schedule.");
+            Console.ForegroundColor= ConsoleColor.DarkGray;
+            Console.WriteLine("\nPress any key to go back");
+            Console.ResetColor();
+            Console.ReadKey();
+            return;
+        }
 
         bool inMenu = true;
         while (inMenu)
@@ -225,7 +240,6 @@
 
     private static void RemoveFromJson(ScheduledMovie movieToRemove)
     {
-        // TODO PUT THIS IN A SEPARATE FUNCTION (THIS LINE IS ALSO IN THE CONSTRUCTOR)
         List<ScheduledMovie> movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
         List<ScheduledMovie> newMovies = new();
         foreach (ScheduledMovie movie in movies)
