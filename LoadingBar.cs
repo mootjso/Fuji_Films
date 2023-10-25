@@ -2,6 +2,7 @@
 {
     public static void Start()
     {
+        Console.Clear();
         int consoleWidth = Console.WindowWidth;
         Console.CursorVisible = false;
 
@@ -11,7 +12,8 @@
         {
             Console.ForegroundColor = ConsoleColor.Gray; //CHANGE COLOR
             Console.Write("\r\t\t\t\t\tLoading:{0,-20} {1,3}%", new string('█', i / 5), i);
-            Thread.Sleep(150);
+            Thread.Sleep(60);
         }
+        Console.ResetColor();
     }
 }

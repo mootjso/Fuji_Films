@@ -24,7 +24,7 @@ public class Auditorium_1
         double totalPrice;
         ConsoleKeyInfo keyInfo;
 
-        DisplayLoadingBar();
+        LoadingBar.Start();
 
         do  // Do-while loop draws the seating overview, allows the user to select seats and checkout using the arrow keys and Enter
         {
@@ -95,13 +95,13 @@ public class Auditorium_1
 
                 // Go to checkout
                 case ConsoleKey.C:
-                    DisplayLoadingBar();
+                    LoadingBar.Start();
 
                     if (ConfirmReservation())
                         return Tickets;
                     else
                     {
-                        DisplayLoadingBar();
+                        LoadingBar.Start();
                         break;
                     }
             }
@@ -109,14 +109,6 @@ public class Auditorium_1
         while (keyInfo.Key != ConsoleKey.Q);
 
         return Tickets;
-    }
-
-    // TODO Uncomment method when done with testing
-    public void DisplayLoadingBar()
-    {
-        //Console.Clear();
-        //LoadingBar.Start();
-        //Console.ResetColor();
     }
 
     public static void DisplaySelectedSeats(List<Ticket> tickets)
