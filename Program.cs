@@ -4,7 +4,6 @@ public class Program
     {
         while (true)
         {
-            ScheduleHandlerAdmin.Start();
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
