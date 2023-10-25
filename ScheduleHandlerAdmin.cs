@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-public static class ScheduleHandlerAdmin
+﻿public static class ScheduleHandlerAdmin
 {
     private const string FileName = "movie_schedule.json";
     private static int latestScheduledMovieID = 1;
