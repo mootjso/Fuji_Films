@@ -123,7 +123,7 @@
             Console.WriteLine(movieMenuStrings[index]);
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\n\nPress any key to continue");
+            Console.WriteLine("\nPress any key to continue");
             Console.ResetColor();
             Console.ReadKey();
             
