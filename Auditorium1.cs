@@ -70,19 +70,19 @@ public class Auditorium_1
                     string selectedSeat = $"{Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1}";
                     if (SeatDb.Seats[selectedRow, selectedColumn] == '■')
                     {
-                        //double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
-                        //string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
+                        double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
+                        string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
 
-                        //Ticket ticket = new(SelectedMovie, selectedSeat, seatPrice, seatColor);
+                        Ticket ticket = new(SelectedMovie, selectedRow, selectedColumn, seatPrice, seatColor);
 
-                        //Console.WriteLine($"You have selected seat {ticket.Row}:{ticket.Column}.");
-                        //Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
+                        Console.WriteLine($"You have selected seat {selectedSeat}.");
+                        Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
 
-                        //if (ConfirmSeatSelection(ticket))
-                        //{
-                        //    SeatDb.Seats[selectedRow, selectedColumn] = 'X';
-                        //    Tickets.Add(ticket);
-                        //}
+                        if (ConfirmSeatSelection(ticket))
+                        {
+                            SeatDb.Seats[selectedRow, selectedColumn] = 'X';
+                            Tickets.Add(ticket);
+                        }
                     }
                     // Invalid seat selected
                     else

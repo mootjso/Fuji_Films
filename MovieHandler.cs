@@ -5,7 +5,7 @@
 
     static MovieHandler()
     {
-        Movies = Initializer.GetMovieObjects();
+        Movies = AppInitializer.GetMovieObjects();
     }
     
     public static Movie? GetMovieById(int id)

@@ -6,7 +6,7 @@
 
     static ShowHandler()
     {
-        Shows = Initializer.GetShowObjects();
+        Shows = AppInitializer.GetShowObjects();
         if (Shows.Count > 0)
             LatestShowID = Shows.MaxBy(sm => sm.Id)!.Id;
         else
@@ -262,11 +262,11 @@
             // Confirm Selection
             Show show = moviesForDate[index];
             Movie movie = MovieHandler.GetMovieById(show.Id)!;
-            string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString}:";
+            string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString} at {show.StartTimeString}:";
             int selection = ConfirmSelection(show, movie, confirmationMessage);
             if (!(selection == 0))
             {
-                break;
+                continue;
             }
 
             return moviesForDate[index];
