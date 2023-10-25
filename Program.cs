@@ -62,6 +62,7 @@ public class Program
                             continue;
                         var newAuditorium = new Auditorium_1(selectedMovie);
                         List<Ticket> tickets = newAuditorium.SelectSeats();
+                        Checkout.Start(tickets);
                         // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
                         // add the tickets to the users reservations
                         break;

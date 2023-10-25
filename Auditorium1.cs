@@ -6,10 +6,12 @@ public class Auditorium_1
     private static List<string> SelectedSeats = new List<string>();
     public string Filename;
     public List<Ticket> Tickets = new();
+    public ScheduledMovie SelectedMovie;
 
     public Auditorium_1(ScheduledMovie selectedMovie)
     {
-        Filename = $"seat_reservations_{selectedMovie.Id}.json";
+        SelectedMovie = selectedMovie;
+        Filename = $"seat_reservations_{SelectedMovie.Id}.json";
         SeatDb = GetSeatDatabase();
     }
 
@@ -36,8 +38,8 @@ public class Auditorium_1
             DisplayPriceInfo();
 
             totalPrice = GetTotalPrice();
-            DisplaySelectedSeats();
-            Console.WriteLine($"\nTotal price of reservation: {totalPrice}\n");
+            DisplaySelectedSeats(Tickets);
+            Console.WriteLine($"\nTotal price of reservation: {totalPrice} EUR\n");
 
             keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
@@ -71,12 +73,12 @@ public class Auditorium_1
                         double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
                         string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
 
-                        Ticket ticket = new(selectedSeat, seatPrice, seatColor);
+                        Ticket ticket = new(SelectedMovie, selectedSeat, seatPrice, seatColor);
 
                         Console.WriteLine($"You have selected seat {ticket.Position}.");
                         Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
 
-                        if (ConfirmSelection(ticket))
+                        if (ConfirmSeatSelection(ticket))
                         {
                             SeatDb.Seats[selectedRow, selectedColumn] = 'X';
                             Tickets.Add(ticket);
@@ -95,7 +97,7 @@ public class Auditorium_1
                 case ConsoleKey.C:
                     DisplayLoadingBar();
 
-                    if (ConfirmSelection())
+                    if (ConfirmReservation())
                         return Tickets;
                     else
                     {
@@ -117,11 +119,11 @@ public class Auditorium_1
         //Console.ResetColor();
     }
 
-    public void DisplaySelectedSeats()
+    public static void DisplaySelectedSeats(List<Ticket> tickets)
     {
         Console.Write("Selected seat(s): ");
         List<string> seatPositions = new();
-        foreach (Ticket ticket in Tickets)
+        foreach (Ticket ticket in tickets)
             seatPositions.Add(ticket.Position);
 
         Console.Write($"{string.Join(", ", seatPositions)}");
@@ -281,7 +283,7 @@ public class Auditorium_1
         return seatDatabase;
     }
 
-    public bool ConfirmSelection(Ticket ticket)
+    public bool ConfirmSeatSelection(Ticket ticket)
     {
         Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel)");
         ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -312,7 +314,7 @@ public class Auditorium_1
         File.WriteAllText(Filename, updatedJson);
     }
 
-    public bool ConfirmSelection()
+    public bool ConfirmReservation()
     {
         // No seats selected
         if (Tickets.Count <= 0)
@@ -324,12 +326,7 @@ public class Auditorium_1
             return false;
         }
 
-        DisplaySelectedSeats();
-
-        double totalPrice = GetTotalPrice();
-        Console.WriteLine($"\nTotal price: {totalPrice} EUR");
-
-        Console.WriteLine("\nPress 'Enter' to continue to checkout, press any other key to go back to seat selection.");
+        Console.WriteLine("Press 'Enter' to continue to checkout, press any other key to go back to seat selection.");
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
         // User confirms their selection and continues to checkout
