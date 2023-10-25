@@ -6,9 +6,9 @@
 
     static ShowHandler()
     {
-        Shows = StartupManager.GetShowObjects();
+        Shows = Initializer.GetShowObjects();
         if (Shows.Count > 0)
-            LatestShowID = Shows.MaxBy(sm => sm.Id).Id;
+            LatestShowID = Shows.MaxBy(sm => sm.Id)!.Id;
         else
             LatestShowID = 0;
     }
@@ -20,7 +20,7 @@
         bool inMenu = true;
         while (inMenu)
         {
-            int index = Menu.Start("Movie Schedule", menuOptions);
+            int index = Menu.Start("Show Schedule\n\nSelect an option:", menuOptions);
             switch (index)
             {
                 case 0:
@@ -51,7 +51,7 @@
         List<Show> shows = new();
         foreach (var show in Shows)
         {
-            if (show.DateAndTime == date)
+            if (show.DateAndTime.Date == date.Date)
                 shows.Add(show);
         }
         return shows;
@@ -64,47 +64,46 @@
         {
             // Movie Selection
             List<string> movieTitles = MovieHandler.GetMovieTitles();
-            int index = Menu.Start("Movie Schedule\n\nSelect a movie:\n", movieTitles);
+            int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles);
             if (index == movieTitles.Count)  // If user presses left arrow key leave current while loop
                 break;
-            Movie movieToAdd = MovieHandler.Movies[index];
-            
-            Console.Clear();
-            DisplaySelectionInfo(movieToAdd);
+            Movie movie = MovieHandler.Movies[index];
 
             // Date selection
             List<string> dates = CreateDatesList(14);
-            index = Menu.Start("Select a date:\n", dates);
+            index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
             if (index == dates.Count)  // If user presses left arrow key leave current while loop
-                continue;
+                break;
 
             // Time selection
             string dateString = dates[index];
-            DateTime selectedTime = TimeSelection(movieToAdd, dateString);
+            DateTime selectedTime = TimeSelection(movie, dateString);
 
-            Show newShow = new(movieToAdd, selectedTime) { Id = LatestShowID += 1 }; // TODO Make sure Id is set correctly
+            Show show = new(movie, selectedTime) { Id = LatestShowID += 1 };
 
             // Confirm or cancel selection
-            int selection = ConfirmSelection(newShow, movieToAdd);
+            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
+            int selection = ConfirmSelection(show, movie, menuHeader);
             if (!(selection == 0))
             {
-                continue;
+                break;
             }
             
-            Shows.Add(newShow);
+            Shows.Add(show);
             JSONMethods.WriteToJSON(Shows, FileName);
             
             Console.Clear();
             DisplayAsciiArt.Header();
-            Console.WriteLine("Movie Schedule");
+            Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nThe show has been added to the schedule");
+            Console.WriteLine("\nThe show has been added");
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("\nPress any key to continue");
             Console.ResetColor();
             
             Console.ReadKey();
+            break;
         }
     }
 
@@ -116,11 +115,11 @@
         {
             Console.Clear();
             DisplayAsciiArt.Header();
-            Console.WriteLine("Movie Schedule");
+            Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nThere are currently no shows scheduled");
+            Console.WriteLine("\n\nThere are currently no shows scheduled");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nPress any key to go back");
+            Console.WriteLine("\n\nPress any key to go back");
             Console.ResetColor();
             Console.ReadKey();
             return;
@@ -129,7 +128,7 @@
         bool inMenu = true;
         while (inMenu)
         {
-            int index = Menu.Start("Select a date to see the shows for that day\n", dates);
+            int index = Menu.Start("Show Schedule\n\nSelect a date to see the shows for that day:", dates);
             if (index == dates.Count || index == dates.Count - 1)
             {
                 return;
@@ -137,28 +136,36 @@
 
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
-            List<Show> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
-            List<string> movieMenuStrings = ScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
+            List<Show> moviesForDate = GetShowsByDate(selectedDate);
+            List<string> movieMenuStrings = CreateListMovieStrings(moviesForDate);
 
-            index = Menu.Start($"Date: {dateString}\nSelect the show you want to remove\n", movieMenuStrings);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuStrings);
             if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)
             {
                 continue;
             }
 
             Show show = moviesForDate[index];
+            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
+
+            // Confirm or cancel selection
+            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
+            int selection = ConfirmSelection(show, movie, menuHeader);
+            if (!(selection == 0))
+            {
+                break;
+            }
+
             Shows.Remove(show);
             JSONMethods.WriteToJSON(Shows, FileName);
 
             // Confirmation message
             Console.Clear();
             DisplayAsciiArt.Header();
+            Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nThe following show has been removed from the schedule:\n");
-
+            Console.WriteLine("\nThe show has been removed");
             Console.ResetColor();
-            Console.WriteLine(movieMenuStrings[index]);
-
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("\nPress any key to continue");
             Console.ResetColor();
@@ -176,31 +183,15 @@
         for (int i = 0; i < count; i++)
         {
             dates.Add(date.ToString("dd-MM-yyyy"));
-            date.AddDays(1);
+            date = date.AddDays(1);
         }
         return dates;
     }
 
-    private static void DisplaySelectionInfo(Movie movie)
-    {
-        Console.Clear();
-        DisplayAsciiArt.Header();
-        Console.WriteLine("Movie Schedule");
-        Console.WriteLine("\nInfo:");
-        MovieHandler.PrintInfo(movie);
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("\nPress any key to continue");
-        Console.ReadKey();
-        Console.ResetColor();
-    }
-
-    private static int ConfirmSelection(Show show, Movie movie)
+    private static int ConfirmSelection(Show show, Movie movie, string menuHeader)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
-        string confirmationMessage = $"Movie: {movie.Title}\n" +
-            $"Date: {show.DateString}\n" +
-            $"Time: {show.StartTimeString} - {show.EndTimeString}\n";
-        return Menu.Start(confirmationMessage, menuOptions);
+        return Menu.Start(menuHeader, menuOptions);
     }
 
     private static DateTime TimeSelection(Movie movieToAdd, string dateString)
@@ -212,7 +203,7 @@
             Console.Clear();
             Console.CursorVisible = true;
             DisplayAsciiArt.Header();
-            Console.WriteLine($"\nMovie: {movieToAdd.Title}\nDate: {dateString}");
+            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nDate: {dateString}");
             Console.Write("\nStart time of the movie (HH:mm): ");
             string? timeString = Console.ReadLine();
             Console.CursorVisible = false;
@@ -236,7 +227,7 @@
         return resultDateTime;
     }
 
-    public static Show? SelectMovieFromSchedule()
+    public static Show? SelectShowFromSchedule()
     {
         bool inMenu = true;
         while (inMenu)
@@ -245,14 +236,14 @@
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
-                Menu.Start("There are no movies scheduled at the moment, please come back later.\n", menuOption);
+                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later.\n", menuOption);
 
                 return null;
             }
 
             // Date selection
             dates.Add("Back");
-            int index = Menu.Start("Select a date to see the movies for that day\n", dates);
+            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
             if (index == dates.Count || index == dates.Count - 1)
                 break;
 
@@ -264,9 +255,19 @@
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(moviesForDate);
 
-            index = Menu.Start($"Date: {dateString}\n", movieMenuString);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
+
+            // Confirm Selection
+            Show show = moviesForDate[index];
+            Movie movie = MovieHandler.GetMovieById(show.Id)!;
+            string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString}:";
+            int selection = ConfirmSelection(show, movie, confirmationMessage);
+            if (!(selection == 0))
+            {
+                break;
+            }
 
             return moviesForDate[index];
         }

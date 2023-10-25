@@ -193,7 +193,7 @@ public class Auditorium_1
             Console.Write("■");
 
         }
-        Console.WriteLine("\n        Movie screen");
+        Console.WriteLine("\n        Movie screen\n");
     }
 
     public double GetSelectedSeatPrice(int selectedRow, int selectedColumn)
@@ -240,11 +240,11 @@ public class Auditorium_1
 
     public SeatDatabase GetSeatDatabase()
     {
-        SeatDatabase? seatDatabase;
+        SeatDatabase seatDatabase;
         if (File.Exists(Filename))
         {
             string json = File.ReadAllText(Filename);
-            seatDatabase = JsonConvert.DeserializeObject<SeatDatabase>(json);
+            seatDatabase = JsonConvert.DeserializeObject<SeatDatabase>(json)!;
         }
         else
         {

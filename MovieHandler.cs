@@ -5,7 +5,7 @@
 
     static MovieHandler()
     {
-        Movies = StartupManager.GetMovieObjects();
+        Movies = Initializer.GetMovieObjects();
     }
     
     public static Movie? GetMovieById(int id)
@@ -34,6 +34,7 @@
     {
         Console.Clear();
         DisplayAsciiArt.Header();
+        Console.WriteLine("Current Movies\n");
         MovieHandler.PrintInfo(movie);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -47,7 +48,7 @@
 
     public static void ViewCurrentMovies()
     {
-        string menuText = "List of Movies:";
+        string menuText = "Current Movies\n\nSelect a movie for more information:";
         List<string> menuOptionsFull = GetMovieTitles();
         List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
         menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });

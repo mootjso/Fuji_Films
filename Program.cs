@@ -2,7 +2,6 @@ public class Program
 {
     private static void Main()
     {
-        ShowHandler.EditShowSchedule();
         while (true)
         {
             // Login Menu
@@ -47,7 +46,7 @@ public class Program
 
             // Main Menu Registered Users
             menuText = "Hello, [USERNAME]\n";
-            menuOptions = new() { "Current Movies", "Movie Schedule", "My Reservations", "Log Out" };
+            menuOptions = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
             while (loggedIn)
             {
                 int selection = Menu.Start(menuText, menuOptions);
@@ -55,15 +54,14 @@ public class Program
                 {
                     case 0:  // View all current movies
                         Console.Clear();
-                        DisplayMovie.Start();
+                        MovieHandler.ViewCurrentMovies();
                         break;
                     case 1:  // View schedule and make reservation
-                        Show? selectedMovie = ShowHandler.SelectMovieFromSchedule();
+                        Show? selectedMovie = ShowHandler.SelectShowFromSchedule();
                         if (selectedMovie is null)
                             continue;
                         var newAuditorium = new Auditorium_1(selectedMovie);
                         List<Ticket> tickets = newAuditorium.SelectSeats();
-                        Checkout.Start(tickets);
                         // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
                         // add the tickets to the users reservations
                         break;
