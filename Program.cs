@@ -52,21 +52,27 @@ public class Program
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
-                    case 0:
+                    case 0:  // View all current movies
                         Console.Clear();
                         DisplayMovie.Start();
                         break;
-                    case 1:
-                        Console.Clear();
-                        MovieSchedule.Start();
+                    case 1:  // View schedule and make reservation
+                        ScheduledMovie? selectedMovie = ScheduleHandlerUser.SelectMovieFromSchedule();
+                        if (selectedMovie is null)
+                            continue;
+                        var newAuditorium = new Auditorium_1(selectedMovie);
+                        List<Ticket> tickets = newAuditorium.SelectSeats();
+                        Checkout.Start(tickets);
+                        // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
+                        // add the tickets to the users reservations
                         break;
-                    case 2:
+                    case 2:  // View all reservations
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\n  NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
                         Console.ReadKey();
                         break;
-                    case 3:
+                    case 3:  // Log out
                         loggedIn = false;
                         break;
                     default:

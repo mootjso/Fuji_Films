@@ -75,7 +75,8 @@ public static class Menu
 
     private static void DisplayMenuLocation()
     {
-        Console.WriteLine("Main Menu > Current Movies [FUNCTIONALITY OF MENU BAR NOT IMPLEMENTED]");
-        Console.WriteLine("---------------------------------------------------------------------\n");
+        Console.ForegroundColor= ConsoleColor.DarkGray;
+        Console.WriteLine();
+        Console.ResetColor();
     }
 }
