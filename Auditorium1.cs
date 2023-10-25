@@ -6,9 +6,9 @@ public class Auditorium_1
     private static List<string> SelectedSeats = new List<string>();
     public string Filename;
     public List<Ticket> Tickets = new();
-    public ScheduledMovie SelectedMovie;
+    public Show SelectedMovie;
 
-    public Auditorium_1(ScheduledMovie selectedMovie)
+    public Auditorium_1(Show selectedMovie)
     {
         SelectedMovie = selectedMovie;
         Filename = $"seat_reservations_{SelectedMovie.Id}.json";
@@ -70,19 +70,19 @@ public class Auditorium_1
                     string selectedSeat = $"{Convert.ToChar(selectedRow + 'A')}{selectedColumn + 1}";
                     if (SeatDb.Seats[selectedRow, selectedColumn] == '■')
                     {
-                        double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
-                        string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
+                        //double seatPrice = GetSelectedSeatPrice(selectedRow, selectedColumn);
+                        //string seatColor = seatPrice == SeatDb.RedSeatPrice ? "Red" : seatPrice == SeatDb.YellowSeatPrice ? "Red" : "Blue";
 
-                        Ticket ticket = new(SelectedMovie, selectedSeat, seatPrice, seatColor);
+                        //Ticket ticket = new(SelectedMovie, selectedSeat, seatPrice, seatColor);
 
-                        Console.WriteLine($"You have selected seat {ticket.Position}.");
-                        Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
+                        //Console.WriteLine($"You have selected seat {ticket.Row}:{ticket.Column}.");
+                        //Console.WriteLine($"Seat price: {ticket.Price} EUR ({ticket.Color} Seat)");
 
-                        if (ConfirmSeatSelection(ticket))
-                        {
-                            SeatDb.Seats[selectedRow, selectedColumn] = 'X';
-                            Tickets.Add(ticket);
-                        }
+                        //if (ConfirmSeatSelection(ticket))
+                        //{
+                        //    SeatDb.Seats[selectedRow, selectedColumn] = 'X';
+                        //    Tickets.Add(ticket);
+                        //}
                     }
                     // Invalid seat selected
                     else
@@ -124,7 +124,7 @@ public class Auditorium_1
         Console.Write("Selected seat(s): ");
         List<string> seatPositions = new();
         foreach (Ticket ticket in tickets)
-            seatPositions.Add(ticket.Position);
+            //seatPositions.Add(ticket.Position);
 
         Console.Write($"{string.Join(", ", seatPositions)}");
     }
@@ -290,7 +290,7 @@ public class Auditorium_1
         if (keyInfo.Key == ConsoleKey.Enter)
         {
             Console.WriteLine("Seat selected.");
-            SelectedSeats.Add($"{ticket.Position}");
+            //SelectedSeats.Add($"{ticket.Position}");
 
             return true;
         }

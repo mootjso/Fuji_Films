@@ -1,15 +1,17 @@
 ﻿public class Ticket
 {
     // TODO Make sure the Id is set appropriately
-    public ScheduledMovie MovieInSchedule;
-    public string Position;
+    public int ShowId;
+    public int Row;
+    public int Column;
     public double Price;
     public string Color;
 
-    public Ticket(ScheduledMovie movie, string position, double price, string color)
+    public Ticket(Show movie, int row, int column, double price, string color)
     {
-        MovieInSchedule = movie;
-        Position = position;
+        ShowId = movie.Id;
+        Row = row;
+        Column = column;
         Price = price;
         Color = color;
     }

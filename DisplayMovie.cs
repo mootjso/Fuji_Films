@@ -1,10 +1,9 @@
 ﻿public static class DisplayMovie
 {
-    static List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName);
     public static void Start()
     {
         string menuText = "List of Movies:";
-        List<string> menuOptionsFull = movies.Select(movie => movie.Title).ToList();
+        List<string> menuOptionsFull = MovieHandler.Movies.Select(movie => movie.Title).ToList();
         List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
         menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
         int pageNumber = 0;
@@ -42,18 +41,12 @@
     {
         Console.Clear();
         DisplayAsciiArt.Header();
-        Movie movie = movies[selection];
-        Console.WriteLine($"{movie.Title}");
-        Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("\nGenres: ");
-        foreach (var genre in movie.Genres)
-        {
-            Console.Write($"{genre}; ");
-        }
-        Console.WriteLine($"\nLanguage: {movie.Language}");
-        Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
-        Console.WriteLine($"IsAdult: {movie.IsAdult}");
+        Movie movie = MovieHandler.Movies[selection];
+        MovieHandler.PrintInfo(movie);
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("\nPress any key to go back");
+        Console.ResetColor();
         Console.ReadKey();
     }
 }

@@ -2,13 +2,14 @@ public class Program
 {
     private static void Main()
     {
+        ShowHandler.EditShowSchedule();
         while (true)
         {
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
 
-            bool loggedIn = false;
+            bool loggedIn = true;
             while (!loggedIn)
             {
                 //DisplayAsciiArt.Standby();
@@ -57,7 +58,7 @@ public class Program
                         DisplayMovie.Start();
                         break;
                     case 1:  // View schedule and make reservation
-                        ScheduledMovie? selectedMovie = ScheduleHandlerUser.SelectMovieFromSchedule();
+                        Show? selectedMovie = ShowHandler.SelectMovieFromSchedule();
                         if (selectedMovie is null)
                             continue;
                         var newAuditorium = new Auditorium_1(selectedMovie);

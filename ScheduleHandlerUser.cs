@@ -1,19 +1,19 @@
 ﻿public static class ScheduleHandlerUser
 {
-    private const string FileName = "movie_schedule.json";
-    public static List<ScheduledMovie> Movies;
+    private const string FileName = "shows.json";
+    public static List<Show> Movies;
 
     static ScheduleHandlerUser()
     {
-        Movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
+        Movies = JSONMethods.ReadJSON<Show>(FileName);
     }
 
-    public static ScheduledMovie? SelectMovieFromSchedule()
+    public static Show? SelectMovieFromSchedule()
     {
         bool inMenu = true;
         while (inMenu)
         {
-            List<string>  dates = GetDatesInFuture();
+            List<string> dates = GetDatesInFuture();
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
@@ -29,9 +29,9 @@
                 break;
 
             string dateString = dates[index];
-            DateTime selectedDate = DateTime.Parse(dateString);
+            DateTime date = DateTime.Parse(dateString);
 
-            List<ScheduledMovie> moviesForDate = GetMoviesByDate(selectedDate);
+            List<Show> moviesForDate = ShowHandler.GetShowsByDate(date);
 
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(moviesForDate);
@@ -45,12 +45,13 @@
         return null;
     }
 
+    //
     public static List<string> GetAllDates()
     {
         List<DateTime> dates = new();
-        foreach (ScheduledMovie movie in Movies)
+        foreach (Show movie in Movies)
         {
-            DateTime date = movie.StartTime.Date;
+            DateTime date = movie.DateAndTime;
             if (!dates.Contains(date.Date))
                 dates.Add(date);
         }
@@ -59,12 +60,13 @@
         return sortedDateStrings;
     }
 
+    //
     public static List<string> GetDatesInFuture()
     {
         List<DateTime> dates = new();
-        foreach (ScheduledMovie movie in Movies)
+        foreach (var _show in ShowHandler.Shows)
         {
-            DateTime date = movie.StartTime.Date;
+            DateTime date = _show.DateAndTime;
             if (date.Date >= DateTime.Today && !dates.Contains(date.Date))
                 dates.Add(date);
         }
@@ -73,24 +75,27 @@
         return sortedDateStrings;
     }
 
-    public static List<ScheduledMovie> GetMoviesByDate(DateTime selectedDate)
+    //
+    public static List<Show> GetMoviesByDate(DateTime selectedDate)
     {
-        List<ScheduledMovie> movies = new();
-        foreach (ScheduledMovie movie in Movies)
+        List<Show> movies = new();
+        foreach (Show movie in Movies)
         {
-            if (movie.StartTime.Date == selectedDate)
+            if (movie.DateAndTime == selectedDate)
                 movies.Add(movie);
         }
         return movies;
     }
 
-    public static List<string> CreateListMovieStrings(List<ScheduledMovie> movies)
+    //
+    public static List<string> CreateListMovieStrings(List<Show> shows)
         // Creates list of formatted strings: Start time - end time : Title
     {
         List<string> movieMenuStrings = new();
-        foreach (var movie in movies)
+        foreach (var _show in shows)
         {
-            movieMenuStrings.Add($"{movie.StartTime.TimeOfDay.ToString()[..5]} - {movie.EndTime.TimeOfDay.ToString()[..5]}: {movie.Movie.Title}  ");
+            Movie movie = MovieHandler.GetMovieById(_show.MovieId)!;
+            movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString}: {movie.Title}  ");
         }
         movieMenuStrings.Add("Back");
         return movieMenuStrings;

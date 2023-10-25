@@ -2,14 +2,13 @@
 {
     private const string FileName = "movie_schedule.json";
     private static int latestScheduledMovieID = 1;
-    private static List<ScheduledMovie> scheduledMovies;
 
     static ScheduleHandlerAdmin()
     {
-        List<ScheduledMovie> scheduledMovies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
+        List<Show> shows = JSONMethods.ReadJSON<Show>(FileName);
 
-        if (scheduledMovies.Count > 0)
-            latestScheduledMovieID = scheduledMovies.MaxBy(sm => sm.Id).Id;
+        if (shows.Count > 0)
+            latestScheduledMovieID = shows.MaxBy(sm => sm.Id).Id;
         else
             latestScheduledMovieID = 0;
     }
@@ -40,17 +39,17 @@
 
     public static void AddToSchedule()
     {
-        List<Movie> movies = JSONMethods.ReadJSON<Movie>("movies.json");
+        List<Movie> Movies = MovieHandler.Movies;
 
         bool inMenu = true;
         while (inMenu)
         {
             // Movie Selection
-            List<string> moviesList = GetMovieTitles(movies);
-            int index = Menu.Start("Select a movie to add to the schedule:\n", GetMovieTitles(movies));
+            List<string> moviesList = GetMovieTitles(Movies);
+            int index = Menu.Start("Select a movie to add to the schedule:\n", GetMovieTitles(Movies));
             if (index == moviesList.Count)  // If user presses left arrow key leave current while loop
                 break;
-            Movie movieToAdd = movies[index];
+            Movie movieToAdd = Movies[index];
             Console.Clear();
             DisplayMovieInfo(movieToAdd);
 
@@ -65,15 +64,20 @@
             DateTime selectedTime = TimeSelection(movieToAdd, dateString);
 
             // Confirm or cancel selection
-            ScheduledMovie newMovie = new(movieToAdd, selectedTime) { Id = latestScheduledMovieID += 1 };
-            int selection = ConfirmSelection(newMovie);
-            if (selection == 0)
-            {
-                ScheduleHandlerUser.Movies.Add(newMovie);
-                JSONMethods.WriteToJSON(ScheduleHandlerUser.Movies, FileName);
-            }
-            else
-                continue;
+            Show newMovie = new(movieToAdd, selectedTime) { Id = latestScheduledMovieID += 1 };
+
+            Console.Clear();
+            Console.WriteLine(newMovie.DateAndTime);
+            Console.ReadKey();
+
+            //int selection = ConfirmSelection(newMovie);
+            //if (selection == 0)
+            //{
+            //    ScheduleHandlerUser.Movies.Add(newMovie);
+            //    JSONMethods.WriteToJSON(ScheduleHandlerUser.Movies, FileName);
+            //}
+            //else
+            //    continue;
 
             // 
             List<string> menuOptions;
@@ -86,7 +90,7 @@
     
     public static void RemoveMovieFromSchedule()
     {
-        List<string> dates = ScheduleHandlerUser.GetAllDates();
+        List<string> dates = ShowHandler.GetAllDates();
         dates.Add("Back");
         if (dates.Count <= 1)
         {
@@ -113,7 +117,7 @@
 
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
-            List<ScheduledMovie> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
+            List<Show> moviesForDate = ScheduleHandlerUser.GetMoviesByDate(selectedDate);
             List<string> movieMenuStrings = ScheduleHandlerUser.CreateListMovieStrings(moviesForDate);
 
             index = Menu.Start($"Date: {dateString}\nSelect the movie you want to remove\n", movieMenuStrings);
@@ -122,7 +126,7 @@
                 continue;
             }
 
-            ScheduledMovie movieToRemove = moviesForDate[index];
+            Show movieToRemove = moviesForDate[index];
             ScheduleHandlerUser.Movies.Remove(movieToRemove);
             RemoveFromJson(movieToRemove);
 
@@ -194,14 +198,14 @@
         return dateString[..10];
     }
 
-    private static int ConfirmSelection(ScheduledMovie movie)
-    {
-        List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
-        string confirmationMessage = $"Movie: {movie.Movie.Title}\n" +
-            $"Date: {movie.StartTime.Date.ToString()[..10]}\n" +
-            $"Time: {movie.StartTime.TimeOfDay.ToString()[..5]} - {movie.EndTime.TimeOfDay.ToString()[..5]}\n";
-        return Menu.Start(confirmationMessage, menuOptions);
-    }
+    //private static int ConfirmSelection(Show movie)
+    //{
+    //    List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
+    //    string confirmationMessage = $"Movie: {movie.Movie.Title}\n" +
+    //        $"Date: {movie.StartTimeString.Date.ToString()[..10]}\n" +
+    //        $"Time: {movie.StartTimeString.TimeOfDay.ToString()[..5]} - {movie.EndTimeString.TimeOfDay.ToString()[..5]}\n";
+    //    return Menu.Start(confirmationMessage, menuOptions);
+    //}
 
     private static DateTime TimeSelection(Movie movieToAdd, string dateString)
     {
@@ -236,11 +240,11 @@
         return resultDateTime;
     }
 
-    private static void RemoveFromJson(ScheduledMovie movieToRemove)
+    private static void RemoveFromJson(Show movieToRemove)
     {
-        List<ScheduledMovie> movies = JSONMethods.ReadJSON<ScheduledMovie>(FileName);
-        List<ScheduledMovie> newMovies = new();
-        foreach (ScheduledMovie movie in movies)
+        List<Show> movies = JSONMethods.ReadJSON<Show>(FileName);
+        List<Show> newMovies = new();
+        foreach (Show movie in movies)
         {
             if (!(movie.Id == movieToRemove.Id))
             {

@@ -10,13 +10,13 @@
         }
 
         // Show reservation information
-        Console.Clear();
-        DisplayAsciiArt.Header();
-        Console.WriteLine("Ticket checkout");
-        Console.Write("\nMovie: ");
-        Console.Write(tickets[0].MovieInSchedule.Movie.Title);
-        Console.WriteLine($"\nDate: {tickets[0].MovieInSchedule.StartTime.ToString("yyyy-MM-dd")}");
-        Console.WriteLine($"Time: {tickets[0].MovieInSchedule.StartTime.TimeOfDay}");
+        //Console.Clear();
+        //DisplayAsciiArt.Header();
+        //Console.WriteLine("Ticket checkout");
+        //Console.Write("\nMovie: ");
+        //Console.Write(tickets[0].ShowId.Movie.Title);
+        //Console.WriteLine($"\nDate: {tickets[0].ShowId.StartTimeString.ToString("yyyy-MM-dd")}");
+        //Console.WriteLine($"Time: {tickets[0].ShowId.StartTimeString.TimeOfDay}");
 
         Auditorium_1.DisplaySelectedSeats(tickets);
         
