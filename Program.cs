@@ -69,7 +69,7 @@ public class Program
                         if (theater is null)
                             theater = TheaterHandler.CreateTheater(selectedShow);
                         
-                        List<Ticket> tickets = TheaterHandler.SelectSeats(user, theater);
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(user, theater);
                         if (tickets is null)
                             continue;
 

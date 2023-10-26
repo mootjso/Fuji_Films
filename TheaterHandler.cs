@@ -124,7 +124,7 @@
                     if (validSelections.Contains(theater.SeatArrangement[selectedRow, selectedColumn]))
                     {
                         double seatPrice = selectedSeat.Price;
-                        string seatColor = seatPrice == RedSeatPrice ? "Red" : seatPrice == YellowSeatPrice ? "Red" : "Blue";
+                        string seatColor = seatPrice == RedSeatPrice ? "Red" : seatPrice == YellowSeatPrice ? "Yellow" : "Blue";
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor);
 
