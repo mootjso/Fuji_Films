@@ -236,7 +236,7 @@
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
-                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later.\n", menuOption);
+                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption);
 
                 return null;
             }
