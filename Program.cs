@@ -70,6 +70,9 @@ public class Program
                             theater = TheaterHandler.CreateTheater(selectedShow);
                         
                         List<Ticket> tickets = TheaterHandler.SelectSeats(user, theater);
+                        if (tickets is null)
+                            continue;
+
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");

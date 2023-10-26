@@ -61,7 +61,7 @@
         return seats;
     }
 
-    public static List<Ticket> SelectSeats(User user, Theater theater)
+    public static List<Ticket>? SelectSeats(User user, Theater theater)
     {
         Console.CursorVisible = false;
 
@@ -119,6 +119,8 @@
                 case ConsoleKey.Enter:
                     Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
                     List<int> validSelections = new() { 1, 2, 3 };
+                    
+                    // Valid seat selected
                     if (validSelections.Contains(theater.SeatArrangement[selectedRow, selectedColumn]))
                     {
                         double seatPrice = selectedSeat.Price;
@@ -129,6 +131,7 @@
                         Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
                         Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 
+                        // Ask user to confirm selected seat
                         if (ConfirmSeatSelection(ticket))
                         {
                             theater.SeatArrangement[selectedRow, selectedColumn] = 5;
@@ -167,10 +170,11 @@
         }
         while (keyInfo.Key != ConsoleKey.Q);
 
+        // Reset the changes made to Seats and SeatArrangement array during seat selection if the user has selected seats but decides to quit
         TurnSelectedSeatsIntoReserved(theater);
         ResetSelectedSeats(theater, selectedSeats);
 
-        return tickets;
+        return null;
     }
 
     public static void TurnSelectedSeatsIntoReserved(Theater theater)
