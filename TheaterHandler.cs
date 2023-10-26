@@ -34,6 +34,9 @@
 
         int selectedRow = 0;
         int selectedColumn = 0;
+        int totalRows = theater.Seats.Max(seat => seat.Row);
+        int totalColumns = theater.Seats.Max(seat => seat.Column);
+
         double totalPrice;
         ConsoleKeyInfo keyInfo;
 
@@ -64,7 +67,7 @@
                     break;
 
                 case ConsoleKey.DownArrow:
-                    if (selectedRow < 13)
+                    if (selectedRow < totalRows)
                         selectedRow++;
                     break;
 
@@ -74,7 +77,7 @@
                     break;
 
                 case ConsoleKey.RightArrow:
-                    if (selectedColumn < 11)
+                    if (selectedColumn < totalColumns)
                         selectedColumn++;
                     break;
 
@@ -163,7 +166,7 @@
         {
             // Write the Letter-labels on the side of the grid
             Console.ResetColor();
-            Console.Write(rowLabel + "  ");
+            Console.Write(rowLabel + " ");
             rowLabel++;
 
             for (int j = 0; j < columns + 1; j++)
