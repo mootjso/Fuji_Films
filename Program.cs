@@ -45,6 +45,11 @@ public class Program
             }
 
             // Main Menu Registered Users
+
+            // CODE FOR TESTING-----
+            var user = new User(1);
+            //----------------------
+
             menuText = "Hello, [USERNAME]\n";
             menuOptions = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
             while (loggedIn)
@@ -57,13 +62,14 @@ public class Program
                         MovieHandler.ViewCurrentMovies();
                         break;
                     case 1:  // View schedule and make reservation
-                        Show? selectedMovie = ShowHandler.SelectShowFromSchedule();
-                        if (selectedMovie is null)
+                        Show? selectedShow = ShowHandler.SelectShowFromSchedule();
+                        if (selectedShow is null)
                             continue;
-                        var newAuditorium = new Auditorium_1(selectedMovie);
-                        List<Ticket> tickets = newAuditorium.SelectSeats();
-                        // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
-                        // add the tickets to the users reservations
+                        Theater? theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id);
+                        if (theater is null)
+                            theater = TheaterHandler.CreateTheater(selectedShow);
+                        
+                        TheaterHandler.SelectSeats(user, theater);
                         break;
                     case 2:  // View all reservations
                         Console.Clear();
