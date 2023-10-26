@@ -17,7 +17,7 @@
         return ticketsForShow;
     }
 
-    public static List<Ticket> GetTickersByUser(User user)
+    public static List<Ticket> GetTicketsByUser(User user)
     {
         var tickersUser = new List<Ticket>();
         foreach (var ticket in Tickets)
