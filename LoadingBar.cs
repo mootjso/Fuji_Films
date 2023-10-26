@@ -1,5 +1,6 @@
 ﻿public static class LoadingBar
 {
+    // TODO Uncomment out code when done with testing
     public static void Start()
     {
         //Console.Clear();
