@@ -47,7 +47,7 @@ public class Program
             // Main Menu Registered Users
 
             // CODE FOR TESTING-----
-            var user = new User(1);
+            var user = new User(2);
             //----------------------
 
             menuText = "Hello, [USERNAME]\n";

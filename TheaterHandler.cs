@@ -1,9 +1,6 @@
 ﻿public static class TheaterHandler
 {
     public const string FileName = "theaters.json";
-    const double BlueSeatPrice = 10;
-    const double YellowSeatPrice = 15;
-    const double RedSeatPrice = 20;
 
     public static List<Theater> Theaters;
 
@@ -15,7 +12,6 @@
     public static Theater CreateTheater(Show show)
     {
         var theater = new Theater(show.Id);
-        theater.Seats = CreateSeats(theater.SeatArrangement);
         Theaters.Add(theater);
         JSONMethods.WriteToJSON(Theaters, FileName);
         return theater;
@@ -29,36 +25,6 @@
                 return theater;
         }
         return null;
-    }
-
-    public static List<Seat> CreateSeats(int[,] seatArrangement)
-    {
-        List<Seat> seats = new();
-        int rows = seatArrangement.GetLength(0);
-        int columns = seatArrangement.GetLength(1);
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < columns; j++)
-            {
-                switch (seatArrangement[i, j])
-                {
-                    case 0:
-                        seats.Add(new Seat(i, j, -1, -1, false));
-                        break;
-                    case 1:
-                        seats.Add(new Seat(i, j, BlueSeatPrice, -1, true));
-                        break;
-                    case 2:
-                        seats.Add(new Seat(i, j, YellowSeatPrice, -1, true));
-                        break;
-                    case 3:
-                        seats.Add(new Seat(i, j, RedSeatPrice, -1, true));
-                        break;
-                }
-            }
-        }
-        return seats;
     }
 
     public static List<Ticket>? SelectSeats(User user, Theater theater)
@@ -83,7 +49,7 @@
             Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
             Console.WriteLine("\nChoose your Seat :\n");
 
-            DrawSeatOverview(theater, selectedRow, selectedColumn);
+            DrawSeatOverview(theater, selectedRow, selectedColumn, user);
             DrawMovieScreen();
             DisplayPriceInfo();
 
@@ -118,13 +84,12 @@
                 // User selects a seat
                 case ConsoleKey.Enter:
                     Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
-                    List<int> validSelections = new() { 1, 2, 3 };
                     
                     // Valid seat selected
-                    if (validSelections.Contains(theater.SeatArrangement[selectedRow, selectedColumn]))
+                    if (selectedSeat.IsSeat)
                     {
                         double seatPrice = selectedSeat.Price;
-                        string seatColor = seatPrice == RedSeatPrice ? "Red" : seatPrice == YellowSeatPrice ? "Yellow" : "Blue";
+                        string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor);
 
@@ -134,7 +99,6 @@
                         // Ask user to confirm selected seat
                         if (ConfirmSeatSelection(ticket))
                         {
-                            theater.SeatArrangement[selectedRow, selectedColumn] = 5;
                             selectedSeat.UserId = user.Id;
                             selectedSeats.Add(selectedSeat);
                             tickets.Add(ticket);
@@ -155,7 +119,6 @@
 
                     if (ConfirmReservation(tickets))
                     {
-                        TurnSelectedSeatsIntoReserved(theater);
                         JSONMethods.WriteToJSON(Theaters, FileName);
                         TicketHandler.Tickets.AddRange(tickets);
                         JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
@@ -170,105 +133,62 @@
         }
         while (keyInfo.Key != ConsoleKey.Q);
 
-        // Reset the changes made to Seats and SeatArrangement array during seat selection if the user has selected seats but decides to quit
-        TurnSelectedSeatsIntoReserved(theater);
-        ResetSelectedSeats(theater, selectedSeats);
-
         return null;
     }
-
-    public static void TurnSelectedSeatsIntoReserved(Theater theater)
-    {
-        // Change the 5's in the theater SeatArrangement array (which represent the current selected seats of a user) into 4's (which represent seats that are taken)
-        // Method is ran when the user goes to checkout
-        // Ensures that the next time a user wants to select a seat, the seats that are already taken are colored grey
-        int rows = theater.SeatArrangement.GetLength(0);
-        int columns = theater.SeatArrangement.GetLength(1);
-
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < columns; j++)
-            {
-                if (theater.SeatArrangement[i, j] == 5)
-                {
-                    theater.SeatArrangement[i, j] = 4;
-                }
-            }
-        }
-    }
     
-    public static void ResetSelectedSeats(Theater theater, List<Seat> seats)
+    public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn, User user)
     {
-        // Reset the Seat objects and SeatArrangement array for when the user quits out of seat selection after having selected seats
-        foreach (var seat in seats)
-        {
-            foreach (var _seat in theater.Seats)
-            {
-                if (seat.PositionName == _seat.PositionName)
-                {
-                    _seat.UserId = -1;
-                    theater.SeatArrangement[seat.Row, seat.Column] = seat.Price == 10 ? 1 : (seat.Price == 15 ? 2 : 3);
-                }
-            }
-        }
-    }
-    
-    public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn)
-    {
-        int rows = theater.SeatArrangement.GetLength(0);
-        int columns = theater.SeatArrangement.GetLength(1);
+        int rows = theater.Seats.Max(seat => seat.Row);
+        int columns = theater.Seats.Max(seat => seat.Column);
 
         // Write top line of numbers for the grid
         Console.Write("   ");
-        for (int j = 1; j <= 12; j++)
+        for (int j = 1; j <= columns + 1; j++)
         {
             Console.Write(j + " ");
         }
         Console.Write("\n");
 
         char rowLabel = 'A';
-        for (int i = 0; i < rows; i++)
+        for (int i = 0; i < rows + 1; i++)
         {
             Console.Write(rowLabel + "  ");
             rowLabel++;
 
-            for (int j = 0; j < columns; j++)
+            for (int j = 0; j < columns + 1; j++)
             {
+                Seat seat = GetSeatByRowAndColumn(theater, i, j)!;
+                
                 if (i == selectedRow && j == selectedColumn)
                 {
                     Console.BackgroundColor = ConsoleColor.Red;
                 }
-                
-                switch (theater.SeatArrangement[i,j])
+                else
+                    Console.ResetColor();
+
+                if (!seat.IsSeat)
                 {
-                    case 0:
-                        Console.Write("  ");
-                        break;
-                    case 1:
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.Write("■ ");
-                        Console.ResetColor();
-                        break;
-                    case 2:
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        Console.Write("■ ");
-                        break;
-                    case 3:
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.Write("■ ");
-                        break;
-                    case 4:
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        Console.Write("O ");
-                        break;
-                    case 5:
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.Write("O ");
-                        break;
-                    default: 
-                        break;
+                    Console.Write("  ");
+                    continue;
                 }
-                Console.ResetColor();
+                // Seat has been reserved by current user
+                if (seat.UserId == user.Id)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.Write("O ");
+                    continue;
+                }
+                // Seat has been reserverd by a different user
+                if (seat.UserId != -1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.Write("O ");
+                    continue;
+                }
+
+                Console.ForegroundColor = seat.Price == Theater.RedSeatPrice ? ConsoleColor.DarkRed :
+                    (seat.Price == Theater.YellowSeatPrice) ? ConsoleColor.DarkYellow : ConsoleColor.Blue;
+                Console.Write("■ ");
             }
             Console.WriteLine();
         }
@@ -296,13 +216,13 @@
     public static void DisplayPriceInfo()
     {
         Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.Write($"■ : {RedSeatPrice} EUR\t");
+        Console.Write($"■ : {Theater.RedSeatPrice} EUR\t");
 
         Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.Write($"■ : {YellowSeatPrice} EUR\t");
+        Console.Write($"■ : {Theater.YellowSeatPrice} EUR\t");
 
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"■ : {BlueSeatPrice} EUR");
+        Console.Write($"■ : {Theater.BlueSeatPrice} EUR");
         Console.WriteLine("\n");
 
         Console.ResetColor();
