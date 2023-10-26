@@ -65,9 +65,8 @@ public class Program
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
                         if (selectedShow is null)
                             continue;
-                        Theater? theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id);
-                        if (theater is null)
-                            theater = TheaterHandler.CreateTheater(selectedShow);
+                        
+                        var theater = TheaterHandler.CreateTheater(selectedShow);
                         
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(user, theater);
                         if (tickets is null)

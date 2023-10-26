@@ -11,20 +11,14 @@
 
     public static Theater CreateTheater(Show show)
     {
-        var theater = new Theater(show.Id);
-        Theaters.Add(theater);
-        JSONMethods.WriteToJSON(Theaters, FileName);
-        return theater;
-    }
-
-    public static Theater? GetTheaterByShowId(int showId)
-    {
-        foreach (var theater in Theaters)
+        Theater? theater = GetTheaterByShowId(show.Id);
+        if (theater is null)
         {
-            if (theater.ShowId == showId)
-                return theater;
+            theater = new Theater(show.Id);
+            Theaters.Add(theater);
+            JSONMethods.WriteToJSON(Theaters, FileName);
         }
-        return null;
+        return theater;
     }
 
     public static List<Ticket>? SelectSeats(User user, Theater theater)
@@ -53,7 +47,7 @@
             DrawMovieScreen();
             DisplayPriceInfo();
 
-            totalPrice = GetTotalPrice(tickets);
+            totalPrice = TicketHandler.GetTotalPrice(tickets);
             DisplaySelectedSeats(selectedSeats);
             Console.WriteLine($"\nTotal price of reservation: {totalPrice} EUR\n");
 
@@ -135,7 +129,17 @@
 
         return null;
     }
-    
+
+    public static Theater? GetTheaterByShowId(int showId)
+    {
+        foreach (var theater in Theaters)
+        {
+            if (theater.ShowId == showId)
+                return theater;
+        }
+        return null;
+    }
+
     public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn, User user)
     {
         int rows = theater.Seats.Max(seat => seat.Row);
@@ -272,16 +276,5 @@
             seatPositions.Add(seat.PositionName);
 
         Console.Write($"{string.Join(", ", seatPositions)}");
-    }
-
-    public static double GetTotalPrice(List<Ticket> tickets)
-    {
-        double totalPrice = 0;
-        foreach (Ticket ticket in tickets)
-        {
-            totalPrice += ticket.Price;
-        }
-
-        return totalPrice;
     }
 }

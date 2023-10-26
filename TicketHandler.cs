@@ -25,4 +25,15 @@
                 tickersUser.Add(ticket);
         return tickersUser;
     }
+
+    public static double GetTotalPrice(List<Ticket> tickets)
+    {
+        double totalPrice = 0;
+        foreach (Ticket ticket in tickets)
+        {
+            totalPrice += ticket.Price;
+        }
+
+        return totalPrice;
+    }
 }

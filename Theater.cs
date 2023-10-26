@@ -10,10 +10,10 @@
     public Theater(int showId)
     {
         ShowId = showId;
-        CreateTickets();
+        CreateSeats();
     }
 
-    public void CreateTickets()
+    public void CreateSeats()
     {
         int rows = SeatDatabase.SeatArrangement.GetLength(0);
         int columns = SeatDatabase.SeatArrangement.GetLength(1);
