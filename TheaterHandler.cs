@@ -86,7 +86,7 @@
                     Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
                     
                     // Valid seat selected
-                    if (selectedSeat.IsSeat)
+                    if (selectedSeat.IsSeat && selectedSeat.UserId == -1)
                     {
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
@@ -152,20 +152,21 @@
         char rowLabel = 'A';
         for (int i = 0; i < rows + 1; i++)
         {
+            // Write the Letter-labels on the side of the grid
             Console.Write(rowLabel + "  ");
             rowLabel++;
 
             for (int j = 0; j < columns + 1; j++)
             {
                 Seat seat = GetSeatByRowAndColumn(theater, i, j)!;
-                
+                // Change background color for the selected seat
                 if (i == selectedRow && j == selectedColumn)
                 {
                     Console.BackgroundColor = ConsoleColor.Red;
                 }
                 else
                     Console.ResetColor();
-
+                // Not a seat
                 if (!seat.IsSeat)
                 {
                     Console.Write("  ");
@@ -181,11 +182,11 @@
                 // Seat has been reserverd by a different user
                 if (seat.UserId != -1)
                 {
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.Write("O ");
                     continue;
                 }
-
+                // Seat is not taken
                 Console.ForegroundColor = seat.Price == Theater.RedSeatPrice ? ConsoleColor.DarkRed :
                     (seat.Price == Theater.YellowSeatPrice) ? ConsoleColor.DarkYellow : ConsoleColor.Blue;
                 Console.Write("■ ");
