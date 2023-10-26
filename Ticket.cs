@@ -7,10 +7,10 @@
     public double Price;
     public string Color;
 
-    public Ticket(Show show, User user, int row, int column, double price, string color)
+    public Ticket(int showId, int userId, int row, int column, double price, string color)
     {
-        ShowId = show.Id;
-        UserId = user.Id;
+        ShowId = showId;
+        UserId = userId;
         Row = row;
         Column = column;
         Price = price;

@@ -69,7 +69,11 @@ public class Program
                         if (theater is null)
                             theater = TheaterHandler.CreateTheater(selectedShow);
                         
-                        TheaterHandler.SelectSeats(user, theater);
+                        List<Ticket> tickets = TheaterHandler.SelectSeats(user, theater);
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
+                        Console.ReadKey();
                         break;
                     case 2:  // View all reservations
                         Console.Clear();

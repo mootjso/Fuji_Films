@@ -124,14 +124,14 @@
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == RedSeatPrice ? "Red" : seatPrice == YellowSeatPrice ? "Red" : "Blue";
 
-                        Ticket ticket = new(selectedShow, user, selectedRow, selectedColumn, seatPrice, seatColor);
+                        Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor);
 
                         Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
                         Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 
                         if (ConfirmSeatSelection(ticket))
                         {
-                            theater.SeatArrangement[selectedRow, selectedColumn] = 4; // Value 4 in the SeatArrangement array means the seat is taken
+                            theater.SeatArrangement[selectedRow, selectedColumn] = 5;
                             selectedSeat.UserId = user.Id;
                             selectedSeats.Add(selectedSeat);
                             tickets.Add(ticket);
@@ -152,6 +152,7 @@
 
                     if (ConfirmReservation(tickets))
                     {
+                        TurnSelectedSeatsIntoReserved(theater);
                         JSONMethods.WriteToJSON(Theaters, FileName);
                         TicketHandler.Tickets.AddRange(tickets);
                         JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
@@ -166,9 +167,48 @@
         }
         while (keyInfo.Key != ConsoleKey.Q);
 
+        TurnSelectedSeatsIntoReserved(theater);
+        ResetSelectedSeats(theater, selectedSeats);
+
         return tickets;
     }
 
+    public static void TurnSelectedSeatsIntoReserved(Theater theater)
+    {
+        // Change the 5's in the theater SeatArrangement array (which represent the current selected seats of a user) into 4's (which represent seats that are taken)
+        // Method is ran when the user goes to checkout
+        // Ensures that the next time a user wants to select a seat, the seats that are already taken are colored grey
+        int rows = theater.SeatArrangement.GetLength(0);
+        int columns = theater.SeatArrangement.GetLength(1);
+
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                if (theater.SeatArrangement[i, j] == 5)
+                {
+                    theater.SeatArrangement[i, j] = 4;
+                }
+            }
+        }
+    }
+    
+    public static void ResetSelectedSeats(Theater theater, List<Seat> seats)
+    {
+        // Reset the Seat objects and SeatArrangement array for when the user quits out of seat selection after having selected seats
+        foreach (var seat in seats)
+        {
+            foreach (var _seat in theater.Seats)
+            {
+                if (seat.PositionName == _seat.PositionName)
+                {
+                    _seat.UserId = -1;
+                    theater.SeatArrangement[seat.Row, seat.Column] = seat.Price == 10 ? 1 : (seat.Price == 15 ? 2 : 3);
+                }
+            }
+        }
+    }
+    
     public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn)
     {
         int rows = theater.SeatArrangement.GetLength(0);
@@ -214,6 +254,10 @@
                         Console.Write("■ ");
                         break;
                     case 4:
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.Write("O ");
+                        break;
+                    case 5:
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("O ");
                         break;
