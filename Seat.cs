@@ -6,8 +6,9 @@
     public double Price;
     public int UserId;
     public bool IsSeat;
+    public bool IsAvailable;
 
-    public Seat(int row, int column, double price, int userId, bool isSeat)
+    public Seat(int row, int column, double price, int userId, bool isSeat, bool isAvailable)
     {
         PositionName = $"{Convert.ToChar(row + 'A')}{column + 1}";
         Row = row;
@@ -15,5 +16,6 @@
         Price = price;
         UserId = userId;
         IsSeat = isSeat;
+        IsAvailable = isAvailable;
     }
 }

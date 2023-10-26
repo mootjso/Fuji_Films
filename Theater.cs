@@ -25,16 +25,16 @@
                 switch (SeatDatabase.SeatArrangement[i, j])
                 {
                     case 0:
-                        Seats.Add(new Seat(i, j, -1, -1, false));
+                        Seats.Add(new Seat(i, j, -1, -1, false, true));
                         break;
                     case 1:
-                        Seats.Add(new Seat(i, j, BlueSeatPrice, -1, true));
+                        Seats.Add(new Seat(i, j, BlueSeatPrice, -1, true, true));
                         break;
                     case 2:
-                        Seats.Add(new Seat(i, j, YellowSeatPrice, -1, true));
+                        Seats.Add(new Seat(i, j, YellowSeatPrice, -1, true, true));
                         break;
                     case 3:
-                        Seats.Add(new Seat(i, j, RedSeatPrice, -1, true));
+                        Seats.Add(new Seat(i, j, RedSeatPrice, -1, true, true));
                         break;
                 }
             }

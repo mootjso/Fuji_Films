@@ -11,12 +11,15 @@
 
     public static Theater CreateTheater(Show show)
     {
-        Theater? theater = GetTheaterByShowId(show.Id);
-        if (theater is null)
+        var theater = GetTheaterByShowId(show.Id);
+
+        if (theater == null)
         {
             theater = new Theater(show.Id);
             Theaters.Add(theater);
             JSONMethods.WriteToJSON(Theaters, FileName);
+            
+            return theater;
         }
         return theater;
     }
@@ -80,7 +83,7 @@
                     Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
                     
                     // Valid seat selected
-                    if (selectedSeat.IsSeat && selectedSeat.UserId == -1)
+                    if (selectedSeat.IsSeat && selectedSeat.UserId == -1 && selectedSeat.IsAvailable)
                     {
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
@@ -170,30 +173,42 @@
                 }
                 else
                     Console.ResetColor();
-                // Not a seat
-                if (!seat.IsSeat)
+                
+                if (seat.IsAvailable)
                 {
-                    Console.Write("  ");
-                    continue;
+                    // Not a seat
+                    if (!seat.IsSeat)
+                    {
+                        Console.Write("  ");
+                        continue;
+                    }
+                    // Seat has been reserved by current user
+                    if (seat.UserId == user.Id)
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("O ");
+                        continue;
+                    }
+                    // Seat has been reserverd by a different user
+                    if (seat.UserId != -1)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.Write("O ");
+                        continue;
+                    }
+                    // Seat is not taken
+                    Console.ForegroundColor = seat.Price == Theater.RedSeatPrice ? ConsoleColor.DarkRed :
+                        (seat.Price == Theater.YellowSeatPrice) ? ConsoleColor.DarkYellow : ConsoleColor.Blue;
+                    Console.Write("■ ");
                 }
-                // Seat has been reserved by current user
-                if (seat.UserId == user.Id)
+                // Seat is Unavailable (X'ed out)
+                else
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.Write("O ");
-                    continue;
+                    Console.ForegroundColor= ConsoleColor.DarkGray;
+                    Console.Write("X ");
+                    Console.ResetColor();
                 }
-                // Seat has been reserverd by a different user
-                if (seat.UserId != -1)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write("O ");
-                    continue;
-                }
-                // Seat is not taken
-                Console.ForegroundColor = seat.Price == Theater.RedSeatPrice ? ConsoleColor.DarkRed :
-                    (seat.Price == Theater.YellowSeatPrice) ? ConsoleColor.DarkYellow : ConsoleColor.Blue;
-                Console.Write("■ ");
+                
             }
             Console.WriteLine();
         }
@@ -228,6 +243,15 @@
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write($"■ : {Theater.BlueSeatPrice} EUR");
+
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write("\nO : You\t\t");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write("O : Others\t");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write("X : Unavailable");
         Console.WriteLine("\n");
 
         Console.ResetColor();
