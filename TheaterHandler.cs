@@ -130,6 +130,8 @@
         }
         while (keyInfo.Key != ConsoleKey.Q);
 
+        foreach (Seat seat in selectedSeats)
+            seat.UserId = -1;
         return null;
     }
 
@@ -160,6 +162,7 @@
         for (int i = 0; i < rows + 1; i++)
         {
             // Write the Letter-labels on the side of the grid
+            Console.ResetColor();
             Console.Write(rowLabel + "  ");
             rowLabel++;
 
@@ -245,7 +248,7 @@
         Console.Write($"■ : {Theater.BlueSeatPrice} EUR");
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("\nO : You\t\t");
+        Console.Write("\nO : Your seat\t");
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.Write("O : Others\t");
