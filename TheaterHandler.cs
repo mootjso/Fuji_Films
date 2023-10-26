@@ -154,7 +154,7 @@
         int columns = theater.Seats.Max(seat => seat.Column);
 
         // Write top line of numbers for the grid
-        Console.Write("   ");
+        Console.Write("  ");
         for (int j = 1; j <= columns + 1; j++)
         {
             Console.Write(j + " ");
@@ -186,6 +186,7 @@
                     if (!seat.IsSeat)
                     {
                         Console.Write("  ");
+                        Console.ResetColor();
                         continue;
                     }
                     // Seat has been reserved by current user
