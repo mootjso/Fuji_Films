@@ -5,24 +5,28 @@
     public const double RedSeatPrice = 20;
 
     public int ShowId;
+    public int NumOfSeats;
     public List<Seat> Seats = new();
 
-    public Theater(int showId)
+    public Theater(int showId, int theaterNumber)
     {
         ShowId = showId;
-        CreateSeats();
+        NumOfSeats = theaterNumber == 1 ? 150 : theaterNumber == 2 ? 300 : 500;
+        CreateSeats(theaterNumber);
     }
 
-    public void CreateSeats()
+    public void CreateSeats(int theaterNumber)
     {
-        int rows = SeatDatabase.SeatArrangement.GetLength(0);
-        int columns = SeatDatabase.SeatArrangement.GetLength(1);
+        int[,] seatArrangement = theaterNumber == 1 ? SeatDatabase.SeatArrangementSmall : theaterNumber == 2 ? SeatDatabase.SeatArrangementMedium : SeatDatabase.SeatArrangementLarge;
+        
+        int rows = seatArrangement.GetLength(0);
+        int columns = seatArrangement.GetLength(1);
 
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
             {
-                switch (SeatDatabase.SeatArrangement[i, j])
+                switch (seatArrangement[i, j])
                 {
                     case 0:
                         Seats.Add(new Seat(i, j, -1, -1, false, true));

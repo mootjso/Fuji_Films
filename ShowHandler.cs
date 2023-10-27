@@ -69,6 +69,14 @@
                 break;
             Movie movie = MovieHandler.Movies[index];
 
+            // Theater selection
+            string menuString = "Show Schedule\n\nSelect a theater:";
+            List<string> menuOptions = new() { "Small (150 seats)", "Medium (300 seats)", "Large (500 seats)" };
+            index = Menu.Start(menuString, menuOptions);
+            string selectedTheater = menuOptions[index];
+            int selectedTheaterNum = index + 1; 
+            
+
             // Date selection
             List<string> dates = CreateDatesList(14);
             index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
@@ -79,10 +87,10 @@
             string dateString = dates[index];
             DateTime selectedTime = TimeSelection(movie, dateString);
 
-            Show show = new(movie, selectedTime) { Id = LatestShowID += 1 };
+            Show show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
 
             // Confirm or cancel selection
-            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
+            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
             int selection = ConfirmSelection(show, movie, menuHeader);
             if (!(selection == 0))
             {
@@ -136,8 +144,8 @@
 
             string dateString = dates[index];
             DateTime selectedDate = DateTime.Parse(dateString);
-            List<Show> moviesForDate = GetShowsByDate(selectedDate);
-            List<string> movieMenuStrings = CreateListMovieStrings(moviesForDate);
+            List<Show> ShowsForDate = GetShowsByDate(selectedDate);
+            List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate);
 
             index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuStrings);
             if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)
@@ -145,7 +153,7 @@
                 continue;
             }
 
-            Show show = moviesForDate[index];
+            Show show = ShowsForDate[index];
             Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
 
             // Confirm or cancel selection

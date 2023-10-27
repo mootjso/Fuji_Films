@@ -1,6 +1,12 @@
 ﻿public static class SeatDatabase
 {
-    public static int[,] SeatArrangement = new int[,]
+    // Seatdatabase is used to instantiate all the Seat objects in the List<Seat> of a Theater object
+    // 0 : not a chair
+    // 1 : cheap chair
+    // 2 : medium priced chair
+    // 3 : expensive chair
+    
+    public static int[,] SeatArrangementSmall = new int[,]
     {
         {0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
         {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},

@@ -15,7 +15,7 @@
 
         if (theater == null)
         {
-            theater = new Theater(show.Id);
+            theater = new Theater(show.Id, show.TheaterNumber);
             Theaters.Add(theater);
             JSONMethods.WriteToJSON(Theaters, FileName);
             
