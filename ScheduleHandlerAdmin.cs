@@ -1,4 +1,5 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+using Newtonsoft.Json;
 
 public static class ScheduleHandlerAdmin
 {
@@ -250,5 +251,91 @@ public static class ScheduleHandlerAdmin
             }
         }
         JSONMethods.WriteToJSON(newMovies, FileName);
+    } 
+
+public static void EditMovieDescription()
+{
+    List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName);
+    const int pageSize = 10;
+    int currentPage = 0;
+
+    while (true)
+    {
+        int startIndex = currentPage * pageSize;
+        int endIndex = Math.Min(startIndex + pageSize, movies.Count);
+        List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
+        List<string> movieTitles = GetMovieTitles(pageMovies);
+        
+        string menuText = $"Select a movie to edit its description (Page {currentPage + 1}):\n";
+        List<string> menuOptions = new List<string>(movieTitles);
+
+        // TODO implement previous page
+
+        if (endIndex < movies.Count)
+        {
+            menuOptions.Add("[Next Page]");
+        }
+
+        int index = AdminMenu.Start(menuText, menuOptions);
+
+        // use this part for creating previous page
+        // if (index == menuOptions.Count - 2 && currentPage > 0)
+        // {
+        //     currentPage--;
+        // }
+        if (index == menuOptions.Count - 1 && endIndex < movies.Count)
+        {
+            currentPage++;
+        }
+        else if (index == menuOptions.Count)
+        {
+            break;
+        }
+        else if (index >= 0 && index < movieTitles.Count)
+        {
+            Movie selectedMovie = pageMovies[index];
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+
+            Console.WriteLine("Edit Movie Description");
+            Console.WriteLine($"Title: {selectedMovie.Title}");
+            Console.WriteLine($"Current Description: {selectedMovie.Description}");
+            Console.WriteLine("Enter the new description:");
+            string? newDescription = Console.ReadLine();
+            string oldDescription = selectedMovie.Description;
+            selectedMovie.Description = newDescription;
+
+            // Serialize the movies list back to JSON with proper formatting
+            string updatedJson = JsonConvert.SerializeObject(movies, Formatting.Indented);
+            File.WriteAllText(JSONMethods.MovieFileName, updatedJson);
+
+            Console.WriteLine("\nEdit Movie Description");
+            Console.WriteLine($"Title: {selectedMovie.Title}");
+            Console.WriteLine("Old Description:");
+            Console.WriteLine(oldDescription);
+            Console.WriteLine("New Description:");
+            Console.WriteLine(newDescription);
+            Console.Write("Confirm the change? (Y/N): ");
+            char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
+
+            if (confirmChangeChoice == 'Y')
+            {
+                Console.Clear();
+                DisplayAsciiArt.AdminHeader();
+                Console.WriteLine("Description updated successfully!");
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.Clear();
+                DisplayAsciiArt.AdminHeader();
+                Console.WriteLine("Description not changed.");
+                Console.WriteLine("Press any key to continue.");
+                Console.ReadKey();
+            }
+        }
     }
+}
+
 }

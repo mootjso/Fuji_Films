@@ -5,13 +5,14 @@ public static class AdminMenu
     static ConsoleKeyInfo keyInfo;
 
     public static int Start(string text, List<string> options)
-    {
+    {   
         selectedOption = 0;
         Console.CursorVisible = false;
         bool inMenu = true;
         while (inMenu)
         {
             Console.Clear();
+            DisplayAsciiArt.AdminHeader();
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
@@ -27,7 +28,11 @@ public static class AdminMenu
                 case ConsoleKey.Enter:
                     inMenu = false;
                     return selectedOption;
+                case ConsoleKey.LeftArrow: 
+                    inMenu = false;
+                    return options.Count;
             }
+            Console.Clear();
         }
         return -1;
     }
@@ -53,7 +58,7 @@ public static class AdminMenu
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select");
+        Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select and left arrow to go back");
         Console.ResetColor();
     }
 

@@ -20,7 +20,7 @@
     public static void AdminHeader()
     {
         Console.Write(AsciiArt.AdminHeader);
-        Console.WriteLine("---------------------------------");
+        Console.WriteLine("---------------------------------\n");
     }
 
     public static void Standby()

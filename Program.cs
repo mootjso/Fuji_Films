@@ -1,7 +1,7 @@
 public class Program
 {
     private static void Main()
-    {
+    {   
         while (true)
         {
             // Login Menu
