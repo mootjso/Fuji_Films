@@ -25,14 +25,9 @@ public static class Admin
                     Console.ReadKey();
                     break;
                 case AddRemoveMovieOption:
-                    Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("\nAdd movie NOT IMPLEMENTED\n\nPRESS ANY KEY TO CONTINUE TO THE MAIN MENU");
-                    Console.ReadKey();
+                    ScheduleHandlerAdmin.Start();
                     break;       
                 case ChangeMovieDescriptionOption:
-                    Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
                     ScheduleHandlerAdmin.EditMovieDescription();
                     break;
                 case TakeOutSeatsOption:
