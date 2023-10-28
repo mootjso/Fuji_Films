@@ -2,7 +2,7 @@ public static class Admin
 {
     public static void StartMenu()
     {   
-        string MenuText = $"\nWelcome Captain!\n\nWhat would you like to do?";
+        string MenuText = $"\n\nWelcome Captain!\n\nWhat would you like to do?";
         
         List<string> MenuOptions = new() {"Financial report", "Add/Remove movie", "Change movie description", "Take out seat(s)", "Log out"};
         

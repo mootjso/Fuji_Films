@@ -305,13 +305,16 @@ public static void EditMovieDescription()
             string oldDescription = selectedMovie.Description;
             selectedMovie.Description = newDescription;
 
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+
             // Serialize the movies list back to JSON with proper formatting
             string updatedJson = JsonConvert.SerializeObject(movies, Formatting.Indented);
             File.WriteAllText(JSONMethods.MovieFileName, updatedJson);
 
-            Console.WriteLine("\nEdit Movie Description");
+            Console.WriteLine("Edit Movie Description");
             Console.WriteLine($"Title: {selectedMovie.Title}");
-            Console.WriteLine("Old Description:");
+            Console.WriteLine("Current Description:");
             Console.WriteLine(oldDescription);
             Console.WriteLine("New Description:");
             Console.WriteLine(newDescription);
