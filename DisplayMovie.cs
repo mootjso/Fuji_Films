@@ -11,7 +11,6 @@
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
         int firstTitleIndex;
-        
         int endIndex = 1;
 
         while (true)
