@@ -8,7 +8,7 @@ public static class Admin
         
         while (true)
         {   
-            int selection = AdminMenu.Start(MenuText, MenuOptions);
+            int selection = Menu.Start(MenuText, MenuOptions, true);
 
             const int FinancialReportOption = 0;
             const int AddRemoveMovieOption = 1;
