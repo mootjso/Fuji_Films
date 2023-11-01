@@ -3,7 +3,7 @@ public class Program
     private static void Main()
     {
         while (true)
-        {
+        {            
             // Login Menu
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
@@ -45,8 +45,13 @@ public class Program
             }
 
             // Main Menu Registered Users
+
+            // CODE FOR TESTING-----
+            var user = new User(1);
+            //----------------------
+
             menuText = "Hello, [USERNAME]\n";
-            menuOptions = new() { "Current Movies", "Movie Schedule", "My Reservations", "Log Out" };
+            menuOptions = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
             while (loggedIn)
             {
                 int selection = Menu.Start(menuText, menuOptions);
@@ -54,17 +59,23 @@ public class Program
                 {
                     case 0:  // View all current movies
                         Console.Clear();
-                        DisplayMovie.Start();
+                        MovieHandler.ViewCurrentMovies();
                         break;
                     case 1:  // View schedule and make reservation
-                        ScheduledMovie? selectedMovie = ScheduleHandlerUser.SelectMovieFromSchedule();
-                        if (selectedMovie is null)
+                        Show? selectedShow = ShowHandler.SelectShowFromSchedule();
+                        if (selectedShow is null)
                             continue;
-                        var newAuditorium = new Auditorium_1(selectedMovie);
-                        List<Ticket> tickets = newAuditorium.SelectSeats();
-                        Checkout.Start(tickets);
-                        // TODO Implement payment functionality (run that from within the Auditorium class so tickets list only gets returned if payment was succesful)
-                        // add the tickets to the users reservations
+                        
+                        var theater = TheaterHandler.CreateTheater(selectedShow);
+                        
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(user, theater);
+                        if (tickets is null)
+                            continue;
+
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTEND\n\nPRESS ANY KEY TO GO BACK");
+                        Console.ReadKey();
                         break;
                     case 2:  // View all reservations
                         Console.Clear();

@@ -12,10 +12,10 @@ public static class JSONMethods
             {
                 StreamReader reader = new(fileName);
                 string content = reader.ReadToEnd();
-                List<T> movies = JsonConvert.DeserializeObject<List<T>>(content)!;
+                List<T> objList = JsonConvert.DeserializeObject<List<T>>(content)!;
                 reader.Close();
 
-                return movies;
+                return objList;
             }
         }
         else
@@ -26,10 +26,10 @@ public static class JSONMethods
         return new List<T>();
     }
 
-    public static void WriteToJSON<T>(List<T> movieList, string fileName)
+    public static void WriteToJSON<T>(List<T> objList, string fileName)
     {
         StreamWriter writer = new(fileName);
-        string ListToJson = JsonConvert.SerializeObject(movieList);
+        string ListToJson = JsonConvert.SerializeObject(objList);
         writer.Write(ListToJson);
         writer.Close();
     }
