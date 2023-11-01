@@ -73,6 +73,8 @@
             string menuString = "Show Schedule\n\nSelect a theater:";
             List<string> menuOptions = new() { "Small (150 seats)", "Medium (300 seats)", "Large (500 seats)" };
             index = Menu.Start(menuString, menuOptions);
+            if (index == menuOptions.Count)
+                break;
             string selectedTheater = menuOptions[index];
             int selectedTheaterNum = index + 1; 
             
