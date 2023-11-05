@@ -21,6 +21,7 @@ public static class Menu
         while (inMenu)
         {
             Console.Clear();
+
             if (IsAdmin)
             {
                 DisplayAsciiArt.AdminHeader();
@@ -77,13 +78,6 @@ public static class Menu
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select and left arrow to go back");
-        Console.ResetColor();
-    }
-
-    private static void DisplayMenuLocation()
-    {
-        Console.ForegroundColor= ConsoleColor.DarkGray;
-        Console.WriteLine();
         Console.ResetColor();
     }
 }
