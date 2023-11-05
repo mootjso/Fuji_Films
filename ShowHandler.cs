@@ -20,7 +20,7 @@ public static class ShowHandler
         bool inMenu = true;
         while (inMenu)
         {
-            int index = Menu.Start("Show Schedule\n\nSelect an option:", menuOptions);
+            int index = Menu.Start("Show Schedule\n\nSelect an option:", menuOptions, true);
             switch (index)
             {
                 case 0:
@@ -64,7 +64,7 @@ public static class ShowHandler
         {
             // Movie Selection
             List<string> movieTitles = MovieHandler.GetMovieTitles();
-            int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles);
+            int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles, true);
             if (index == movieTitles.Count)  // If user presses left arrow key leave current while loop
                 break;
             Movie movie = MovieHandler.Movies[index];
@@ -72,16 +72,15 @@ public static class ShowHandler
             // Theater selection
             string menuString = "Show Schedule\n\nSelect a theater:";
             List<string> menuOptions = new() { "Small (150 seats)", "Medium (300 seats)", "Large (500 seats)" };
-            index = Menu.Start(menuString, menuOptions);
+            index = Menu.Start(menuString, menuOptions, true);
             if (index == menuOptions.Count)
                 break;
             string selectedTheater = menuOptions[index];
             int selectedTheaterNum = index + 1; 
             
-
             // Date selection
             List<string> dates = CreateDatesList(14);
-            index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
+            index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
             if (index == dates.Count)  // If user presses left arrow key leave current while loop
                 break;
 
@@ -116,7 +115,13 @@ public static class ShowHandler
             break;
         }
     }
-
+    public static List<string> GetMovieTitles(List<Movie> movies)
+    {
+        List<string> movieTitles = new();
+        foreach (Movie movie in movies)
+        movieTitles.Add(movie.Title);
+        return movieTitles;
+    }
     public static void RemoveShow()
     {
         List<string> dates = GetAllDates();
@@ -138,7 +143,7 @@ public static class ShowHandler
         bool inMenu = true;
         while (inMenu)
         {
-            int index = Menu.Start("Show Schedule\n\nSelect a date to see the shows for that day:", dates);
+            int index = Menu.Start("Show Schedule\n\nSelect a date to see the shows for that day:", dates, true);
             if (index == dates.Count || index == dates.Count - 1)
             {
                 return;
@@ -149,7 +154,7 @@ public static class ShowHandler
             List<Show> ShowsForDate = GetShowsByDate(selectedDate);
             List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate);
 
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuStrings);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuStrings, true);
             if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)
             {
                 continue;
@@ -201,7 +206,7 @@ public static class ShowHandler
     private static int ConfirmSelection(Show show, Movie movie, string menuHeader)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
-        return Menu.Start(menuHeader, menuOptions);
+        return Menu.Start(menuHeader, menuOptions, true);
     }
 
     private static DateTime TimeSelection(Movie movieToAdd, string dateString)
@@ -246,14 +251,14 @@ public static class ShowHandler
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
-                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption);
+                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption, true);
 
                 return null;
             }
 
             // Date selection
             dates.Add("Back");
-            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
+            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
             if (index == dates.Count || index == dates.Count - 1)
                 break;
 
@@ -265,7 +270,7 @@ public static class ShowHandler
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(moviesForDate);
 
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString, true);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
 
