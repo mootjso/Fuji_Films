@@ -50,7 +50,7 @@ public static class TheaterHandler
             Console.WriteLine("\nChoose your Seat :\n");
 
             DrawSeatOverview(theater, selectedRow, selectedColumn, user);
-            DrawMovieScreen();
+            DrawMovieScreen(theater);
             DisplayPriceInfo();
 
             totalPrice = TicketHandler.GetTotalPrice(tickets);
@@ -229,15 +229,36 @@ public static class TheaterHandler
         return null;
     }
 
-    public static void DrawMovieScreen()
+    public static void DrawMovieScreen(Theater theater)
     {
-        Console.WriteLine("");
-        for (int j = 0; j < 30; j++)
+        int screenLength = 27;
+        int movieEmptySpace = 7;
+        switch (theater.NumOfSeats)
+        {
+            case 150:
+                break;
+            case 300:
+                screenLength = 43;
+                movieEmptySpace = 14;
+                break;
+            case 500:
+                screenLength = 66;
+                movieEmptySpace = 26;
+                break;
+            default:
+                break;
+
+        }
+        Console.WriteLine();
+        for (int j = 0; j < screenLength; j++)
         {
             Console.Write("■");
 
         }
-        Console.WriteLine("\n        Movie screen\n");
+        Console.WriteLine();
+        for (int i = 0; i < movieEmptySpace--; i++)
+            Console.Write("  ");
+        Console.WriteLine("Movie screen\n");
     }
 
     public static void DisplayPriceInfo()
