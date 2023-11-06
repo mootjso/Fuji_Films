@@ -1,5 +1,6 @@
 ﻿public static class DisplayMovie
 {
+    //testting
     static List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName);
     public static void Start()
     {
