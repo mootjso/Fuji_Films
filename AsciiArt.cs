@@ -33,8 +33,7 @@
              |_|
 ";
 
-    public static string AdminHeader = @"
-    _       _           _       
+    public static string AdminHeader = @"    _       _           _       
    / \   __| |_ __ ___ (_)_ __  
   / _ \ / _` | '_ ` _ \| | '_ \ 
  / ___ \ (_| | | | | | | | | | |

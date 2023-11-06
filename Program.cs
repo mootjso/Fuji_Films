@@ -1,9 +1,7 @@
 public class Program
 {
     private static void Main()
-    {
-        ChangeMovieDetails.EditMovieDescription();
-        
+    {        
         while (true)
         {            
             // Login Menu

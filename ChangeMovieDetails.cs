@@ -4,7 +4,7 @@ public static class ChangeMovieDetails
     //split code to reuse for other methods
     public static void EditMovieDescription()
 {
-    List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName);
+    List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
     const int pageSize = 10;
     int currentPage = 0;
 
