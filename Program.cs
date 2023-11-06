@@ -2,6 +2,7 @@ public class Program
 {
     private static void Main()
     {
+        Admin.StartMenu();
         while (true)
         {            
             // Login Menu
