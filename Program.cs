@@ -1,7 +1,9 @@
 public class Program
 {
     private static void Main()
-    {        
+    {
+        AdminHandler.AddMovie(); // To test
+        Console.ReadLine();
         while (true)
         {            
             // Login Menu
