@@ -1,10 +1,4 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 public class LoginHandler
 {
     private static List<User> users;
@@ -17,34 +11,16 @@ public class LoginHandler
         bool login = true;
         while (login)
         {
-            Console.Write("E-mailadres (type 'back' to return to the menu): ");
-            StringBuilder username = new StringBuilder();
-            ConsoleKeyInfo key;
-            do
-            {
-                key = Console.ReadKey(intercept: true);
+            Console.Write("E-mailadres: ");
+            string username = Console.ReadLine();
 
-                if (key.Key == ConsoleKey.Backspace && username.Length > 0)
-                {
-                    username.Length -= 1; // Remove last character
-                    Console.Write("\b \b"); // Erase character from display
-                }
-                else if (key.Key != ConsoleKey.Enter)
-                {
-                    username.Append(key.KeyChar);
-                    Console.Write(key.KeyChar);
-                }
-            } while (key.Key != ConsoleKey.Enter);
-
-            string usernameString = username.ToString();
-
-            if (usernameString.ToLower() == "back")
+            if (username == "\b")
             {
                 login = false;
                 break;
             }
 
-            Console.Write("\nPassword: ");
+            Console.Write("Password: ");
             string password = Console.ReadLine();
 
             bool userLogIn = false;
@@ -52,7 +28,7 @@ public class LoginHandler
 
             foreach (var user in users)
             {
-                if (user.Email == usernameString)
+                if (user.Email == username)
                 {
                     accountExists = true;
 
@@ -90,35 +66,29 @@ public class LoginHandler
         bool makeAccount = true;
         while (makeAccount)
         {
-            Console.Write("First Name (type 'back' to return to the menu): ");
-            StringBuilder firstName = new StringBuilder();
-            ConsoleKeyInfo key;
-            do
-            {
-                key = Console.ReadKey(intercept: true);
+            Console.Write("First Name: ");
+            string firstName = Console.ReadLine();
 
-                if (key.Key == ConsoleKey.Backspace && firstName.Length > 0)
-                {
-                    firstName.Length -= 1; // Remove last character
-                    Console.Write("\b \b"); // Erase character from display
-                }
-                else if (key.Key != ConsoleKey.Enter)
-                {
-                    firstName.Append(key.KeyChar);
-                    Console.Write(key.KeyChar);
-                }
-            } while (key.Key != ConsoleKey.Enter);
+            Console.Write("Last Name: ");
+            string lastName = Console.ReadLine();
 
-            string firstNameString = firstName.ToString();
+            Console.Write("Phone Number: ");
+            string phoneNumber = Console.ReadLine();
 
-            if (firstNameString.ToLower() == "back")
-            {
-                makeAccount = false;
-                break;
-            }
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
 
-            // Continue with other prompts (Last Name, Phone Number, Email, Password)
-            // ...
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
+
+
+            var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber);
+            users.Add(newUser);
+            loggedInUser = newUser;
+            SaveUsers();
+
+            Console.WriteLine($"Account {email}, has been created!");
+            makeAccount = false;
         }
     }
 
