@@ -3,53 +3,63 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Principal;
+using System.Text;
 
-public class logIn
+public class LoginHandler
 {
-    private static List<Account> accounts;
+    private static List<User> users;
+    private static int lastUserId;
 
     public static void LogIn()
     {
-        LoadAccount();
+        Console.CursorVisible = true;
+        LoadUsers();
         bool login = true;
         while (login)
         {
-            Console.WriteLine("Gebruikersnaam:");
-            string username_uncut = Console.ReadLine();
-            // Eerste letter wordt hoofdletter.
-            string username = char.ToUpper(username_uncut[0]) + username_uncut.Substring(1).ToLower();
+            Console.Write("E-mailadres (type 'back' to return to the menu): ");
+            StringBuilder username = new StringBuilder();
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(intercept: true);
 
-            Console.WriteLine("Password:");
+                if (key.Key == ConsoleKey.Backspace && username.Length > 0)
+                {
+                    username.Length -= 1; // Remove last character
+                    Console.Write("\b \b"); // Erase character from display
+                }
+                else if (key.Key != ConsoleKey.Enter)
+                {
+                    username.Append(key.KeyChar);
+                    Console.Write(key.KeyChar);
+                }
+            } while (key.Key != ConsoleKey.Enter);
+
+            string usernameString = username.ToString();
+
+            if (usernameString.ToLower() == "back")
+            {
+                login = false;
+                break;
+            }
+
+            Console.Write("\nPassword: ");
             string password = Console.ReadLine();
 
             bool userLogIn = false;
             bool accountExists = false;
-            bool passwordCorrect = false;
-            bool adminLogIn = false;
-            bool adminPasswordCorrect = false;
 
-            foreach (var account in accounts)
+            foreach (var user in users)
             {
-                if (account.Username == username && !username.Contains("Admin"))
+                if (user.Email == usernameString)
                 {
                     accountExists = true;
 
-                    if (account.Password == password)
+                    if (user.Password == password)
                     {
                         userLogIn = true;
-                        passwordCorrect = true;
-                        login = false;
-                    }
-                }
-                else if (account.Username == "Admin")
-                {
-                    accountExists = true;
-
-                    if (account.Password == password)
-                    {
-                        adminLogIn = true;
-                        adminPasswordCorrect = true;
+                        loggedInUser = user;
                         login = false;
                     }
                 }
@@ -57,91 +67,85 @@ public class logIn
 
             if (accountExists)
             {
-                if (passwordCorrect)
+                if (userLogIn)
                 {
-                    Console.WriteLine("Login succesvol!");
-                }
-                else if (adminPasswordCorrect)
-                {
-                    Console.WriteLine("Admin login succesvol!");
+                    Console.WriteLine("Login successful!");
                 }
                 else
                 {
-                    Console.WriteLine("Verkeerde Password!");
+                    Console.WriteLine("Incorrect password!");
                 }
             }
             else
             {
-                Console.WriteLine("Account bestaat niet!");
+                Console.WriteLine("Account does not exist!");
             }
         }
     }
 
     public static void Register()
     {
-        LoadAccount();
+        Console.CursorVisible = true;
+        LoadUsers();
         bool makeAccount = true;
         while (makeAccount)
         {
-            Console.WriteLine("Gebruikersnaam:");
-            string username_uncut = Console.ReadLine();
-            // Eerste letter wordt hoofdletter.
-            string username = char.ToUpper(username_uncut[0]) + username_uncut.Substring(1).ToLower();
-
-            bool usernameExists = accounts.Any(account => account.Username == username);
-
-            if (usernameExists)
+            Console.Write("First Name (type 'back' to return to the menu): ");
+            StringBuilder firstName = new StringBuilder();
+            ConsoleKeyInfo key;
+            do
             {
-                Console.WriteLine("Account met dezelfde gebruikersnaam bestaat al!");
-            }
-            else
-            {
-                Console.WriteLine("Password:");
-                string password = Console.ReadLine();
+                key = Console.ReadKey(intercept: true);
 
-                // Ensure password length is at least 5 characters
-                if (password.Length < 5)
+                if (key.Key == ConsoleKey.Backspace && firstName.Length > 0)
                 {
-                    Console.WriteLine("Password must be at least 5 characters long.");
-                    continue;
+                    firstName.Length -= 1; // Remove last character
+                    Console.Write("\b \b"); // Erase character from display
                 }
+                else if (key.Key != ConsoleKey.Enter)
+                {
+                    firstName.Append(key.KeyChar);
+                    Console.Write(key.KeyChar);
+                }
+            } while (key.Key != ConsoleKey.Enter);
 
-                Console.WriteLine("E-mail:");
-                string email = Console.ReadLine();
+            string firstNameString = firstName.ToString();
 
-                Console.WriteLine("Phone Number:");
-                string number = Console.ReadLine();
-
-                var newAccount = new Account(username, password, email, number);
-                accounts.Add(newAccount);
-                Console.WriteLine($"Account {username}, is gemaakt!");
-
-                SaveAccounts();
+            if (firstNameString.ToLower() == "back")
+            {
                 makeAccount = false;
+                break;
             }
+
+            // Continue with other prompts (Last Name, Phone Number, Email, Password)
+            // ...
         }
     }
 
-    public static void LoadAccount()
+    public static void LoadUsers()
     {
-        string filename = "accounts.json";
+
+        string filename = "UserAccounts.json";
 
         if (File.Exists(filename))
         {
             string json = File.ReadAllText(filename);
-            accounts = JsonConvert.DeserializeObject<List<Account>>(json);
+            users = JsonConvert.DeserializeObject<List<User>>(json);
+            lastUserId = users.Max(u => u.Id);
         }
         else
         {
-            accounts = new List<Account>();
-            SaveAccounts(); // Create a new accounts.json file
+            users = new List<User>();
+            lastUserId = 0;
         }
     }
 
-    public static void SaveAccounts()
+    public static void SaveUsers()
     {
-        string filename = "accounts.json";
-        string json = JsonConvert.SerializeObject(accounts, Newtonsoft.Json.Formatting.Indented);
+        string filename = "UserAccounts.json";
+        string json = JsonConvert.SerializeObject(users, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(filename, json);
     }
+
+    public static User loggedInUser { get; private set; }
 }
