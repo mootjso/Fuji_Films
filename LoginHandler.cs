@@ -14,12 +14,6 @@ public class LoginHandler
             Console.Write("E-mailadres: ");
             string username = Console.ReadLine();
 
-            if (username == "\b")
-            {
-                login = false;
-                break;
-            }
-
             Console.Write("Password: ");
             string password = Console.ReadLine();
 
