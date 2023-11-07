@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+
 public class LoginHandler
 {
     private static List<User> users;
@@ -9,6 +10,7 @@ public class LoginHandler
         Console.CursorVisible = true;
         LoadUsers();
         bool login = true;
+
         while (login)
         {
             Console.Write("E-mailadres: ");
@@ -48,7 +50,7 @@ public class LoginHandler
             }
             else
             {
-                Console.WriteLine("Account does not exist!");
+                Console.WriteLine("E-mailadres does not exist!");
             }
         }
     }
@@ -69,12 +71,38 @@ public class LoginHandler
             Console.Write("Phone Number: ");
             string phoneNumber = Console.ReadLine();
 
-            Console.Write("Email: ");
-            string email = Console.ReadLine();
+            string email;
+            bool emailExists;
+            do
+            {
+                Console.Write("Email: ");
+                email = Console.ReadLine();
 
-            Console.Write("Password: ");
-            string password = Console.ReadLine();
+                // Check if the email is already registered
+                emailExists = users.Any(user => user.Email == email);
 
+                if (emailExists)
+                {
+                    Console.WriteLine("Email is already registered! Please choose a different email.");
+                }
+
+            } while (emailExists);
+
+            string password;
+            bool validPassword;
+            PasswordValidator validator = new PasswordValidator();
+
+            do
+            {   
+                Console.WriteLine("\nPassword requirements: \n-Between 6 and 13 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
+                Console.Write("\nPassword: ");
+                password = Console.ReadLine();
+                validPassword = validator.IsValid(password);
+                if (!validPassword)
+                {
+                    Console.WriteLine("Password does not meet the requirements!");
+                }
+            } while (!validPassword);
 
             var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber);
             users.Add(newUser);
@@ -88,14 +116,13 @@ public class LoginHandler
 
     public static void LoadUsers()
     {
-
         string filename = "UserAccounts.json";
 
         if (File.Exists(filename))
         {
             string json = File.ReadAllText(filename);
             users = JsonConvert.DeserializeObject<List<User>>(json);
-            lastUserId = users.Max(u => u.Id);
+            lastUserId = users.Max(u => u.Id) ;
         }
         else
         {
