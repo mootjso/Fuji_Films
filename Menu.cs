@@ -22,7 +22,8 @@ public static class Menu
         {
             Console.Clear();
             DisplayAsciiArt.Header();
-
+            //DisplayMenuLocation();  TODO Implement menu bar functionality
+            Snack.DisplaySnacks();
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
