@@ -4,6 +4,7 @@ public class LoginHandler
 {
     private static List<User> users;
     private static int lastUserId;
+    public static User loggedInUser { get; private set; }
 
     public static void LogIn()
     {
@@ -13,6 +14,13 @@ public class LoginHandler
 
         while (login)
         {
+            Console.CursorVisible = true;
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            
+            Console.WriteLine("Login to your account\n");
+
             Console.Write("E-mailadres: ");
             string username = Console.ReadLine();
 
@@ -41,27 +49,47 @@ public class LoginHandler
             {
                 if (userLogIn)
                 {
-                    Console.WriteLine("Login successful!");
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Login successful, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect password!");
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Incorrect password, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
                 }
             }
             else
             {
-                Console.WriteLine("E-mailadres does not exist!");
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("E-mailadres does not exist, press any key to continue");
+                Console.ResetColor();
+                Console.ReadKey();
             }
         }
     }
 
     public static void Register()
     {
-        Console.CursorVisible = true;
         LoadUsers();
         bool makeAccount = true;
+
+        AdHandler.DisplaySnacks();
         while (makeAccount)
         {
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+
+            Console.WriteLine("Registration\n");
+
+            Console.CursorVisible = true;
             Console.Write("First Name: ");
             string firstName = Console.ReadLine();
 
@@ -75,6 +103,16 @@ public class LoginHandler
             bool emailExists;
             do
             {
+                Console.Clear();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+
+                Console.WriteLine("Registration\n");
+                Console.WriteLine($"First Name: {firstName}");
+                Console.WriteLine($"Last Name: {lastName}");
+                Console.WriteLine($"Phone Number: {phoneNumber}");
+
+
                 Console.Write("Email: ");
                 email = Console.ReadLine();
 
@@ -83,7 +121,12 @@ public class LoginHandler
 
                 if (emailExists)
                 {
-                    Console.WriteLine("Email is already registered! Please choose a different email.");
+                    Console.ForegroundColor= ConsoleColor.Red;
+                    Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
+                    Console.CursorVisible= false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
                 }
 
             } while (emailExists);
@@ -93,14 +136,29 @@ public class LoginHandler
             PasswordValidator validator = new PasswordValidator();
 
             do
-            {   
+            {
+                Console.Clear();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+
+                Console.WriteLine("Registration\n");
+                Console.WriteLine($"First Name: {firstName}");
+                Console.WriteLine($"Last Name: {lastName}");
+                Console.WriteLine($"Phone Number: {phoneNumber}");
+                Console.WriteLine($"Email: {email}");
+
                 Console.WriteLine("\nPassword requirements: \n-Between 6 and 13 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
                 Console.Write("\nPassword: ");
                 password = Console.ReadLine();
                 validPassword = validator.IsValid(password);
                 if (!validPassword)
                 {
-                    Console.WriteLine("Password does not meet the requirements!");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Password does not meet the requirements, press any key to try again");
+                    Console.CursorVisible = false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
                 }
             } while (!validPassword);
 
@@ -137,6 +195,4 @@ public class LoginHandler
         string json = JsonConvert.SerializeObject(users, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(filename, json);
     }
-
-    public static User loggedInUser { get; private set; }
 }

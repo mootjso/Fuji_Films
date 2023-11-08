@@ -28,8 +28,8 @@ public static class Menu
             else
             {
                 DisplayAsciiArt.Header();
-            }
-            AdHandler.DisplaySnacks();
+                AdHandler.DisplaySnacks();
+            }            
           
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();

@@ -19,15 +19,11 @@ public class Program
                 {
                     //Login
                     case 0:
-                        Console.Clear();
-                        DisplayAsciiArt.Header();
                         LoginHandler.LogIn();
                         loggedIn = true;
                         break;
                     //Register
                     case 1:
-                        Console.Clear();
-                        DisplayAsciiArt.Header();
                         LoginHandler.Register();
                         loggedIn = true;
                         break;
