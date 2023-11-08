@@ -55,6 +55,7 @@ public static class AdminHandler
 
     public static void AddMovie()
     {
+        DisplayAsciiArt.AdminHeader();
         string title, language, description, genre;
         int id, runTime, genreCount;
         bool isAdult;
@@ -88,8 +89,8 @@ public static class AdminHandler
         {
             input += Console.ReadLine();
             if (input.Length > 0) 
-
                 break;
+            Console.WriteLine("Invalid input");
         }
         return input;
     }
@@ -113,12 +114,16 @@ public static class AdminHandler
     {
         Console.Write($"{information} (True/False): ");
         bool info = false;
-        string input = "";
+        string input;
         while (true)
         {
+            input = "";
             input += Console.ReadLine();
             if (!(input == "True" || input == "False"))
+            {
+                Console.WriteLine("Invalid input -> True or False");
                 continue;
+            }
             info = input switch
             {
                 "True" => true,
