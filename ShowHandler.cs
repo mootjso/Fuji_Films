@@ -92,7 +92,7 @@ public static class ShowHandler
 
             // Confirm or cancel selection
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader);
+            int selection = ConfirmSelection(show, movie, menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -102,7 +102,7 @@ public static class ShowHandler
             JSONMethods.WriteToJSON(Shows, FileName);
             
             Console.Clear();
-            DisplayAsciiArt.Header();
+            DisplayAsciiArt.AdminHeader();
             Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nThe show has been added");
@@ -129,7 +129,7 @@ public static class ShowHandler
         if (dates.Count <= 1)
         {
             Console.Clear();
-            DisplayAsciiArt.Header();
+            DisplayAsciiArt.AdminHeader();
             Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("\n\nThere are currently no shows scheduled");
@@ -164,8 +164,9 @@ public static class ShowHandler
             Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
 
             // Confirm or cancel selection
-            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader);
+            string theaterSize = show.TheaterNumber == 1 ? "Small (150 seats)" : show.TheaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
+            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {theaterSize}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
+            int selection = ConfirmSelection(show, movie, menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -176,7 +177,7 @@ public static class ShowHandler
 
             // Confirmation message
             Console.Clear();
-            DisplayAsciiArt.Header();
+            DisplayAsciiArt.AdminHeader();
             Console.WriteLine("Show Schedule");
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("\nThe show has been removed");
@@ -203,10 +204,10 @@ public static class ShowHandler
         return dates;
     }
 
-    private static int ConfirmSelection(Show show, Movie movie, string menuHeader)
+    private static int ConfirmSelection(Show show, Movie movie, string menuHeader, bool isAdmin = false)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
-        return Menu.Start(menuHeader, menuOptions);
+        return Menu.Start(menuHeader, menuOptions, isAdmin);
     }
 
     private static DateTime TimeSelection(Movie movieToAdd, string dateString)
@@ -217,7 +218,7 @@ public static class ShowHandler
         {
             Console.Clear();
             Console.CursorVisible = true;
-            DisplayAsciiArt.Header();
+            DisplayAsciiArt.AdminHeader();
             Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nDate: {dateString}");
             Console.Write("\nStart time of the movie (HH:mm): ");
             string? timeString = Console.ReadLine();
@@ -294,8 +295,8 @@ public static class ShowHandler
         List<DateTime> dates = new();
         foreach (var _show in ShowHandler.Shows)
         {
-            DateTime date = _show.DateAndTime;
-            if (date.Date >= DateTime.Today && !dates.Contains(date.Date))
+            DateTime date = _show.DateAndTime.Date;
+            if (date.Date >= DateTime.Today && !dates.Contains(date))
                 dates.Add(date);
         }
         List<DateTime> sortedDates = dates.OrderBy(d => d).ToList();
@@ -310,7 +311,7 @@ public static class ShowHandler
         foreach (var _show in shows)
         {
             Movie movie = MovieHandler.GetMovieById(_show.MovieId)!;
-            movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString}: {movie.Title}  ");
+            movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString} {movie.Title}  ");
         }
         movieMenuStrings.Add("Back");
         return movieMenuStrings;
@@ -321,8 +322,8 @@ public static class ShowHandler
         List<DateTime> dates = new();
         foreach (var _show in Shows)
         {
-            DateTime date = _show.DateAndTime;
-            if (!dates.Contains(date.Date))
+            DateTime date = _show.DateAndTime.Date;
+            if (!dates.Contains(date))
                 dates.Add(date);
         }
         List<DateTime> sortedDates = dates.OrderBy(d => d).ToList();
