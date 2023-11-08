@@ -87,7 +87,7 @@ public class LoginHandler
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Registration\n");
+            Console.WriteLine("Register new account\n");
 
             Console.CursorVisible = true;
             Console.Write("First Name: ");
@@ -107,7 +107,7 @@ public class LoginHandler
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
 
-                Console.WriteLine("Registration\n");
+                Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
                 Console.WriteLine($"Last Name: {lastName}");
                 Console.WriteLine($"Phone Number: {phoneNumber}");
@@ -141,7 +141,7 @@ public class LoginHandler
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
 
-                Console.WriteLine("Registration\n");
+                Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
                 Console.WriteLine($"Last Name: {lastName}");
                 Console.WriteLine($"Phone Number: {phoneNumber}");
@@ -167,7 +167,11 @@ public class LoginHandler
             loggedInUser = newUser;
             SaveUsers();
 
-            Console.WriteLine($"Account {email}, has been created!");
+            Console.CursorVisible = false;
+            Console.ForegroundColor= ConsoleColor.Green;
+            Console.WriteLine($"Account {email}, has been created, press any key to continue");
+            Console.ResetColor();
+            Console.ReadKey(true);
             makeAccount = false;
         }
     }

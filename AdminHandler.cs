@@ -42,11 +42,11 @@ public static class AdminHandler
                 case LogOutOption:
                     Console.Clear();
                     DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("\nBon Voyage, Captain!");
-                    Thread.Sleep(500);
+                    Console.WriteLine("\n\n         Bon Voyage, Captain!");
+                    Thread.Sleep(800);
                     Console.WriteLine("\nMay your guidance bring us waves of cinematic success! ");
-                    Thread.Sleep(2000);
-                    break;
+                    Thread.Sleep(1500);
+                    return;
                 default:
                     break;
             }
