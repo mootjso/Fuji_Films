@@ -22,14 +22,12 @@ public class Program
                         DisplayAsciiArt.Header();
                         LoginHandler.LogIn();
                         loggedIn = true;
-                        Console.ReadKey();
                         break;
                     case 1:
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         LoginHandler.Register();
                         loggedIn = true;
-                        Console.ReadKey();
                         break;
                     case 2:
                         Console.Clear();
