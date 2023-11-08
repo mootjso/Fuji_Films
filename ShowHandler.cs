@@ -206,7 +206,7 @@ public static class ShowHandler
     private static int ConfirmSelection(Show show, Movie movie, string menuHeader)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
-        return Menu.Start(menuHeader, menuOptions, true);
+        return Menu.Start(menuHeader, menuOptions);
     }
 
     private static DateTime TimeSelection(Movie movieToAdd, string dateString)
@@ -251,14 +251,14 @@ public static class ShowHandler
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
-                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption, true);
+                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption);
 
                 return null;
             }
 
             // Date selection
             dates.Add("Back");
-            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
+            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
             if (index == dates.Count || index == dates.Count - 1)
                 break;
 
@@ -270,7 +270,7 @@ public static class ShowHandler
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(moviesForDate);
 
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString, true);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
 
