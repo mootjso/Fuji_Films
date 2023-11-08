@@ -6,8 +6,6 @@ public class Program
 {
     private static void Main()
     {
-        ShowHandler.EditShowSchedule();
-        
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
