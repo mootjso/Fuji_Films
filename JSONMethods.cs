@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 public static class JSONMethods
 {
     public static string MovieFileName = "movies.json";
-    public static List<T> ReadJSON<T>(string fileName)
+    public static IEnumerable<T> ReadJSON<T>(string fileName)
     {
         if (File.Exists(fileName))
         {
@@ -12,7 +12,7 @@ public static class JSONMethods
             {
                 StreamReader reader = new(fileName);
                 string content = reader.ReadToEnd();
-                List<T> objList = JsonConvert.DeserializeObject<List<T>>(content)!;
+                IEnumerable<T> objList = JsonConvert.DeserializeObject<List<T>>(content)!;
                 reader.Close();
 
                 return objList;
@@ -23,7 +23,7 @@ public static class JSONMethods
             File.WriteAllText(fileName, "[]");
         }
 
-        return new List<T>();
+        return Enumerable.Empty<T>();
     }
 
     public static void WriteToJSON<T>(List<T> objList, string fileName)

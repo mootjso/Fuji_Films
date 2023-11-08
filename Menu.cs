@@ -13,7 +13,7 @@ public static class Menu
     static int selectedOption = 0;
     static ConsoleKeyInfo keyInfo;
 
-    public static int Start(string text, List<string> options)
+    public static int Start(string text, List<string> options, bool IsAdmin = false)
     {
         selectedOption = 0;
         Console.CursorVisible = false;
@@ -21,9 +21,16 @@ public static class Menu
         while (inMenu)
         {
             Console.Clear();
-            DisplayAsciiArt.Header();
-            //DisplayMenuLocation();  TODO Implement menu bar functionality
+            if (IsAdmin)
+            {
+                DisplayAsciiArt.AdminHeader();
+            }
+            else
+            {
+                DisplayAsciiArt.Header();
+            }
             AdHandler.DisplaySnacks();
+          
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)

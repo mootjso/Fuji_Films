@@ -10,7 +10,7 @@ public static class AppInitializer
     {
         if (File.Exists(MoviesFileName))
         {
-            return JSONMethods.ReadJSON<Movie>(MoviesFileName);
+            return JSONMethods.ReadJSON<Movie>(MoviesFileName).ToList();
         }
         else
         {
@@ -24,7 +24,7 @@ public static class AppInitializer
     {
         if (File.Exists(ShowsFileName))
         {
-            return JSONMethods.ReadJSON<Show>(ShowsFileName);
+            return JSONMethods.ReadJSON<Show>(ShowsFileName).ToList();
         }
         else
         {
@@ -38,7 +38,7 @@ public static class AppInitializer
     {
         if (File.Exists(ShowsFileName))
         {
-            return JSONMethods.ReadJSON<Theater>(TheatersFileName);
+            return JSONMethods.ReadJSON<Theater>(TheatersFileName).ToList();
         }
         else
         {
@@ -52,7 +52,7 @@ public static class AppInitializer
     {
         if (File.Exists(TicketsFileName))
         {
-            return JSONMethods.ReadJSON<Ticket>(TicketsFileName);
+            return JSONMethods.ReadJSON<Ticket>(TicketsFileName).ToList();
         }
         else
         {
