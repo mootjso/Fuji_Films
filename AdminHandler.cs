@@ -4,7 +4,7 @@ public static class AdminHandler
 {
     public static void StartMenu()
     {   
-        string MenuText = $"---------------------------------\n\n\n\nWelcome Captain!\n\nWhat would you like to do?";
+        string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
         List<string> MenuOptions = new() {"Financial report", "Add/Remove movie", "Change movie details", "Take out seat(s)", "Log out"};
         
         while (true)

@@ -13,6 +13,13 @@ public class LoginHandler
 
         while (login)
         {
+            Console.CursorVisible = true;
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            
+            Console.WriteLine("Login to your account\n");
+
             Console.Write("E-mailadres: ");
             string username = Console.ReadLine();
 
@@ -41,16 +48,28 @@ public class LoginHandler
             {
                 if (userLogIn)
                 {
-                    Console.WriteLine("Login successful!");
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Login successful, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect password!");
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Incorrect password, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
                 }
             }
             else
             {
-                Console.WriteLine("E-mailadres does not exist!");
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("E-mailadres does not exist, press any key to continue");
+                Console.ResetColor();
+                Console.ReadKey();
             }
         }
     }
@@ -60,8 +79,16 @@ public class LoginHandler
         Console.CursorVisible = true;
         LoadUsers();
         bool makeAccount = true;
+
+        AdHandler.DisplaySnacks();
         while (makeAccount)
         {
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+
+            Console.WriteLine("Registration\n");
+
             Console.Write("First Name: ");
             string firstName = Console.ReadLine();
 
@@ -75,6 +102,16 @@ public class LoginHandler
             bool emailExists;
             do
             {
+                Console.Clear();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+
+                Console.WriteLine("Registration\n");
+                Console.WriteLine($"First Name: {firstName}");
+                Console.WriteLine($"Last Name: {lastName}");
+                Console.WriteLine($"Phone Number: {phoneNumber}");
+
+
                 Console.Write("Email: ");
                 email = Console.ReadLine();
 
@@ -83,7 +120,11 @@ public class LoginHandler
 
                 if (emailExists)
                 {
-                    Console.WriteLine("Email is already registered! Please choose a different email.");
+                    Console.ForegroundColor= ConsoleColor.Red;
+                    Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
+                    Console.CursorVisible= false;
+                    Console.ResetColor();
+                    Console.ReadKey();
                 }
 
             } while (emailExists);
