@@ -56,6 +56,8 @@ public static class ShowHandler
             if (show.DateAndTime.Date == date.Date)
                 shows.Add(show);
         }
+        shows.Sort((s1, s2) => s1.DateAndTime.CompareTo(s2.DateAndTime));
+
         return shows;
     }
 
