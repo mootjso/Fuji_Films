@@ -6,8 +6,6 @@ public class Program
 {
     private static void Main()
     {
-        AdminHandler.StartMenu();
-        
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
@@ -16,6 +14,9 @@ public class Program
             bool loggedIn = false;
             while (!loggedIn)
             {
+                DisplayAsciiArt.Standby();
+                //DisplayAsciiArt.OpeningLogo();
+
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
@@ -36,7 +37,6 @@ public class Program
                         Thread.Sleep(1000);
                         Console.WriteLine("\n         We hope to see you soon!");
                         Thread.Sleep(1500);
-                        Environment.Exit(0);
                         break;
                     default:
                         break;
