@@ -6,6 +6,8 @@ public class Program
 {
     private static void Main()
     {
+        AdminHandler.StartMenu();
+        
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";

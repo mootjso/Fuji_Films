@@ -87,7 +87,7 @@ public class LoginHandler
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Registering new account\n");
+            Console.WriteLine("Register new account\n");
 
             Console.CursorVisible = true;
             Console.Write("First Name: ");

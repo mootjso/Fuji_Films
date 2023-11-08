@@ -21,6 +21,7 @@ public static class ShowHandler
         while (inMenu)
         {
             int index = Menu.Start("Show Schedule\n\nSelect an option:", menuOptions, true);
+
             switch (index)
             {
                 case 0:
@@ -30,6 +31,7 @@ public static class ShowHandler
                     AddShow();
                     break;
                 case 2:
+                case 3:
                     inMenu = false;
                     break;
                 default:
