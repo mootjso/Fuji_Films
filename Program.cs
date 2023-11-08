@@ -17,19 +17,19 @@ public class Program
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
+                    //Login
                     case 0:
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         LoginHandler.LogIn();
                         loggedIn = true;
-                        Console.ReadKey();
                         break;
+                    //Register
                     case 1:
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         LoginHandler.Register();
                         loggedIn = true;
-                        Console.ReadKey();
                         break;
                     case 2:
                         Console.Clear();
