@@ -15,20 +15,15 @@ public class Program
             while (!loggedIn)
             {
                 DisplayAsciiArt.Standby();
-                //DisplayAsciiArt.OpeningLogo();
 
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
-                    //Login
                     case 0:
-                        LoginHandler.LogIn();
-                        loggedIn = true;
+                        loggedIn = LoginHandler.LogIn();
                         break;
-                    //Register
                     case 1:
-                        LoginHandler.Register();
-                        loggedIn = true;
+                        loggedIn = LoginHandler.Register();
                         break;
                     case 2:
                         Console.Clear();
