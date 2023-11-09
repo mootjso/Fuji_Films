@@ -12,8 +12,11 @@ public class Reservation
 
     public static string GetReservationID()
     {
-        Guid ReservationID = Guid.NewGuid();
-        string ReservationIDString = ReservationID.ToString();
+        Guid ReservationGUID = Guid.NewGuid();
+        // Dit zorgt er voor dat de GUID geen "-" heeft zodat ik dit hieronder zelf kan toevoegen.
+        string ReservationID = ReservationGUID.ToString("N");
+        string ReservationIDString = $"{ReservationID.Substring(0, 4)}-{ReservationID.Substring(4, 4)}-{ReservationID.Substring(8, 4)}";
+
 
         Debug.WriteLine("Your UUID is: " + ReservationIDString);
         return ReservationIDString;
