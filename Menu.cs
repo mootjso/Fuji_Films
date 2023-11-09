@@ -13,7 +13,7 @@ public static class Menu
     static int selectedOption = 0;
     static ConsoleKeyInfo keyInfo;
 
-    public static int Start(string text, List<string> options)
+    public static int Start(string text, List<string> options, bool IsAdmin = false)
     {
         selectedOption = 0;
         Console.CursorVisible = false;
@@ -21,9 +21,16 @@ public static class Menu
         while (inMenu)
         {
             Console.Clear();
-            DisplayAsciiArt.Header();
-            DisplayMenuLocation();
-
+            if (IsAdmin)
+            {
+                DisplayAsciiArt.AdminHeader();
+            }
+            else
+            {
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+            }            
+          
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
@@ -70,13 +77,6 @@ public static class Menu
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select and left arrow to go back");
-        Console.ResetColor();
-    }
-
-    private static void DisplayMenuLocation()
-    {
-        Console.ForegroundColor= ConsoleColor.DarkGray;
-        Console.WriteLine("Main Menu > Current Movies [FUNCTIONALITY OF MENU BAR NOT IMPLEMENTED]\n");
         Console.ResetColor();
     }
 }
