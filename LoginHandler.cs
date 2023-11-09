@@ -6,7 +6,7 @@ public class LoginHandler
     private static int lastUserId;
     public static User loggedInUser { get; private set; }
 
-    public static void LogIn()
+    public static bool LogIn()
     {
         Console.CursorVisible = true;
         LoadUsers();
@@ -18,7 +18,7 @@ public class LoginHandler
             Console.Clear();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
-            
+
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
@@ -54,6 +54,7 @@ public class LoginHandler
                     Console.WriteLine("Login successful, press any key to continue");
                     Console.ResetColor();
                     Console.ReadKey();
+                    return true; 
                 }
                 else
                 {
@@ -73,9 +74,11 @@ public class LoginHandler
                 Console.ReadKey();
             }
         }
+
+        return false; 
     }
 
-    public static void Register()
+    public static bool Register()
     {
         LoadUsers();
         bool makeAccount = true;
@@ -112,18 +115,15 @@ public class LoginHandler
                 Console.WriteLine($"Last Name: {lastName}");
                 Console.WriteLine($"Phone Number: {phoneNumber}");
 
-
                 Console.Write("Email: ");
                 email = Console.ReadLine();
-
-                // Check if the email is already registered
                 emailExists = users.Any(user => user.Email == email);
 
                 if (emailExists)
                 {
-                    Console.ForegroundColor= ConsoleColor.Red;
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
-                    Console.CursorVisible= false;
+                    Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
                     Console.CursorVisible = true;
@@ -168,12 +168,16 @@ public class LoginHandler
             SaveUsers();
 
             Console.CursorVisible = false;
-            Console.ForegroundColor= ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Account {email}, has been created, press any key to continue");
             Console.ResetColor();
             Console.ReadKey(true);
             makeAccount = false;
+
+            return true; // Registration successful, return true
         }
+
+        return false; // Registration failed, return false
     }
 
     public static void LoadUsers()
@@ -184,7 +188,7 @@ public class LoginHandler
         {
             string json = File.ReadAllText(filename);
             users = JsonConvert.DeserializeObject<List<User>>(json);
-            lastUserId = users.Max(u => u.Id) ;
+            lastUserId = users.Max(u => u.Id);
         }
         else
         {
