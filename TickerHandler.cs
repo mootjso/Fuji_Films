@@ -6,7 +6,6 @@ public static class TicketHandler
     static TicketHandler()
     {
         Tickets = AppInitializer.GetTicketObjects();
-        
     }
 
     public static List<Ticket> GetTicketsByShowId(int showId)
@@ -20,11 +19,11 @@ public static class TicketHandler
 
     public static List<Ticket> GetTicketsByUser(User user)
     {
-        var ticketsUser = new List<Ticket>();
+        var tickersUser = new List<Ticket>();
         foreach (var ticket in Tickets)
             if (ticket.UserId == user.Id)
-                ticketsUser.Add(ticket);
-        return ticketsUser;
+                tickersUser.Add(ticket);
+        return tickersUser;
     }
 
     public static double GetTotalPrice(List<Ticket> tickets)

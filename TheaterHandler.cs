@@ -90,9 +90,8 @@ public static class TheaterHandler
                     {
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
-                        string ReservationId = Reservation.GetReservationID();
 
-                        Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
+                        Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor);
 
                         Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
                         Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");

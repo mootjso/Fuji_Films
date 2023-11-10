@@ -10,7 +10,7 @@ public static class MovieHandler
     
     public static Movie? GetMovieById(int id)
     {
-            foreach (var movie in Movies)
+        foreach (var movie in Movies)
             if (movie.Id == id) 
                 return movie;
         return null;
