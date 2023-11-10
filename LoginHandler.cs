@@ -62,7 +62,12 @@ public class LoginHandler
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Incorrect password, press any key to continue");
                     Console.ResetColor();
-                    Console.ReadKey();
+                    ConsoleKeyInfo key = Console.ReadKey();
+
+                    if (key.Key == ConsoleKey.LeftArrow) 
+                    {
+                        login = false; // Go back to the main menu 
+                    }
                 }
             }
             else

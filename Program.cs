@@ -21,6 +21,7 @@ public class Program
                 {
                     case 0:
                         loggedIn = LoginHandler.LogIn();
+                        // AdminHandler.StartMenu();
                         break;
                     case 1:
                         loggedIn = LoginHandler.Register();
@@ -51,15 +52,20 @@ public class Program
                         break;
                     case 1:
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
+                        if (selectedShow == null)
+                        {
+                            return;
+                        }
                         if (selectedShow is null)
                             continue;
 
                         var theater = TheaterHandler.CreateTheater(selectedShow);
 
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(LoginHandler.loggedInUser, theater);
+                        
                         if (tickets is null)
                             continue;
-
+                        //TicketHandler.SaveTicketsInJSON(tickets);
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
@@ -68,8 +74,21 @@ public class Program
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
-                        Console.ReadKey();
+                        if (t)
+                        {
+                            foreach (var ticket in tickets)
+                            {
+
+                                // Dit wordt een menu. Dit is voor nu een voorbeeld.
+                                Console.WriteLine($"Movie name: {movie.Title}\nReservation ID: {ticket.ReservationId}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("You have no reservations.");
+                        }
+                        Console.WriteLine("PRESS ANY KEY TO GO BACK");
+                        Console.ReadLine();
                         break;
                     case 3:
                         loggedIn = false;
