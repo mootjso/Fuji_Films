@@ -69,9 +69,14 @@ public class LoginHandler
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("E-mailadres does not exist, press any key to continue");
+                Console.WriteLine("E-mailadres does not exist, press left key to go back and any other key to continue");
                 Console.ResetColor();
-                Console.ReadKey();
+                ConsoleKeyInfo key = Console.ReadKey();
+
+                if (key.Key == ConsoleKey.LeftArrow) 
+                {
+                     login = false; // Go back to the main menu 
+                }
             }
         }
 
