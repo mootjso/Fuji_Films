@@ -9,7 +9,7 @@ public static class AppInitializer
     public static List<Movie> GetMovieObjects()
     {
         if (File.Exists(MoviesFileName))
-        {
+        {   
             return JSONMethods.ReadJSON<Movie>(MoviesFileName).ToList();
         }
         else
@@ -36,7 +36,7 @@ public static class AppInitializer
 
     public static List<Theater> GetTheaterObjects()
     {
-        if (File.Exists(ShowsFileName))
+        if (File.Exists(TheatersFileName))
         {
             return JSONMethods.ReadJSON<Theater>(TheatersFileName).ToList();
         }
