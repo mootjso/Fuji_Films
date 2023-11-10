@@ -18,7 +18,7 @@ public class Reservation
         string ReservationIDString = $"{ReservationID.Substring(0, 4)}-{ReservationID.Substring(4, 4)}-{ReservationID.Substring(8, 4)}";
 
 
-        Debug.WriteLine("Your UUID is: " + ReservationIDString);
+        Debug.WriteLine("Your Reservation code is: " + ReservationIDString);
         return ReservationIDString;
     }
 }
