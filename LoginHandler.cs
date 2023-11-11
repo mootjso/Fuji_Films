@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 
+
 public class LoginHandler
 {
     private static List<User> users;
@@ -54,6 +55,12 @@ public class LoginHandler
                     Console.WriteLine("Login successful, press any key to continue");
                     Console.ResetColor();
                     Console.ReadKey();
+
+                    if (loggedInUser.IsAdmin)
+                    {
+                        AdminHandler.StartMenu();
+                    }
+
                     return true;
                 }
                 else
@@ -180,7 +187,7 @@ public class LoginHandler
 
             } while (confirmPassword != password);
 
-            var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber);
+            var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber, false);
             users.Add(newUser);
             loggedInUser = newUser;
             SaveUsers();
@@ -243,7 +250,7 @@ public class LoginHandler
             }
         } while (key.Key != ConsoleKey.Enter);
 
-        Console.WriteLine(); 
+        Console.WriteLine();
         return password;
     }
 }
