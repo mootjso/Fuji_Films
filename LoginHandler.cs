@@ -1,8 +1,4 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 public class LoginHandler
 {
@@ -235,7 +231,6 @@ public class LoginHandler
         {
             key = Console.ReadKey(true);
 
-            // Ignore any key that is not a printable ASCII character or Enter
             if (char.IsLetterOrDigit(key.KeyChar) || char.IsSymbol(key.KeyChar) || char.IsPunctuation(key.KeyChar))
             {
                 password += key.KeyChar;
@@ -248,7 +243,7 @@ public class LoginHandler
             }
         } while (key.Key != ConsoleKey.Enter);
 
-        Console.WriteLine(); // Move to the next line after Enter is pressed
+        Console.WriteLine(); 
         return password;
     }
 }
