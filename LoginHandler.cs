@@ -1,4 +1,8 @@
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 public class LoginHandler
 {
@@ -16,8 +20,8 @@ public class LoginHandler
         {
             Console.CursorVisible = true;
             Console.Clear();
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
+            // DisplayAsciiArt.Header();
+            // AdHandler.DisplaySnacks();
 
             Console.WriteLine("Login to your account\n");
 
@@ -25,7 +29,7 @@ public class LoginHandler
             string username = Console.ReadLine();
 
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string password = GetMaskedPassword();
 
             bool userLogIn = false;
             bool accountExists = false;
@@ -54,7 +58,7 @@ public class LoginHandler
                     Console.WriteLine("Login successful, press any key to continue");
                     Console.ResetColor();
                     Console.ReadKey();
-                    return true; 
+                    return true;
                 }
                 else
                 {
@@ -75,7 +79,7 @@ public class LoginHandler
             }
         }
 
-        return false; 
+        return false;
     }
 
     public static bool Register()
@@ -83,12 +87,12 @@ public class LoginHandler
         LoadUsers();
         bool makeAccount = true;
 
-        AdHandler.DisplaySnacks();
+        // AdHandler.DisplaySnacks();
         while (makeAccount)
         {
             Console.Clear();
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
+            // DisplayAsciiArt.Header();
+            // AdHandler.DisplaySnacks();
 
             Console.WriteLine("Register new account\n");
 
@@ -107,8 +111,8 @@ public class LoginHandler
             do
             {
                 Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
+                // DisplayAsciiArt.Header();
+                // AdHandler.DisplaySnacks();
 
                 Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
@@ -138,8 +142,8 @@ public class LoginHandler
             do
             {
                 Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
+                // DisplayAsciiArt.Header();
+                // AdHandler.DisplaySnacks();
 
                 Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
@@ -149,7 +153,7 @@ public class LoginHandler
 
                 Console.WriteLine("\nPassword requirements: \n-Between 6 and 13 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
                 Console.Write("\nPassword: ");
-                password = Console.ReadLine();
+                password = GetMaskedPassword();
                 validPassword = validator.IsValid(password);
                 if (!validPassword)
                 {
@@ -161,6 +165,24 @@ public class LoginHandler
                     Console.CursorVisible = true;
                 }
             } while (!validPassword);
+
+            string confirmPassword;
+            do
+            {
+                Console.Write("Confirm Password: ");
+                confirmPassword = GetMaskedPassword();
+
+                if (confirmPassword != password)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Passwords do not match, press any key to try again");
+                    Console.CursorVisible = false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
+                }
+
+            } while (confirmPassword != password);
 
             var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber);
             users.Add(newUser);
@@ -202,5 +224,31 @@ public class LoginHandler
         string filename = "UserAccounts.json";
         string json = JsonConvert.SerializeObject(users, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(filename, json);
+    }
+
+    private static string GetMaskedPassword()
+    {
+        string password = "";
+        ConsoleKeyInfo key;
+
+        do
+        {
+            key = Console.ReadKey(true);
+
+            // Ignore any key that is not a printable ASCII character or Enter
+            if (char.IsLetterOrDigit(key.KeyChar) || char.IsSymbol(key.KeyChar) || char.IsPunctuation(key.KeyChar))
+            {
+                password += key.KeyChar;
+                Console.Write("*");
+            }
+            else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+            {
+                password = password.Substring(0, password.Length - 1);
+                Console.Write("\b \b");
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.WriteLine(); // Move to the next line after Enter is pressed
+        return password;
     }
 }
