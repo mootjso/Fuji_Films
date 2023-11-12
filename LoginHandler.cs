@@ -23,49 +23,40 @@ public class LoginHandler
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
-            string username = Console.ReadLine();
+            string inputted_email = Console.ReadLine();
 
-            Console.Write("Password: ");
-            string password = GetMaskedPassword();
+            User user = users.FirstOrDefault(u => u.Email == inputted_email);
 
-            bool userLogIn = false;
-            bool accountExists = false;
-
-            foreach (var user in users)
+            if (user != null)
             {
-                if (user.Email == username)
+                bool correctPassword = false;
+
+                do
                 {
-                    accountExists = true;
+                    Console.Write("Password: ");
+                    string password = GetMaskedPassword();
 
                     if (user.Password == password)
                     {
-                        userLogIn = true;
                         loggedInUser = user;
+                        correctPassword = true;
                         login = false;
                     }
-                }
-            }
-
-            if (accountExists)
-            {
-                if (userLogIn)
-                {
-                    Console.CursorVisible = false;
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Login successful, press any key to continue");
-                    Console.ResetColor();
-                    Console.ReadKey();
-
-                    return loggedInUser;
-                }
-                else
-                {
-                    Console.CursorVisible = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Incorrect password, press any key to continue");
-                    Console.ResetColor();
-                    Console.ReadKey();
-                }
+                    else
+                    {
+                        Console.CursorVisible = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Incorrect password, press any key to try again");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        AdHandler.DisplaySnacks();
+                        Console.WriteLine("Login to your account\n");
+                        Console.Write("E-mailadres: ");
+                        Console.WriteLine(inputted_email); 
+                    }
+                } while (!correctPassword);
             }
             else
             {
@@ -76,8 +67,16 @@ public class LoginHandler
                 Console.ReadKey();
             }
         }
-        return null; 
+
+        Console.CursorVisible = false;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Login successful, press any key to continue");
+        Console.ResetColor();
+        Console.ReadKey();
+
+        return loggedInUser;
     }
+
 
     public static User Register()
     {
@@ -124,7 +123,7 @@ public class LoginHandler
                 if (emailExists)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
+                    Console.WriteLine("Email is already registered, please choose a different inputted_email, press any key to continue");
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
