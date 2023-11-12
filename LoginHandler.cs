@@ -94,8 +94,8 @@ public class LoginHandler
         while (makeAccount)
         {
             Console.Clear();
-            // DisplayAsciiArt.Header();
-            // AdHandler.DisplaySnacks();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
 
             Console.WriteLine("Register new account\n");
 
@@ -114,8 +114,8 @@ public class LoginHandler
             do
             {
                 Console.Clear();
-                // DisplayAsciiArt.Header();
-                // AdHandler.DisplaySnacks();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
 
                 Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
@@ -145,8 +145,8 @@ public class LoginHandler
             do
             {
                 Console.Clear();
-                // DisplayAsciiArt.Header();
-                // AdHandler.DisplaySnacks();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
 
                 Console.WriteLine("Register new account\n");
                 Console.WriteLine($"First Name: {firstName}");
@@ -199,10 +199,10 @@ public class LoginHandler
             Console.ReadKey(true);
             makeAccount = false;
 
-            return true; // Registration successful, return true
+            return true; 
         }
 
-        return false; // Registration failed, return false
+        return false;
     }
 
     public static void LoadUsers()
