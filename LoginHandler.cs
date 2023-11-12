@@ -1,5 +1,4 @@
 using Newtonsoft.Json;
-
 public class LoginHandler
 {
     private static List<User> users;
@@ -54,7 +53,7 @@ public class LoginHandler
                         AdHandler.DisplaySnacks();
                         Console.WriteLine("Login to your account\n");
                         Console.Write("E-mailadres: ");
-                        Console.WriteLine(inputted_email); 
+                        Console.WriteLine(inputted_email);
                     }
                 } while (!correctPassword);
             }
@@ -77,12 +76,10 @@ public class LoginHandler
         return loggedInUser;
     }
 
-
     public static User Register()
     {
         LoadUsers();
         bool makeAccount = true;
-
         User newUser = null;
 
         while (makeAccount)
@@ -101,10 +98,39 @@ public class LoginHandler
             string lastName = Console.ReadLine();
 
             Console.Write("Phone Number: ");
-            string phoneNumber = Console.ReadLine();
+            string phoneNumber;
+            bool validPhoneNumber;
+            PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
+
+            do
+            {
+                Console.Clear();
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+
+                Console.WriteLine("Register new account\n");
+                Console.WriteLine($"First Name: {firstName}");
+                Console.WriteLine($"Last Name: {lastName}");
+
+                Console.Write("Phone Number: ");
+                phoneNumber = Console.ReadLine();
+                validPhoneNumber = phoneNumberValidator.IsValid(phoneNumber);
+
+                if (!validPhoneNumber)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid phone number, please enter a valid number with 8 to 15 digits, press any key to continue");
+                    Console.CursorVisible = false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
+                }
+            } while (!validPhoneNumber);
 
             string email;
-            bool emailExists;
+            bool validEmail;
+            EmailValidator emailValidator = new EmailValidator();
+
             do
             {
                 Console.Clear();
@@ -118,23 +144,23 @@ public class LoginHandler
 
                 Console.Write("Email: ");
                 email = Console.ReadLine();
-                emailExists = users.Any(user => user.Email == email);
+                validEmail = emailValidator.IsValid(email);
 
-                if (emailExists)
+                if (!validEmail)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Email is already registered, please choose a different inputted_email, press any key to continue");
+                    Console.WriteLine("Invalid email, please enter a valid email address with '@', press any key to continue");
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
                     Console.CursorVisible = true;
                 }
 
-            } while (emailExists);
+            } while (!validEmail);
 
             string password;
             bool validPassword;
-            PasswordValidator validator = new PasswordValidator();
+            PasswordValidator passwordValidator = new PasswordValidator();
 
             do
             {
@@ -151,7 +177,8 @@ public class LoginHandler
                 Console.WriteLine("\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
                 Console.Write("\nPassword: ");
                 password = GetMaskedPassword();
-                validPassword = validator.IsValid(password);
+                validPassword = passwordValidator.IsValid(password);
+
                 if (!validPassword)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -216,7 +243,7 @@ public class LoginHandler
     public static void SaveUsers()
     {
         string filename = "UserAccounts.json";
-        string json = JsonConvert.SerializeObject(users, Newtonsoft.Json.Formatting.Indented);
+        string json = JsonConvert.SerializeObject(users, Formatting.Indented);
         File.WriteAllText(filename, json);
     }
 
