@@ -1,13 +1,18 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
 public class Program
 {
     private static void Main()
     {
+        User? loggedInUser = null;
 
-        User loggedInUser = null;
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
+
             while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
@@ -21,7 +26,7 @@ public class Program
                         if (loggedInUser.IsAdmin)
                         {
                             AdminHandler.StartMenu();
-                            break;// Admin Shutdown
+                            loggedInUser = null;
                         }
                         break;
                     case 1:
@@ -40,14 +45,12 @@ public class Program
                         break;
                 }
             }
-            string userGreeting = loggedInUser.IsAdmin
-                ? "Hello, Admin!\n"
-                : $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
 
             List<string> menuOptionsLoggedIn = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
             while (loggedInUser != null)
             {
-                int selection = Menu.Start(userGreeting, menuOptionsLoggedIn);
+                menuText = $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
+                int selection = Menu.Start(menuText, menuOptionsLoggedIn);
                 switch (selection)
                 {
                     case 0:
@@ -55,6 +58,7 @@ public class Program
                         MovieHandler.ViewCurrentMovies();
                         break;
                     case 1:
+                        Console.Clear();
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
                         if (selectedShow is null)
                             continue;
@@ -78,6 +82,12 @@ public class Program
                         break;
                     case 3:
                         loggedInUser = null;
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\nThank you for your visit!");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("\nWe hope to see you soon!");
+                        Thread.Sleep(1500);
                         break;
                     default:
                         break;
