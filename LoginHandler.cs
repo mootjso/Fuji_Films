@@ -6,7 +6,7 @@ public class LoginHandler
     private static int lastUserId;
     public static User loggedInUser { get; private set; }
 
-    public static bool LogIn()
+    public static User LogIn()
     {
         Console.CursorVisible = true;
         LoadUsers();
@@ -16,6 +16,7 @@ public class LoginHandler
         {
             Console.CursorVisible = true;
             Console.Clear();
+
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
@@ -25,7 +26,7 @@ public class LoginHandler
             string username = Console.ReadLine();
 
             Console.Write("Password: ");
-            string password = Console.ReadLine();
+            string password = GetMaskedPassword();
 
             bool userLogIn = false;
             bool accountExists = false;
@@ -54,7 +55,8 @@ public class LoginHandler
                     Console.WriteLine("Login successful, press any key to continue");
                     Console.ResetColor();
                     Console.ReadKey();
-                    return true; 
+
+                    return loggedInUser;
                 }
                 else
                 {
@@ -84,16 +86,16 @@ public class LoginHandler
                 }
             }
         }
-
-        return false; 
+        return null; 
     }
 
-    public static bool Register()
+    public static User Register()
     {
         LoadUsers();
         bool makeAccount = true;
 
-        AdHandler.DisplaySnacks();
+        User newUser = null;
+
         while (makeAccount)
         {
             Console.Clear();
@@ -159,7 +161,7 @@ public class LoginHandler
 
                 Console.WriteLine("\nPassword requirements: \n-Between 6 and 13 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
                 Console.Write("\nPassword: ");
-                password = Console.ReadLine();
+                password = GetMaskedPassword();
                 validPassword = validator.IsValid(password);
                 if (!validPassword)
                 {
@@ -172,7 +174,25 @@ public class LoginHandler
                 }
             } while (!validPassword);
 
-            var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber);
+            string confirmPassword;
+            do
+            {
+                Console.Write("Confirm Password: ");
+                confirmPassword = GetMaskedPassword();
+
+                if (confirmPassword != password)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Passwords do not match, press any key to try again");
+                    Console.CursorVisible = false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
+                }
+
+            } while (confirmPassword != password);
+
+            newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber, false);
             users.Add(newUser);
             loggedInUser = newUser;
             SaveUsers();
@@ -183,11 +203,8 @@ public class LoginHandler
             Console.ResetColor();
             Console.ReadKey(true);
             makeAccount = false;
-
-            return true; // Registration successful, return true
         }
-
-        return false; // Registration failed, return false
+        return newUser;
     }
 
     public static void LoadUsers()
@@ -212,5 +229,30 @@ public class LoginHandler
         string filename = "UserAccounts.json";
         string json = JsonConvert.SerializeObject(users, Newtonsoft.Json.Formatting.Indented);
         File.WriteAllText(filename, json);
+    }
+
+    private static string GetMaskedPassword()
+    {
+        string password = "";
+        ConsoleKeyInfo key;
+
+        do
+        {
+            key = Console.ReadKey(true);
+
+            if (char.IsLetterOrDigit(key.KeyChar) || char.IsSymbol(key.KeyChar) || char.IsPunctuation(key.KeyChar))
+            {
+                password += key.KeyChar;
+                Console.Write("*");
+            }
+            else if (key.Key == ConsoleKey.Backspace && password.Length > 0)
+            {
+                password = password.Substring(0, password.Length - 1);
+                Console.Write("\b \b");
+            }
+        } while (key.Key != ConsoleKey.Enter);
+
+        Console.WriteLine();
+        return password;
     }
 }

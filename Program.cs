@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
 public class Program
 {
     private static void Main()
     {
+        User? loggedInUser = null;
+
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
 
-            bool loggedIn = false;
-            while (!loggedIn)
+            while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
 
@@ -20,29 +17,35 @@ public class Program
                 switch (selection)
                 {
                     case 0:
-                        loggedIn = LoginHandler.LogIn();
-                        // AdminHandler.StartMenu();
+                        loggedInUser = LoginHandler.LogIn();
+
+                        if (loggedInUser.IsAdmin)
+                        {
+                            AdminHandler.StartMenu();
+                            loggedInUser = null;
+                        }
                         break;
                     case 1:
-                        loggedIn = LoginHandler.Register();
+                        loggedInUser = LoginHandler.Register();
                         break;
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n         Thank you for your visit!");
+                        Console.WriteLine("\n\nThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\n         We hope to see you soon!");
+                        Console.WriteLine("\nWe hope to see you soon!");
                         Thread.Sleep(1500);
+                        Environment.Exit(0);
                         break;
                     default:
                         break;
                 }
             }
 
-            menuText = $"Hello, {LoginHandler.loggedInUser.FirstName} {LoginHandler.loggedInUser.LastName}\n";
             List<string> menuOptionsLoggedIn = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
-            while (loggedIn)
+            while (loggedInUser != null)
             {
+                menuText = $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
                 int selection = Menu.Start(menuText, menuOptionsLoggedIn);
                 switch (selection)
                 {
@@ -51,6 +54,7 @@ public class Program
                         MovieHandler.ViewCurrentMovies();
                         break;
                     case 1:
+                        Console.Clear();
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
                         if (selectedShow == null)
                         {
@@ -61,8 +65,7 @@ public class Program
 
                         var theater = TheaterHandler.CreateTheater(selectedShow);
 
-                        List<Ticket>? tickets = TheaterHandler.SelectSeats(LoginHandler.loggedInUser, theater);
-                        
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater);
                         if (tickets is null)
                             continue;
                         //TicketHandler.SaveTicketsInJSON(tickets);
@@ -91,7 +94,13 @@ public class Program
                         Console.ReadLine();
                         break;
                     case 3:
-                        loggedIn = false;
+                        loggedInUser = null;
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\nThank you for your visit!");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("\nWe hope to see you soon!");
+                        Thread.Sleep(1500);
                         break;
                     default:
                         break;

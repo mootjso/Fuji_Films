@@ -6,9 +6,9 @@
     public string Email { get; set; }
     public string Password { get; set; }
     public string PhoneNumber { get; set; }
-    private List<Ticket> ReservedTickets = new();
+    public bool IsAdmin { get; set; }
 
-    public User(int id, string firstName, string lastName, string email, string password, string phoneNumber)
+    public User(int id, string firstName, string lastName, string email, string password, string phoneNumber, bool isAdmin)
     {
         Id = id;
         FirstName = firstName;
@@ -16,8 +16,7 @@
         Email = email;
         Password = password;
         PhoneNumber = phoneNumber;
-        ReservedTickets = TicketHandler.GetTicketsByUser(this);
-         
+        IsAdmin = isAdmin;
     }
     public List<Ticket> GetTickets() => ReservedTickets;
 

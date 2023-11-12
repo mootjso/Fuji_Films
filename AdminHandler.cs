@@ -1,5 +1,3 @@
-using System.ComponentModel.Design;
-
 public static class AdminHandler
 {
     public static void StartMenu()
