@@ -2,7 +2,7 @@
 {
     public bool IsValid(string password)
     {
-        if (password.Length < 6 || password.Length > 13)
+        if (password.Length < 6 || password.Length > 256)
             return false;
 
         if (!HasUppercase(password) || !HasLowercase(password) || !HasDigits(password))

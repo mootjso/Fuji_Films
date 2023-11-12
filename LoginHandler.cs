@@ -148,7 +148,7 @@ public class LoginHandler
                 Console.WriteLine($"Phone Number: {phoneNumber}");
                 Console.WriteLine($"Email: {email}");
 
-                Console.WriteLine("\nPassword requirements: \n-Between 6 and 13 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
+                Console.WriteLine("\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
                 Console.Write("\nPassword: ");
                 password = GetMaskedPassword();
                 validPassword = validator.IsValid(password);
