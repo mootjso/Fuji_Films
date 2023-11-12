@@ -1,5 +1,15 @@
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
+public enum UserType
+{
+    RegularUser,
+    AdminUser,
+    InvalidUser
+}
 
 public class LoginHandler
 {
@@ -7,7 +17,7 @@ public class LoginHandler
     private static int lastUserId;
     public static User loggedInUser { get; private set; }
 
-    public static bool LogIn()
+    public static UserType LogIn()
     {
         Console.CursorVisible = true;
         LoadUsers();
@@ -17,9 +27,6 @@ public class LoginHandler
         {
             Console.CursorVisible = true;
             Console.Clear();
-            // DisplayAsciiArt.Header();
-            // AdHandler.DisplaySnacks();
-
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
@@ -58,10 +65,12 @@ public class LoginHandler
 
                     if (loggedInUser.IsAdmin)
                     {
-                        AdminHandler.StartMenu();
+                        return UserType.AdminUser; // Indicate admin user login
                     }
-
-                    return true;
+                    else
+                    {
+                        return UserType.RegularUser; // Indicate regular user login
+                    }
                 }
                 else
                 {
@@ -82,7 +91,7 @@ public class LoginHandler
             }
         }
 
-        return false;
+        return UserType.InvalidUser; // Indicate invalid user login
     }
 
     public static bool Register()
@@ -90,7 +99,6 @@ public class LoginHandler
         LoadUsers();
         bool makeAccount = true;
 
-        // AdHandler.DisplaySnacks();
         while (makeAccount)
         {
             Console.Clear();
@@ -199,7 +207,7 @@ public class LoginHandler
             Console.ReadKey(true);
             makeAccount = false;
 
-            return true; 
+            return true;
         }
 
         return false;

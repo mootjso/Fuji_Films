@@ -7,38 +7,34 @@ public class Program
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
 
-            bool loggedIn = false;
-            while (!loggedIn)
+            UserType userType = UserType.InvalidUser;
+            while (userType == UserType.InvalidUser)
             {
                 DisplayAsciiArt.Standby();
 
-                int selection = Menu.Start(menuText, menuOptions);
-                switch (selection)
+                userType = LoginHandler.LogIn();
+                switch (userType)
                 {
-                    case 0:
-                        loggedIn = LoginHandler.LogIn();
+                    case UserType.RegularUser:
                         break;
-                    case 1:
-                        loggedIn = LoginHandler.Register();
+                    case UserType.AdminUser:
+                        AdminHandler.StartMenu();
                         break;
-                    case 2:
-                        Console.Clear();
-                        DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n         Thank you for your visit!");
-                        Thread.Sleep(1000);
-                        Console.WriteLine("\n         We hope to see you soon!");
-                        Thread.Sleep(1500);
+                    case UserType.InvalidUser:
                         break;
                     default:
                         break;
                 }
             }
 
-            menuText = $"Hello, {LoginHandler.loggedInUser.FirstName} {LoginHandler.loggedInUser.LastName}\n";
+            string userGreeting = userType == UserType.RegularUser
+                ? $"Hello, {LoginHandler.loggedInUser.FirstName} {LoginHandler.loggedInUser.LastName}\n"
+                : "Hello, Admin!\n";
+
             List<string> menuOptionsLoggedIn = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
-            while (loggedIn)
+            while (userType == UserType.RegularUser)
             {
-                int selection = Menu.Start(menuText, menuOptionsLoggedIn);
+                int selection = Menu.Start(userGreeting, menuOptionsLoggedIn);
                 switch (selection)
                 {
                     case 0:
@@ -68,7 +64,7 @@ public class Program
                         Console.ReadKey();
                         break;
                     case 3:
-                        loggedIn = false;
+                        userType = UserType.InvalidUser;
                         break;
                     default:
                         break;
