@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+
 public class Program
 {
     private static void Main()
@@ -7,32 +11,46 @@ public class Program
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
 
-            UserType userType = UserType.InvalidUser;
-            while (userType == UserType.InvalidUser)
+            User loggedInUser = null;
+            while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
 
-                userType = LoginHandler.LogIn();
-                switch (userType)
+                int selection = Menu.Start(menuText, menuOptions);
+                switch (selection)
                 {
-                    case UserType.RegularUser:
+                    case 0:
+                        loggedInUser = LoginHandler.LogIn();
+
+                        if (loggedInUser.IsAdmin)
+                        {
+                            AdminHandler.StartMenu();
+                            return; // Admin Shutdown
+                        }
                         break;
-                    case UserType.AdminUser:
-                        AdminHandler.StartMenu();
+                    case 1:
+                        loggedInUser = LoginHandler.Register();
                         break;
-                    case UserType.InvalidUser:
+                    case 2:
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\nThank you for your visit!");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("\nWe hope to see you soon!");
+                        Thread.Sleep(1500);
+                        Environment.Exit(0);
                         break;
                     default:
                         break;
                 }
             }
 
-            string userGreeting = userType == UserType.RegularUser
-                ? $"Hello, {LoginHandler.loggedInUser.FirstName} {LoginHandler.loggedInUser.LastName}\n"
-                : "Hello, Admin!\n";
+            string userGreeting = loggedInUser.IsAdmin
+                ? "Hello, Admin!\n"
+                : $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
 
             List<string> menuOptionsLoggedIn = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
-            while (userType == UserType.RegularUser)
+            while (loggedInUser != null)
             {
                 int selection = Menu.Start(userGreeting, menuOptionsLoggedIn);
                 switch (selection)
@@ -48,7 +66,7 @@ public class Program
 
                         var theater = TheaterHandler.CreateTheater(selectedShow);
 
-                        List<Ticket>? tickets = TheaterHandler.SelectSeats(LoginHandler.loggedInUser, theater);
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater);
                         if (tickets is null)
                             continue;
 
@@ -64,7 +82,7 @@ public class Program
                         Console.ReadKey();
                         break;
                     case 3:
-                        userType = UserType.InvalidUser;
+                        loggedInUser = null; // Log out the user
                         break;
                     default:
                         break;

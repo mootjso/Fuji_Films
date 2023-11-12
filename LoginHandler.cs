@@ -1,15 +1,4 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
-public enum UserType
-{
-    RegularUser,
-    AdminUser,
-    InvalidUser
-}
 
 public class LoginHandler
 {
@@ -17,7 +6,7 @@ public class LoginHandler
     private static int lastUserId;
     public static User loggedInUser { get; private set; }
 
-    public static UserType LogIn()
+    public static User LogIn()
     {
         Console.CursorVisible = true;
         LoadUsers();
@@ -63,14 +52,7 @@ public class LoginHandler
                     Console.ResetColor();
                     Console.ReadKey();
 
-                    if (loggedInUser.IsAdmin)
-                    {
-                        return UserType.AdminUser; // Indicate admin user login
-                    }
-                    else
-                    {
-                        return UserType.RegularUser; // Indicate regular user login
-                    }
+                    return loggedInUser;
                 }
                 else
                 {
@@ -90,14 +72,15 @@ public class LoginHandler
                 Console.ReadKey();
             }
         }
-
-        return UserType.InvalidUser; // Indicate invalid user login
+        return null; 
     }
 
-    public static bool Register()
+    public static User Register()
     {
         LoadUsers();
         bool makeAccount = true;
+
+        User newUser = null;
 
         while (makeAccount)
         {
@@ -195,7 +178,7 @@ public class LoginHandler
 
             } while (confirmPassword != password);
 
-            var newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber, false);
+            newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber, false);
             users.Add(newUser);
             loggedInUser = newUser;
             SaveUsers();
@@ -206,11 +189,8 @@ public class LoginHandler
             Console.ResetColor();
             Console.ReadKey(true);
             makeAccount = false;
-
-            return true;
         }
-
-        return false;
+        return newUser;
     }
 
     public static void LoadUsers()
