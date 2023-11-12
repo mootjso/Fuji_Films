@@ -16,6 +16,10 @@ public class LoginHandler
         {
             Console.CursorVisible = true;
             Console.Clear();
+
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
