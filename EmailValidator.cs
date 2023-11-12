@@ -2,7 +2,8 @@
 {
     public bool IsValid(string email)
     {
-        // Check if the email contains "@" symbol.
-        return email.Contains("@");
+        if (email.Length < 4 || !email.Contains("@"))
+            return false;
+        return true;
     }
 }
