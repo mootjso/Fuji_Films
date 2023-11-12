@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+
 public class LoginHandler
 {
     private static List<User> users;
@@ -155,9 +156,20 @@ public class LoginHandler
                     Console.ReadKey();
                     Console.CursorVisible = true;
                 }
+                else if (users.Any(user => user.Email == email))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
+                    Console.CursorVisible = false;
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.CursorVisible = true;
+                    validEmail = false; // To continue the loop
+                }
 
             } while (!validEmail);
 
+            // Password entry and validation
             string password;
             bool validPassword;
             PasswordValidator passwordValidator = new PasswordValidator();
@@ -190,6 +202,7 @@ public class LoginHandler
                 }
             } while (!validPassword);
 
+            // Confirm password entry
             string confirmPassword;
             do
             {
