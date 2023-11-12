@@ -2,12 +2,12 @@ public class Program
 {
     private static void Main()
     {
+
+        User loggedInUser = null;
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
-
-            User loggedInUser = null;
             while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
@@ -21,7 +21,7 @@ public class Program
                         if (loggedInUser.IsAdmin)
                         {
                             AdminHandler.StartMenu();
-                            return; // Admin Shutdown
+                            break;// Admin Shutdown
                         }
                         break;
                     case 1:
