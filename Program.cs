@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
 public class Program
 {
     private static void Main()
@@ -44,7 +40,6 @@ public class Program
                         break;
                 }
             }
-
             string userGreeting = loggedInUser.IsAdmin
                 ? "Hello, Admin!\n"
                 : $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
@@ -82,7 +77,7 @@ public class Program
                         Console.ReadKey();
                         break;
                     case 3:
-                        loggedInUser = null; // Log out the user
+                        loggedInUser = null;
                         break;
                     default:
                         break;
