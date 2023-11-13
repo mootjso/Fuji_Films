@@ -21,10 +21,10 @@ public class Reservation
         return ReservationIDString;
     }
 
-    // public static void GetReservations()
-    // {
-    //     List<Ticket> AllTickets = JSONMethods.ReadJSON<Ticket>(JSONMethods.TicketHandler.FileName).ToList();
+    public static void GetReservations()
+    {
+     List<Ticket> AllTickets = JSONMethods.ReadJSON<Ticket>(JSONMethods.TicketHandler.FileName).ToList();
 
-    // }
+    }
 
 }
