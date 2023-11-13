@@ -281,7 +281,7 @@ public static class ShowHandler
 
             // Confirm Selection
             Show show = moviesForDate[index];
-            Movie movie = MovieHandler.GetMovieById(show.Id)!;
+            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
             string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString} at {show.StartTimeString}:";
             int selection = ConfirmSelection(show, movie, confirmationMessage);
             if (!(selection == 0))
