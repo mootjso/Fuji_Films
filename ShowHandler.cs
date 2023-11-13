@@ -68,6 +68,20 @@ public static class ShowHandler
         {
             // Movie Selection
             List<string> movieTitles = MovieHandler.GetMovieTitles();
+            if (movieTitles.Count == 0)
+            {
+                Console.Clear();
+                DisplayAsciiArt.AdminHeader();
+                Console.WriteLine("Show Schedule");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\n\nCan't add showing as there are no movies available");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\n\nPress any key to go back");
+                Console.ResetColor();
+                Console.ReadKey();
+                return;
+            }
+
             int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles, true);
             if (index == movieTitles.Count)  // If user presses left arrow key leave current while loop
                 break;
