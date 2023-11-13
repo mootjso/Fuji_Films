@@ -55,8 +55,7 @@ public static class AdminHandler
     {
         DisplayAsciiArt.AdminHeader();
         string title, language, description, genre;
-        int id, runTime, genreCount;
-        bool isAdult;
+        int id, runTime, genreCount, ageRating;
         List<string> genres = new();
 
         id = GetInputDataInt("ID");
@@ -72,10 +71,10 @@ public static class AdminHandler
         }
 
         runTime = GetInputDataInt("Runtime");
-        isAdult = GetInputDataBool("IsAdult");
+        ageRating = GetInputDataInt("AgeRating");
 
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
-        movies.Add(new Movie(id, title, language, description, genres, runTime, isAdult));
+        movies.Add(new Movie(id, title, language, description, genres, runTime, ageRating));
         JSONMethods.WriteToJSON<Movie>(movies, JSONMethods.MovieFileName);
     }
 
@@ -106,30 +105,5 @@ public static class AdminHandler
             }
             Console.WriteLine("Invalid number");
         }
-    }
-
-    private static bool GetInputDataBool(string information)
-    {
-        Console.Write($"{information} (True/False): ");
-        bool info = false;
-        string input;
-        while (true)
-        {
-            input = "";
-            input += Console.ReadLine();
-            if (!(input == "True" || input == "False"))
-            {
-                Console.WriteLine("Invalid input -> True or False");
-                continue;
-            }
-            info = input switch
-            {
-                "True" => true,
-                "False" => false,
-                _ => false
-            };
-            break;
-        }
-        return info;
     }
 }
