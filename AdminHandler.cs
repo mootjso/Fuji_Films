@@ -71,7 +71,7 @@ public static class AdminHandler
         }
 
         runTime = GetInputDataInt("Runtime");
-        ageRating = GetInputDataInt("AgeRating");
+        ageRating = GetInputDataInt("Age Rating");
 
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
         movies.Add(new Movie(id, title, language, description, genres, runTime, ageRating));
