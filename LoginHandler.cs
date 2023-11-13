@@ -150,7 +150,7 @@ public class LoginHandler
                 if (!validEmail)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid email, please enter a valid email address with atleast 4 characters, press any key to continue");
+                    Console.WriteLine("Invalid email, please enter a valid email address with atleast 4 characters and an "@", press any key to continue");
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
