@@ -27,7 +27,7 @@ public static class MovieHandler
         }
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
-        Console.WriteLine($"IsAdult: {movie.IsAdult}");
+        Console.WriteLine($"Age Rating: {movie.AgeRating}");
     }
 
     public static void DisplayMovieDetails(Movie movie)
