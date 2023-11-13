@@ -260,6 +260,54 @@ public class LoginHandler
         File.WriteAllText(filename, json);
     }
 
+    public class PasswordValidator
+    {
+        public bool IsValid(string password)
+        {
+            if (password.Length < 6 || password.Length > 256)
+                return false;
+
+            if (!HasUppercase(password) || !HasLowercase(password) || !HasDigits(password))
+                return false;
+
+            return true;
+        }
+
+        private bool HasUppercase(string password)
+        {
+            foreach (char letter in password)
+                if (char.IsUpper(letter)) return true;
+
+            return false;
+        }
+
+        private bool HasLowercase(string password)
+        {
+            foreach (char letter in password)
+                if (char.IsLower(letter)) return true;
+
+            return false;
+        }
+
+        private bool HasDigits(string password)
+        {
+            foreach (char letter in password)
+                if (char.IsDigit(letter)) return true;
+
+            return false;
+        }
+
+    }
+
+    public class PhoneNumberValidator
+    {
+        public bool IsValid(string phoneNumber)
+        {
+            // Check if the phone number contains only digits and has a length between 8 and 15.
+            return System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
+        }
+    }
+
     private static string GetMaskedPassword()
     {
         string password = "";
