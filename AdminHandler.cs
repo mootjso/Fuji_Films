@@ -3,7 +3,7 @@ public static class AdminHandler
     public static void StartMenu()
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Add/Remove movie", "Change movie details", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial report", "Add movie", "Add/Remove show","Change movie details", "Take out seat(s)", "Log out"};
         
         while (true)
         {   
@@ -11,9 +11,10 @@ public static class AdminHandler
 
             const int FinancialReportOption = 0;
             const int AddRemoveMovieOption = 1;
-            const int ChangeMovieDetailsOption = 2;
-            const int TakeOutSeatsOption = 3;
-            const int LogOutOption = 4;
+            const int AddRemoveShowOption = 2;
+            const int ChangeMovieDetailsOption = 3;
+            const int TakeOutSeatsOption = 4;
+            const int LogOutOption = 5;
   
             switch (selection)
             {
@@ -24,6 +25,10 @@ public static class AdminHandler
                     Console.ReadKey();
                     break;
                 case AddRemoveMovieOption:
+                    Console.Clear();
+                    AddMovie();
+                    break;
+                case AddRemoveShowOption:
                     Console.Clear();
                     ShowHandler.EditShowSchedule();
                     break;       
