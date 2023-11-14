@@ -18,6 +18,4 @@
         PhoneNumber = phoneNumber;
         IsAdmin = isAdmin;
     }
-    public List<Ticket> GetTickets() => ReservedTickets;
-
 }
