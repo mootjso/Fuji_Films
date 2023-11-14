@@ -24,7 +24,7 @@ public static class TheaterHandler
         return theater;
     }
 
-    public static List<Ticket>? SelectSeats(User user, Theater theater)
+    public static List<Ticket>? SelectSeats(User user, Theater theater, string ReservationId)
     {
         Console.CursorVisible = false;
 
