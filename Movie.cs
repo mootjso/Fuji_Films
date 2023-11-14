@@ -7,9 +7,9 @@
     public string Description { get; set; }
     public List<string> Genres { get; set; }
     public int Runtime { get; set; }
-    public bool IsAdult { get; set; }
+    public int AgeRating { get; set; }
 
-    public Movie(int id, string title, string language, string description, List<string> genres, int runtime, bool isAdult)
+    public Movie(int id, string title, string language, string description, List<string> genres, int runtime, int ageRating)
     {
         Id = id;
         Title = title;
@@ -17,6 +17,6 @@
         Description = description;
         Genres = genres;
         Runtime = runtime;
-        IsAdult = isAdult;
+        AgeRating = ageRating;
     }
 }
