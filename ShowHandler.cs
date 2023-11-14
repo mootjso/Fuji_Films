@@ -15,7 +15,7 @@ public static class ShowHandler
 
     public static void EditShowSchedule()
     {
-        List<string> menuOptions = new() { "View/Remove shows  ", "Add show", "Back" };
+        List<string> menuOptions = new() { "Add show", "View/Remove shows  ", "Back" };
 
         bool inMenu = true;
         while (inMenu)
@@ -25,10 +25,10 @@ public static class ShowHandler
             switch (index)
             {
                 case 0:
-                    RemoveShow();
+                    AddShow();
                     break;
                 case 1:
-                    AddShow();
+                    RemoveShow();
                     break;
                 case 2:
                 case 3:
