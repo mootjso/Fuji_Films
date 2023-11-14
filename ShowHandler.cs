@@ -15,7 +15,7 @@ public static class ShowHandler
 
     public static void EditShowSchedule()
     {
-        List<string> menuOptions = new() { "View/Remove shows  ", "Add show", "Back" };
+        List<string> menuOptions = new() { "Add show", "View/Remove shows  ", "Back" };
 
         bool inMenu = true;
         while (inMenu)
@@ -25,10 +25,10 @@ public static class ShowHandler
             switch (index)
             {
                 case 0:
-                    RemoveShow();
+                    AddShow();
                     break;
                 case 1:
-                    AddShow();
+                    RemoveShow();
                     break;
                 case 2:
                 case 3:
@@ -261,7 +261,7 @@ public static class ShowHandler
         return resultDateTime;
     }
 
-    public static Show? SelectShowFromSchedule()
+    public static Show? SelectShowFromSchedule(bool isAdmin = false)
     {
         bool inMenu = true;
         while (inMenu)
@@ -277,33 +277,48 @@ public static class ShowHandler
 
             // Date selection
             dates.Add("Back");
-            int index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
+
+            int index;
+            if (!isAdmin)
+                index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
+            else
+                index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
+
+
             if (index == dates.Count || index == dates.Count - 1)
                 break;
 
             string dateString = dates[index];
             DateTime date = DateTime.Parse(dateString);
 
-            List<Show> moviesForDate = GetShowsByDate(date);
+            List<Show> showsForDate = GetShowsByDate(date);
 
             // Create list of formatted strings to display to the user
-            List<string> movieMenuString = CreateListMovieStrings(moviesForDate);
+            List<string> movieMenuString = CreateListMovieStrings(showsForDate);
 
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString);
+            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString, isAdmin);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
 
+            Show show = showsForDate[index];
             // Confirm Selection
-            Show show = moviesForDate[index];
-            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
-            string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString} at {show.StartTimeString}:";
-            int selection = ConfirmSelection(show, movie, confirmationMessage);
-            if (!(selection == 0))
+            if (!isAdmin)
             {
-                continue;
-            }
+                
+                Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
+                string confirmationMessage = $"Show Schedule\n\nMake a reservation for '{movie.Title}' on {show.DateString} at {show.StartTimeString}:";
+                int selection = ConfirmSelection(show, movie, confirmationMessage);
+                if (!(selection == 0))
+                {
+                    continue;
+                }
 
-            return moviesForDate[index];
+                return show;
+            }
+            else if (isAdmin)
+            {
+                return show;
+            }
         }
         return null;
     }

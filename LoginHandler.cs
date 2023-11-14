@@ -8,13 +8,10 @@ public class LoginHandler
 
     public static User LogIn()
     {
-        Console.CursorVisible = true;
         LoadUsers();
         bool login = true;
-
         while (login)
         {
-            Console.CursorVisible = true;
             Console.Clear();
 
             DisplayAsciiArt.Header();
@@ -23,6 +20,7 @@ public class LoginHandler
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
+            Console.CursorVisible = true;
             string username = Console.ReadLine();
 
             Console.Write("Password: ");
