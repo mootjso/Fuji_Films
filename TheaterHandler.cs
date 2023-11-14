@@ -132,7 +132,6 @@ public static class TheaterHandler
 
                 // Go to checkout
                 case ConsoleKey.C:
-                    LoadingBar.Start();
 
                     if (ConfirmReservation(tickets, user.IsAdmin))
                     {
@@ -143,7 +142,6 @@ public static class TheaterHandler
                     }
                     else
                     {
-                        LoadingBar.Start();
                         break;
                     }
             }
