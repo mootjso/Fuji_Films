@@ -45,17 +45,25 @@ public static class TheaterHandler
         do  // Do-while loop draws the seating overview, allows the user to select seats and checkout using the arrow keys and Enter
         {
             Console.Clear();
-            DisplayAsciiArt.Header();
-            Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
-            Console.WriteLine("\nChoose your Seat :\n");
+
+            if (user.IsAdmin)
+            {
+                DisplayAsciiArt.Header();
+                Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
+                Console.WriteLine("\nChoose your Seat :\n");
+            }
+            else
+                Console.WriteLine("Select a seat to make it unavailable\n");
 
             DrawSeatOverview(theater, selectedRow, selectedColumn, user);
             DrawMovieScreen(theater);
-            DisplayPriceInfo();
-
-            totalPrice = TicketHandler.GetTotalPrice(tickets);
-            DisplaySelectedSeats(selectedSeats);
-            Console.WriteLine($"\nTotal price of reservation: {totalPrice} EUR\n");
+            if (!user.IsAdmin)
+            {
+                DisplayPriceInfo();
+                totalPrice = TicketHandler.GetTotalPrice(tickets);
+                DisplaySelectedSeats(selectedSeats);
+                Console.WriteLine($"\nTotal price of reservation: {totalPrice} EUR\n");
+            }
 
             keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
