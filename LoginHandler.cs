@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 public class LoginHandler
 {
@@ -150,7 +150,7 @@ public class LoginHandler
                 if (!validEmail)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid email, please enter a valid email address with atleast 4 characters and an "@", press any key to continue");
+                    Console.WriteLine("Invalid email, please enter a valid email address with atleast 4 characters and an '@', press any key to continue");
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
@@ -307,6 +307,16 @@ public class LoginHandler
             return System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
         }
     }
+
+    ﻿public class EmailValidator
+        {
+            public bool IsValid(string email)
+            {
+                if (email.Length < 4 || !email.Contains("@"))
+                    return false;
+                return true;
+            }
+        }
 
     private static string GetMaskedPassword()
     {
