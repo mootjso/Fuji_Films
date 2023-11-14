@@ -1,10 +1,23 @@
 using Newtonsoft.Json;
 public static class ChangeMovieDetails 
 {
-    //split code to reuse for other methods
     public static void EditMovieDescription()
 {
     List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
+    
+    if (movies.Count == 0)
+    {
+        Console.Clear();
+        DisplayAsciiArt.AdminHeader();
+        Console.WriteLine("Change movie details");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\n\nCan't change movie details as there are no movies available");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("\n\nPress any key to go back");
+        Console.ResetColor();
+        Console.ReadKey();
+        return;
+    }
     const int pageSize = 10;
     int currentPage = 0;
 
@@ -36,52 +49,128 @@ public static class ChangeMovieDetails
         }
         else if (index >= 0 && index < movieTitles.Count)
         {
-            Movie selectedMovie = pageMovies[index];
+            string selectedTitle = movieTitles[index];
+            Movie selectedMovieToEdit = movies.FirstOrDefault(movie => movie.Title == selectedTitle);
+            EditMovieDetail(selectedMovieToEdit, movies);
+    
+        }
+    }
+}
+
+
+
+public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies)
+{
+    const int pageSize = 10;
+    int currentPage = 0;
+
+    while (true)
+    {
+        int startIndex = currentPage * pageSize;
+        int endIndex = Math.Min(startIndex + pageSize, movies.Count);
+        List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
+
+        string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:\n";
+        List<string> menuOptions = new List<string>
+        {
+            "Id", "Title", "Description", "Language", "Genres", "Runtime", "IsAdult"
+        };
+
+        int selectedIndex = Menu.Start(menuText, menuOptions);
+
+        if (selectedIndex == menuOptions.Count - 3 && currentPage > 0) // previous page
+        {
+            currentPage--;
+        }
+        if (selectedIndex == menuOptions.Count - 2 && endIndex < movies.Count)  // next page
+        {
+            currentPage++;
+        }
+        else if (selectedIndex == menuOptions.Count) // return to the previous menu
+        {
+            break;
+        }
+        else
+        {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
 
-            Console.WriteLine("Edit Movie Description");
-            Console.WriteLine($"Title: {selectedMovie.Title}");
-            Console.WriteLine($"Current Description: {selectedMovie.Description}");
-            Console.WriteLine("Enter the new description:");
-            Console.CursorVisible = true;
-            string? newDescription = Console.ReadLine();
-            string oldDescription = selectedMovie.Description;
+            string selectedOption = menuOptions[selectedIndex];
+            // Movie selectedMovie = selectedMovieToEdit;
 
+            Console.WriteLine($"Editing Movie Detail for '{selectedMovieToEdit.Title}': {selectedOption}");
+            Console.WriteLine($"Current {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
+            Console.Write($"Enter the new {selectedOption}: ");
+
+            string newValue = Console.ReadLine();
+
+            // Show confirmation
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-
-            Console.WriteLine("Edit Movie Description");
-            Console.WriteLine($"Title: {selectedMovie.Title}");
-            Console.WriteLine("Current Description:");
-            Console.WriteLine(oldDescription);
-            Console.WriteLine("New Description:");
-            Console.WriteLine(newDescription);
-            Console.Write("Confirm the change? (Y/N): ");
+            Console.WriteLine($"Confirm Changes for '{selectedMovieToEdit.Title}':");
+            Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
+            Console.WriteLine($"New {selectedOption}: {newValue}");
+            Console.Write("Confirm changes (Y/N): ");
             char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
-            Console.CursorVisible = false;
 
             if (confirmChangeChoice == 'Y')
             {
-                selectedMovie.Description = newDescription;
+                // Update the movie detail
+                UpdateMovieDetail(selectedMovieToEdit, selectedOption, newValue);
+
+                // Save changes to JSON file
                 string updatedJson = JsonConvert.SerializeObject(movies, Formatting.Indented);
                 File.WriteAllText(JSONMethods.MovieFileName, updatedJson);
+
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
-                Console.WriteLine("Description updated successfully!");
-                Console.WriteLine("Press any key to continue.");
+                Console.WriteLine($"Movie {selectedOption} for '{selectedMovieToEdit.Title}' updated successfully!");
+                // Console.WriteLine("\nMake sure to refresh the movie menu to see the changes.");
+                Console.WriteLine("\nPress any key to continue.");
                 Console.ReadKey();
             }
             else
             {
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
-                Console.WriteLine("Description not changed.");
-                Console.WriteLine("Press any key to continue.");
+                Console.WriteLine("Changes discarded. Press any key to continue.");
                 Console.ReadKey();
             }
         }
     }
 }
+
+
+
+    private static string GetMovieDetail(Movie movie, string selectedOption)
+    {
+        switch (selectedOption)
+        {
+            case "Id": return movie.Id.ToString();
+            case "Title": return movie.Title;
+            case "Description": return movie.Description;
+            case "Language": return movie.Language;
+            case "Genres": return string.Join(", ", movie.Genres);
+            case "Runtime": return movie.Runtime.ToString();
+            case "IsAdult": return movie.IsAdult.ToString();
+            default: return "";
+        }
+    }
+
+    private static void UpdateMovieDetail(Movie movie, string selectedOption, string newValue)
+    {
+        switch (selectedOption)
+        {
+            case "Id": movie.Id = int.Parse(newValue); break;
+            case "Title": movie.Title = newValue; break;
+            case "Description": movie.Description = newValue; break;
+            case "Language": movie.Language = newValue; break;
+            case "Genres": movie.Genres = newValue.Split(',').ToList(); break;
+            case "Runtime": movie.Runtime = int.Parse(newValue); break;
+            case "IsAdult": movie.IsAdult = bool.Parse(newValue); break;
+        }
+    }
 }
+
+
 
