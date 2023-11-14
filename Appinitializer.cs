@@ -4,6 +4,7 @@ public static class AppInitializer
     public const string ShowsFileName = ShowHandler.FileName;
     public const string TheatersFileName = TheaterHandler.FileName;
     public const string TicketsFileName = TicketHandler.FileName;
+    public const string ReservationsFileName = ReservationHandler.FileName;
 
 
     public static List<Movie> GetMovieObjects()
@@ -59,6 +60,20 @@ public static class AppInitializer
             var tickets = new List<Ticket>();
             JSONMethods.WriteToJSON(tickets, TicketsFileName);
             return tickets;
+        }
+    }
+
+    public static List<Reservation> GetReservationObjects()
+    {
+        if (File.Exists(ReservationsFileName))
+        {
+            return JSONMethods.ReadJSON<Reservation>(ReservationsFileName).ToList();
+        }
+        else
+        {
+            var reservations = new List<Reservation>();
+            JSONMethods.WriteToJSON(reservations, ReservationsFileName);
+            return reservations;
         }
     }
 }
