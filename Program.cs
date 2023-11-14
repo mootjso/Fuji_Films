@@ -77,13 +77,14 @@ public class Program
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        if (t)
-                        {
-                            foreach (var ticket in tickets)
-                            {
+                        var userReservations = ReservationHandler.GetReservationsByUser(loggedInUser);
 
-                                // Dit wordt een menu. Dit is voor nu een voorbeeld.
-                                Console.WriteLine($"Movie name: {movie.Title}\nReservation ID: {ticket.ReservationId}");
+                        if (userReservations.Count > 0)
+                        {
+                            foreach (var reservation in userReservations)
+                            {
+                                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                                Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
                             }
                         }
                         else
