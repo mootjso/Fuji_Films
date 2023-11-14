@@ -46,14 +46,19 @@ public static class TheaterHandler
         {
             Console.Clear();
 
-            if (user.IsAdmin)
+            if (!user.IsAdmin)
             {
                 DisplayAsciiArt.Header();
                 Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
-                Console.WriteLine("\nChoose your Seat :\n");
+                Console.WriteLine("\nChoose your Seat:\n");
             }
-            else
-                Console.WriteLine("Select a seat to make it unavailable\n");
+            else if (user.IsAdmin)
+            {
+                DisplayAsciiArt.AdminHeader();
+                Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to apply your selection.");
+                Console.WriteLine("\nSelect a seat to make it unavailable:\n");
+            }
+            
 
             DrawSeatOverview(theater, selectedRow, selectedColumn, user);
             DrawMovieScreen(theater);
@@ -102,11 +107,15 @@ public static class TheaterHandler
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor);
 
                         Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
-                        Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
+                        if (!user.IsAdmin)
+                            Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 
                         // Ask user to confirm selected seat
-                        if (ConfirmSeatSelection(ticket))
+                        if (ConfirmSeatSelection(user))
                         {
+                            if (user.IsAdmin)
+                                selectedSeat.IsAvailable = false;
+
                             selectedSeat.UserId = user.Id;
                             selectedSeats.Add(selectedSeat);
                             tickets.Add(ticket);
@@ -125,7 +134,7 @@ public static class TheaterHandler
                 case ConsoleKey.C:
                     LoadingBar.Start();
 
-                    if (ConfirmReservation(tickets))
+                    if (ConfirmReservation(tickets, user.IsAdmin))
                     {
                         JSONMethods.WriteToJSON(Theaters, FileName);
                         TicketHandler.Tickets.AddRange(tickets);
@@ -142,7 +151,11 @@ public static class TheaterHandler
         while (keyInfo.Key != ConsoleKey.Q);
 
         foreach (Seat seat in selectedSeats)
+        {
             seat.UserId = -1;
+            seat.IsAvailable = true;
+        }
+            
         return null;
     }
 
@@ -293,19 +306,27 @@ public static class TheaterHandler
         Console.ResetColor();
     }
 
-    public static bool ConfirmReservation(List<Ticket> tickets)
+    public static bool ConfirmReservation(List<Ticket> tickets, bool isAdmin = false)
     {
         // No seats selected
         if (tickets.Count <= 0)
         {
-            Console.WriteLine("Cannot checkout, you have not selected any seats.");
+            if (!isAdmin)
+                Console.WriteLine("Cannot checkout, you have not selected any seats.");
+            else
+                Console.WriteLine("You have not selected any seats to take out.");
+
             Console.WriteLine("Press any key to continue");
 
             Console.ReadKey();
             return false;
         }
 
-        Console.WriteLine("Press 'Enter' to continue to checkout, press any other key to go back to seat selection.");
+        if (!isAdmin)
+            Console.WriteLine("Press 'Enter' to continue to checkout, press any other key to go back to seat selection.");
+        else
+            Console.WriteLine("Press 'Enter' to confirm and take out the selected seats, press any other key to go back to seat selection.");
+
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
         // User confirms their selection and continues to checkout
@@ -317,9 +338,15 @@ public static class TheaterHandler
         return false;
     }
 
-    public static bool ConfirmSeatSelection(Ticket ticket)
+    public static bool ConfirmSeatSelection(User user)
     {
-        Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel)");
+        if (!user.IsAdmin)
+        {
+            Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel)");
+        }
+        else if (user.IsAdmin)
+            Console.WriteLine("\nAre you sure you want to take out this seat? (Press Enter to confirm, press any other key to cancel)");
+
         ConsoleKeyInfo keyInfo = Console.ReadKey();
         if (keyInfo.Key == ConsoleKey.Enter)
         {
