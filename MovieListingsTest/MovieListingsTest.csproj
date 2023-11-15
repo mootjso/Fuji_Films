@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fuji_Films\ShipsCinema.csproj" />
     <ProjectReference Include="..\ShipsCinema\ShipsCinema.csproj" />
   </ItemGroup>
 
