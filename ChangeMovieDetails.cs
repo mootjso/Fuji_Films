@@ -119,8 +119,39 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
             Console.CursorVisible = false;
 
-            if (confirmChangeChoice == 'Y')
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Change movie details");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\n\nCan't change movie details as there are no movies available");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\n\nPress any key to go back");
+            Console.ResetColor();
+            Console.ReadKey();
+            return;
+        }
+
+        const int pageSize = 10;
+        int currentPage = 0;
+
+        while (true)
+        {
+            int startIndex = currentPage * pageSize;
+            int endIndex = Math.Min(startIndex + pageSize, movies.Count);
+            List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
+            List<string> movieTitles = ShowHandler.GetMovieTitles(pageMovies);
+        
+            string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
+            List<string> menuOptions = new List<string>(movieTitles);
+            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+
+            int index = Menu.Start(menuText, menuOptions, true);
+
+
+ 
+            if (index == menuOptions.Count - 2 && currentPage > 0) // next page
             {
+
                 // Update the movie detail
                 UpdateMovieDetail(selectedMovieToEdit, selectedOption, newValue);
 
