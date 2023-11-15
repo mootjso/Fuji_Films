@@ -2,6 +2,7 @@ public class Program
 {
     private static void Main()
     {
+        AdminHandler.RemoveMovie(); // To test
         User? loggedInUser = null;
 
         while (true)

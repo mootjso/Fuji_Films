@@ -81,6 +81,41 @@ public static class AdminHandler
         JSONMethods.WriteToJSON<Movie>(movies, JSONMethods.MovieFileName);
     }
 
+    public static void RemoveMovie()
+    {
+        int id;
+        while (true)
+        {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Enter the ID of the movie you want to remove");
+            if (int.TryParse(Console.ReadLine(), out id))
+                break;
+            Console.WriteLine("Please enter a valid integer");
+            Console.ReadLine();
+        }
+
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
+        Movie? movieToRemove = null;
+        foreach (Movie movie in movies)
+        {
+            if (movie.Id == id)
+            {
+                movieToRemove = movie;
+                break;
+            }
+        }
+        if (movieToRemove is null)
+            Console.WriteLine($"No movie with ID {id} found");
+        else
+        {
+            movies.Remove(movieToRemove);
+            JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
+            Console.WriteLine($"Movie {movieToRemove.Title} has been removed");
+        }
+        Console.ReadLine();
+    }
+
     private static string GetInputDataString(string information)
     {
         string input = "";
