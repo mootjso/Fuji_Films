@@ -27,7 +27,7 @@ public static class MovieHandler
         }
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
-        Console.WriteLine($"IsAdult: {movie.IsAdult}");
+        Console.WriteLine($"Age Rating: {movie.AgeRating}");
     }
 
     public static void DisplayMovieDetails(Movie movie)
@@ -48,6 +48,12 @@ public static class MovieHandler
 
     public static void ViewCurrentMovies()
     {
+        if (Movies.Count == 0)
+        {
+            List<string> menuOption = new() { "Back" };
+            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption);
+            return;
+        }
         string menuText = "Current Movies\n\nSelect a movie for more information:";
         List<string> menuOptionsFull = GetMovieTitles();
         List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
