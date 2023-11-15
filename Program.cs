@@ -21,7 +21,7 @@ public class Program
 
                         if (loggedInUser.IsAdmin)
                         {
-                            AdminHandler.StartMenu();
+                            AdminHandler.StartMenu(loggedInUser);
                             loggedInUser = null;
                         }
                         break;
