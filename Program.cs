@@ -3,7 +3,6 @@ public class Program
     private static void Main()
     {
         User? loggedInUser = null;
-
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
@@ -70,7 +69,7 @@ public class Program
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-                        //TicketHandler.SaveTicketsInJSON(tickets);
+
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
@@ -80,13 +79,19 @@ public class Program
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         var userReservations = ReservationHandler.GetReservationsByUser(loggedInUser);
-
+                        Console.WriteLine(userReservations);
+                        Console.WriteLine(userReservations.Count);
                         if (userReservations.Count > 0)
                         {
                             foreach (var reservation in userReservations)
                             {
+<<<<<<< HEAD
                                 Show show = ShowHandler.GetShowById(reservation.ShowId);
                                 Movie movie = MovieHandler.GetMovieById(show.MovieId);
+=======
+                                var show_id 
+                                Movie movie = MovieHandler.GetMovieById();
+>>>>>>> 63187b8c1e8c595f8201faf484393a9560a08f9f
                                 Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
                             }
                         }
