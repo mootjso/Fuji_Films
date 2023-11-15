@@ -61,57 +61,63 @@ public static class ChangeMovieDetails
 
 public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies)
 {
-    const int pageSize = 10;
-    int currentPage = 0;
-
     while (true)
     {
-        int startIndex = currentPage * pageSize;
-        int endIndex = Math.Min(startIndex + pageSize, movies.Count);
-        List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
-
-        string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:\n";
+        string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:";
         List<string> menuOptions = new List<string>
         {
             "Id", "Title", "Description", "Language", "Genres", "Runtime", "IsAdult"
         };
 
-        int selectedIndex = Menu.Start(menuText, menuOptions);
+        int selectedIndex = Menu.Start(menuText, menuOptions, true);
 
-        if (selectedIndex == menuOptions.Count - 3 && currentPage > 0) // previous page
-        {
-            currentPage--;
-        }
-        if (selectedIndex == menuOptions.Count - 2 && endIndex < movies.Count)  // next page
-        {
-            currentPage++;
-        }
-        else if (selectedIndex == menuOptions.Count) // return to the previous menu
+        if (selectedIndex == menuOptions.Count) // return to the previous menu
         {
             break;
         }
         else
         {
-            Console.Clear();
-            DisplayAsciiArt.AdminHeader();
-
+            bool rightInput = false;
+            string newValue;
             string selectedOption = menuOptions[selectedIndex];
-            // Movie selectedMovie = selectedMovieToEdit;
 
-            Console.WriteLine($"Editing Movie Detail for '{selectedMovieToEdit.Title}': {selectedOption}");
-            Console.WriteLine($"Current {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
-            Console.Write($"Enter the new {selectedOption}: ");
-
-            string newValue = Console.ReadLine();
-
-            // Show confirmation
+            do
+            {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Confirm Changes for '{selectedMovieToEdit.Title}':");
-            Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
+            Console.WriteLine($"Editing Movie Detail for '{selectedMovieToEdit.Title}': {selectedOption}\n");
+            Console.WriteLine($"Current {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
+            Console.Write($"\nEnter the new {selectedOption}: ");
+            Console.CursorVisible = true;
+            newValue = Console.ReadLine();
+            Console.CursorVisible = false;
+
+            if (ValidateInput(selectedOption, newValue))
+                {
+                    rightInput = true;
+                }
+            else
+            {
+                Console.Clear();
+                DisplayAsciiArt.AdminHeader();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Invalid input for {selectedOption}. Please enter a valid value.");
+                Console.ResetColor();
+                Console.ReadKey();
+                
+            }
+            } while (!rightInput);
+
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine($"Confirm Changes for '{selectedMovieToEdit.Title}':\n");
+            Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}\n");
             Console.WriteLine($"New {selectedOption}: {newValue}");
-            Console.Write("Confirm changes (Y/N): ");
+            Console.CursorVisible = true;
+
+            Console.Write("\nConfirm changes (Y/N): ");
             char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
+            Console.CursorVisible = false;
 
             if (confirmChangeChoice == 'Y')
             {
@@ -124,8 +130,9 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
 
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
-                Console.WriteLine($"Movie {selectedOption} for '{selectedMovieToEdit.Title}' updated successfully!");
-                // Console.WriteLine("\nMake sure to refresh the movie menu to see the changes.");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Movie {selectedOption} for '{selectedMovieToEdit.Title}' is updated successfully!");
+                Console.ResetColor();
                 Console.WriteLine("\nPress any key to continue.");
                 Console.ReadKey();
             }
@@ -140,8 +147,6 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
     }
 }
 
-
-
     private static string GetMovieDetail(Movie movie, string selectedOption)
     {
         switch (selectedOption)
@@ -152,7 +157,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             case "Language": return movie.Language;
             case "Genres": return string.Join(", ", movie.Genres);
             case "Runtime": return movie.Runtime.ToString();
-            case "IsAdult": return movie.IsAdult.ToString();
+            case "IsAdult": return movie.IsAdult.ToString().ToLower();
             default: return "";
         }
     }
@@ -165,11 +170,29 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             case "Title": movie.Title = newValue; break;
             case "Description": movie.Description = newValue; break;
             case "Language": movie.Language = newValue; break;
-            case "Genres": movie.Genres = newValue.Split(',').ToList(); break;
+            case "Genres": movie.Genres = newValue.Split(", ").ToList(); break;
             case "Runtime": movie.Runtime = int.Parse(newValue); break;
             case "IsAdult": movie.IsAdult = bool.Parse(newValue); break;
+
         }
     }
+
+    private static bool ValidateInput(string selectedOption, string newValue)
+    {
+    switch (selectedOption)
+    {
+        case "Id":
+        case "Runtime":
+            return int.TryParse(newValue, out _);
+        case "IsAdult":
+            return bool.TryParse(newValue, out _);
+        case "Language":
+            return !newValue.Any(char.IsDigit); // check whether the new value contains any digits
+        default:
+            return true; // No specific validation for other options
+    }
+    }
+
 }
 
 
