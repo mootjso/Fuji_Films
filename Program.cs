@@ -69,7 +69,9 @@ public class Program
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-
+                        Console.WriteLine("Your Reservation code is: " + ReservationId);
+                        Console.WriteLine("Press any button to continue");
+                        Console.ReadLine();
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
@@ -78,15 +80,14 @@ public class Program
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
+                        ReservationHandler.AddTicketsToReservations();
                         var userReservations = ReservationHandler.GetReservationsByUser(loggedInUser);
-                        Console.WriteLine(userReservations);
-                        Console.WriteLine(userReservations.Count);
+                        Console.WriteLine($"You have: {userReservations.Count} reservations!");
                         if (userReservations.Count > 0)
                         {
                             foreach (var reservation in userReservations)
                             {
-                                Show show = ShowHandler.GetShowById(reservation.ShowId);
-                                Movie movie = MovieHandler.GetMovieById(show.MovieId);
+                                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
 
                                 Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
                             }
