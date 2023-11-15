@@ -85,13 +85,9 @@ public class Program
                         {
                             foreach (var reservation in userReservations)
                             {
-<<<<<<< HEAD
                                 Show show = ShowHandler.GetShowById(reservation.ShowId);
                                 Movie movie = MovieHandler.GetMovieById(show.MovieId);
-=======
-                                var show_id 
-                                Movie movie = MovieHandler.GetMovieById();
->>>>>>> 63187b8c1e8c595f8201faf484393a9560a08f9f
+
                                 Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
                             }
                         }
