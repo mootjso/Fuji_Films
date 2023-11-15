@@ -21,18 +21,18 @@ public static class ChangeMovieDetails
     const int pageSize = 10;
     int currentPage = 0;
 
-        while (true)
-        {
-            int startIndex = currentPage * pageSize;
-            int endIndex = Math.Min(startIndex + pageSize, movies.Count);
-            List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
-            List<string> movieTitles = ShowHandler.GetMovieTitles(pageMovies);
+    while (true)
+    {
+        int startIndex = currentPage * pageSize;
+        int endIndex = Math.Min(startIndex + pageSize, movies.Count);
+        List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
+        List<string> movieTitles = ShowHandler.GetMovieTitles(pageMovies);
         
-            string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
-            List<string> menuOptions = new List<string>(movieTitles);
-            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+        string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
+        List<string> menuOptions = new List<string>(movieTitles);
+        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
 
-            int index = Menu.Start(menuText, menuOptions, true);
+        int index = Menu.Start(menuText, menuOptions, true);
 
  
         if (index == menuOptions.Count - 2 && currentPage > 0) // next page
@@ -66,7 +66,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
         string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:";
         List<string> menuOptions = new List<string>
         {
-            "Id", "Title", "Description", "Language", "Genres", "Runtime", "IsAdult"
+            "Id", "Title", "Description", "Language", "Genres", "Runtime", "AgeRating"
         };
 
         int selectedIndex = Menu.Start(menuText, menuOptions, true);
@@ -111,7 +111,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
             Console.WriteLine($"Confirm Changes for '{selectedMovieToEdit.Title}':\n");
-            Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}\n");
+            Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
             Console.WriteLine($"New {selectedOption}: {newValue}");
             Console.CursorVisible = true;
 
@@ -119,39 +119,8 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
             Console.CursorVisible = false;
 
-            Console.Clear();
-            DisplayAsciiArt.AdminHeader();
-            Console.WriteLine("Change movie details");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n\nCan't change movie details as there are no movies available");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\n\nPress any key to go back");
-            Console.ResetColor();
-            Console.ReadKey();
-            return;
-        }
-
-        const int pageSize = 10;
-        int currentPage = 0;
-
-        while (true)
-        {
-            int startIndex = currentPage * pageSize;
-            int endIndex = Math.Min(startIndex + pageSize, movies.Count);
-            List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
-            List<string> movieTitles = ShowHandler.GetMovieTitles(pageMovies);
-        
-            string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
-            List<string> menuOptions = new List<string>(movieTitles);
-            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
-
-            int index = Menu.Start(menuText, menuOptions, true);
-
-
- 
-            if (index == menuOptions.Count - 2 && currentPage > 0) // next page
+            if (confirmChangeChoice == 'Y')
             {
-
                 // Update the movie detail
                 UpdateMovieDetail(selectedMovieToEdit, selectedOption, newValue);
 
@@ -171,7 +140,9 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             {
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.WriteLine("Changes discarded. Press any key to continue.");
+                Console.ResetColor();
                 Console.ReadKey();
             }
         }
@@ -188,7 +159,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             case "Language": return movie.Language;
             case "Genres": return string.Join(", ", movie.Genres);
             case "Runtime": return movie.Runtime.ToString();
-            case "IsAdult": return movie.IsAdult.ToString().ToLower();
+            case "AgeRating": return movie.AgeRating.ToString();
             default: return "";
         }
     }
@@ -203,7 +174,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             case "Language": movie.Language = newValue; break;
             case "Genres": movie.Genres = newValue.Split(", ").ToList(); break;
             case "Runtime": movie.Runtime = int.Parse(newValue); break;
-            case "IsAdult": movie.IsAdult = bool.Parse(newValue); break;
+            case "AgeRating": movie.AgeRating = int.Parse(newValue); break;
 
         }
     }
@@ -214,9 +185,9 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
     {
         case "Id":
         case "Runtime":
+        case "AgeRating":
             return int.TryParse(newValue, out _);
-        case "IsAdult":
-            return bool.TryParse(newValue, out _);
+
         case "Language":
             return !newValue.Any(char.IsDigit); // check whether the new value contains any digits
         default:
@@ -225,6 +196,3 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
     }
 
 }
-
-
-
