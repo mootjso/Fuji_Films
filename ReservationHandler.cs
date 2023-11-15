@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 public static class ReservationHandler
 {
     public const string FileName = "reservations.json";
@@ -19,14 +21,16 @@ public static class ReservationHandler
         string ReservationIDString = $"{ReservationID.Substring(0, 4)}-{ReservationID.Substring(4, 4)}-{ReservationID.Substring(8, 4)}";
 
 
-        Debug.WriteLine("Your Reservation code is: " + ReservationIDString);
+        Console.WriteLine("Your Reservation code is: " + ReservationIDString);
+        Console.WriteLine("Press any button to continue");
+        Console.ReadLine();
         return ReservationIDString;
     }
 
     public static void AddTicketsToReservations()
     {
         var tickets = JSONMethods.ReadJSON<Ticket>("tickets.json");
-        var reservations = JSONMethods.ReadJSON<Reservation>("reservations.json");
+        var reservations = JSONMethods.ReadJSON<Reservation>("reservations.json").ToList();
 
         foreach (var ticket in tickets)
         {
@@ -45,12 +49,10 @@ public static class ReservationHandler
 
             if (!reservationExists)
             {
-                // HIER MOET NOG DE SHOW GEVONDEN WORDEN ZODAT WE DE MOVIE TITLE HEBBEN
-                var show = GetShowById(ticket.ShowId);
-                if (show != null)
                 {
-                    int movieId = show.MovieId;
-                    var reservation = new Reservation(ticket.ReservationId, ticket.UserId, ticket.ShowId, ); //Hier moet de movie id
+                    Show show = ShowHandler.GetShowById(ticket.ShowId);
+                    Movie movie = MovieHandler.GetMovieById(show.MovieId);
+                    var reservation = new Reservation(ticket.ReservationId, ticket.UserId, ticket.ShowId, movie.Id);
 
                     reservations.Add(reservation);
                 }
@@ -59,7 +61,7 @@ public static class ReservationHandler
         }
 
         // HIER MOET DE LIST VAN RESERVATIONS DIE VONDEN ZIJN GESAVED WORDEN NAAR JSON
-        JSONMethods.WriteToJSON(reservations, "reservations.json");
+        JSONMethods.WriteToJSON(reservations, FileName);
     }
 
     public static List<Reservation> GetReservationsByUser(User user)
