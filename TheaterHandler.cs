@@ -24,7 +24,7 @@ public static class TheaterHandler
         return theater;
     }
 
-    public static List<Ticket>? SelectSeats(User user, Theater theater)
+    public static List<Ticket>? SelectSeats(User user, Theater theater, string ReservationId)
     {
         Console.CursorVisible = false;
 
@@ -90,7 +90,6 @@ public static class TheaterHandler
                     {
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
-                        string ReservationId = ReservationHandler.GetReservationID();
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
 

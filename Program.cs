@@ -65,7 +65,9 @@ public class Program
 
                         var theater = TheaterHandler.CreateTheater(selectedShow);
 
-                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater);
+                        string ReservationId = ReservationHandler.GetReservationID();
+
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
                         //TicketHandler.SaveTicketsInJSON(tickets);
@@ -83,7 +85,8 @@ public class Program
                         {
                             foreach (var reservation in userReservations)
                             {
-                                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                                Show show = ShowHandler.GetShowById(reservation.ShowId);
+                                Movie movie = MovieHandler.GetMovieById(show.MovieId);
                                 Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
                             }
                         }
