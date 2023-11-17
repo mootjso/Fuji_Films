@@ -5,7 +5,14 @@
     public static List<string> selectedSnacks = new();
 
     private static void PickSnacks()
-    {   if (_picked)
+    {   
+        if (Ads.Count == 0)
+        {
+            selectedSnacks.Add("Stay tuned, snack enthusiasts! Exciting flavors and mouthwatering deals are opening soon!");
+            return;
+        }
+
+        if (_picked)
             return;
         // Choose 3 random sentences and display them
         
