@@ -109,6 +109,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Movie with ID {newValue} already exists. Please enter a different ID.");
                 Console.ResetColor();
+                Console.WriteLine("\n\nPress any key to continue");
                 Console.ReadKey();
             }
             else if (ValidateInput(selectedOption, newValue))
@@ -122,6 +123,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Invalid input for {selectedOption}. Please enter a valid value.");
                 Console.ResetColor();
+                Console.WriteLine("\n\nPress any key to continue");
                 Console.ReadKey(); 
             }
             } while (!rightInput);
