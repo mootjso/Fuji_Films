@@ -50,7 +50,17 @@ public static class ChangeMovieDetails
         else if (index >= 0 && index < movieTitles.Count)
         {
             string selectedTitle = movieTitles[index];
-            Movie selectedMovieToEdit = movies.FirstOrDefault(movie => movie.Title == selectedTitle);
+            Movie selectedMovieToEdit = null;
+
+            foreach (Movie movie in movies)
+            {
+                if (movie.Title == selectedTitle)
+                {
+                    selectedMovieToEdit = movie;
+                    break; // Exit the loop once a matching movie is found
+                }
+            }
+
             EditMovieDetail(selectedMovieToEdit, movies);
     
         }
@@ -85,14 +95,23 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
             {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Editing Movie Detail for '{selectedMovieToEdit.Title}': {selectedOption}\n");
+            Console.WriteLine($"Editing the {selectedOption} for '{selectedMovieToEdit.Title}'\n");
             Console.WriteLine($"Current {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
             Console.Write($"\nEnter the new {selectedOption}: ");
             Console.CursorVisible = true;
             newValue = Console.ReadLine();
             Console.CursorVisible = false;
 
-            if (ValidateInput(selectedOption, newValue))
+            if (selectedOption == "Id"  && MovieIdExists(newValue, movies))
+            {
+                Console.Clear();
+                DisplayAsciiArt.AdminHeader();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Movie with ID {newValue} already exists. Please enter a different ID.");
+                Console.ResetColor();
+                Console.ReadKey();
+            }
+            else if (ValidateInput(selectedOption, newValue))
                 {
                     rightInput = true;
                 }
@@ -103,8 +122,7 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Invalid input for {selectedOption}. Please enter a valid value.");
                 Console.ResetColor();
-                Console.ReadKey();
-                
+                Console.ReadKey(); 
             }
             } while (!rightInput);
 
@@ -187,12 +205,23 @@ public static void EditMovieDetail(Movie selectedMovieToEdit, List<Movie> movies
         case "Runtime":
         case "AgeRating":
             return int.TryParse(newValue, out _);
-
         case "Language":
             return !newValue.Any(char.IsDigit); // check whether the new value contains any digits
         default:
             return true; // No specific validation for other options
     }
     }
+    private static bool MovieIdExists(string newId, List<Movie> movies)
+    {
+        foreach (Movie movie in movies)
+        {
+            if (movie.Id.ToString() == newId)
+            {
+                return true; // Found a movie with the same ID
+            }
+        }
+        return false; // No movie with the specified ID found
+    }
+
 
 }
