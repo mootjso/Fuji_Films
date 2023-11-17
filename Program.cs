@@ -82,7 +82,7 @@ public class Program
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\nWe hope to see you soon!");
+                        Console.WriteLine("\nWe hope to sea you soon!");
                         Thread.Sleep(1500);
                         break;
                     default:
