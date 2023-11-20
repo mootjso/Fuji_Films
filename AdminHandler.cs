@@ -1,9 +1,9 @@
 public static class AdminHandler
 {
-    public static void StartMenu()
+    public static void StartMenu(User adminAccount)
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Add/Remove movie", "Change movie details", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial report", "Add movie", "Add/Remove show","Change movie details", "Take out seat(s)", "Log out"};
         
         while (true)
         {   
@@ -11,9 +11,10 @@ public static class AdminHandler
 
             const int FinancialReportOption = 0;
             const int AddRemoveMovieOption = 1;
-            const int ChangeMovieDetailsOption = 2;
-            const int TakeOutSeatsOption = 3;
-            const int LogOutOption = 4;
+            const int AddRemoveShowOption = 2;
+            const int ChangeMovieDetailsOption = 3;
+            const int TakeOutSeatsOption = 4;
+            const int LogOutOption = 5;
   
             switch (selection)
             {
@@ -25,6 +26,10 @@ public static class AdminHandler
                     break;
                 case AddRemoveMovieOption:
                     Console.Clear();
+                    AddMovie();
+                    break;
+                case AddRemoveShowOption:
+                    Console.Clear();
                     ShowHandler.EditShowSchedule();
                     break;       
                 case ChangeMovieDetailsOption:
@@ -33,9 +38,7 @@ public static class AdminHandler
                     break;
                 case TakeOutSeatsOption:
                     Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("\nTAKE OUT SEAT(S) NOT IMPLEMENTED\n\nPRESS ANY KEY TO CONTINUE TO THE MAIN MENU");
-                    Console.ReadKey();
+                    TakeOutSeats(adminAccount);
                     break;
                 case LogOutOption:
                     Console.Clear();
@@ -105,5 +108,16 @@ public static class AdminHandler
             }
             Console.WriteLine("Invalid number");
         }
+    }
+
+    public static void TakeOutSeats(User adminAccount)
+    {
+        Show? show = ShowHandler.SelectShowFromSchedule(true);
+        if (show == null)
+            return;
+
+        Theater theater = TheaterHandler.CreateTheater(show);
+
+        TheaterHandler.SelectSeats(adminAccount, theater);
     }
 }
