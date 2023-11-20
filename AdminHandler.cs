@@ -118,6 +118,6 @@ public static class AdminHandler
 
         Theater theater = TheaterHandler.CreateTheater(show);
 
-        TheaterHandler.SelectSeats(adminAccount, theater);
+        TheaterHandler.SelectSeats(adminAccount, theater, null);
     }
 }

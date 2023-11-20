@@ -1,6 +1,7 @@
 ﻿public class Movie
 {
     public int Id { get; set; }
+    public static int ID = 1;
     public string Title { get; set; }
     public string Language { get; set; }
     public string Description { get; set; }
