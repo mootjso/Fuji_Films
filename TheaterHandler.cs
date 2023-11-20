@@ -137,11 +137,11 @@ public static class TheaterHandler
                     {
                         if (!user.IsAdmin)
                         {
-                            JSONMethods.WriteToJSON(Theaters, FileName);
                             TicketHandler.Tickets.AddRange(tickets);
                             JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
                             return tickets;
                         }
+                        JSONMethods.WriteToJSON(Theaters, FileName);
                         return new List<Ticket>();
                     }
                     else
