@@ -120,7 +120,9 @@ public class LoginHandler
                 if (!validPhoneNumber)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid phone number, please enter a valid number with 8 to 15 digits, press any key to continue");
+                    Console.WriteLine(
+                        "Invalid phone number, please enter a valid number with 8 to 15 digits, press any key to continue"
+                    );
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
@@ -150,7 +152,9 @@ public class LoginHandler
                 if (!validEmail)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid email, please enter a valid email address with atleast 4 characters and an '@', press any key to continue");
+                    Console.WriteLine(
+                        "Invalid email, please enter a valid email address with atleast 4 characters and an '@', press any key to continue"
+                    );
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
@@ -159,14 +163,15 @@ public class LoginHandler
                 else if (users.Any(user => user.Email == email))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Email is already registered, please choose a different email, press any key to continue");
+                    Console.WriteLine(
+                        "Email is already registered, please choose a different email, press any key to continue"
+                    );
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
                     Console.CursorVisible = true;
                     validEmail = false; // To continue the loop
                 }
-
             } while (!validEmail);
 
             // Password entry and validation
@@ -186,7 +191,9 @@ public class LoginHandler
                 Console.WriteLine($"Phone Number: {phoneNumber}");
                 Console.WriteLine($"Email: {email}");
 
-                Console.WriteLine("\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
+                Console.WriteLine(
+                    "\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit"
+                );
                 Console.Write("\nPassword: ");
                 password = GetMaskedPassword();
                 validPassword = passwordValidator.IsValid(password);
@@ -194,7 +201,9 @@ public class LoginHandler
                 if (!validPassword)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Password does not meet the requirements, press any key to try again");
+                    Console.WriteLine(
+                        "Password does not meet the requirements, press any key to try again"
+                    );
                     Console.CursorVisible = false;
                     Console.ResetColor();
                     Console.ReadKey();
@@ -218,10 +227,17 @@ public class LoginHandler
                     Console.ReadKey();
                     Console.CursorVisible = true;
                 }
-
             } while (confirmPassword != password);
 
-            newUser = new User(++lastUserId, firstName, lastName, email, password, phoneNumber, false);
+            newUser = new User(
+                ++lastUserId,
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber,
+                false
+            );
             users.Add(newUser);
             loggedInUser = newUser;
             SaveUsers();
@@ -276,7 +292,8 @@ public class LoginHandler
         private bool HasUppercase(string password)
         {
             foreach (char letter in password)
-                if (char.IsUpper(letter)) return true;
+                if (char.IsUpper(letter))
+                    return true;
 
             return false;
         }
@@ -284,7 +301,8 @@ public class LoginHandler
         private bool HasLowercase(string password)
         {
             foreach (char letter in password)
-                if (char.IsLower(letter)) return true;
+                if (char.IsLower(letter))
+                    return true;
 
             return false;
         }
@@ -292,11 +310,11 @@ public class LoginHandler
         private bool HasDigits(string password)
         {
             foreach (char letter in password)
-                if (char.IsDigit(letter)) return true;
+                if (char.IsDigit(letter))
+                    return true;
 
             return false;
         }
-
     }
 
     public class PhoneNumberValidator
@@ -327,7 +345,11 @@ public class LoginHandler
         {
             key = Console.ReadKey(true);
 
-            if (char.IsLetterOrDigit(key.KeyChar) || char.IsSymbol(key.KeyChar) || char.IsPunctuation(key.KeyChar))
+            if (
+                char.IsLetterOrDigit(key.KeyChar)
+                || char.IsSymbol(key.KeyChar)
+                || char.IsPunctuation(key.KeyChar)
+            )
             {
                 password += key.KeyChar;
                 Console.Write("*");
