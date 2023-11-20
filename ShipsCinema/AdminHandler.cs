@@ -3,7 +3,7 @@ public static class AdminHandler
     public static void StartMenu(User adminAccount)
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Add movie", "Add/Remove show","Change movie details", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial report", "Add/Remove/View Movies", "Add/Remove show","Change movie details", "Take out seat(s)", "Log out"};
         
         while (true)
         {   
@@ -26,7 +26,7 @@ public static class AdminHandler
                     break;
                 case AddRemoveMovieOption:
                     Console.Clear();
-                    AddMovie();
+                    EditMovieList();
                     break;
                 case AddRemoveShowOption:
                     Console.Clear();
@@ -114,6 +114,38 @@ public static class AdminHandler
             Console.WriteLine($"Movie {movieToRemove.Title} has been removed");
         }
         Console.ReadLine();
+    }
+
+    private static void EditMovieList()
+    {
+        List<string> menuOptions = new() { "Add Movie", "Remove Movie", "View Movies", "Back" };
+
+        bool inMenu = true;
+        while (inMenu)
+        {
+            int index = Menu.Start("Movie Listings\n\nSelect an option:", menuOptions, true);
+
+            switch (index)
+            {
+                case 0:
+                    Console.Clear();
+                    AddMovie();
+                    break;
+                case 1:
+                    Console.Clear();
+                    RemoveMovie();
+                    break;
+                case 2:
+                    Console.Clear();
+                    MovieHandler.ViewCurrentMovies();
+                    break;
+                case 3:
+                    inMenu = false;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private static string GetInputDataString(string information)
