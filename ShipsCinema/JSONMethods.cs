@@ -26,9 +26,9 @@ public static class JSONMethods
         return Enumerable.Empty<T>();
     }
 
-    public static void WriteToJSON<T>(List<T> objList, string fileName)
+    public static void WriteToJSON<T>(IEnumerable<T> objList, string fileName)
     {
-        StreamWriter writer = new(fileName);
+        using StreamWriter writer = new(fileName);
         string ListToJson = JsonConvert.SerializeObject(objList);
         writer.Write(ListToJson);
         writer.Close();

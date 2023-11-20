@@ -3,7 +3,6 @@ public class Program
     private static void Main()
     {
         User? loggedInUser = null;
-
         while (true)
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
@@ -56,15 +55,23 @@ public class Program
                     case 1:
                         Console.Clear();
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
+                        if (selectedShow == null)
+                        {
+                            return;
+                        }
                         if (selectedShow is null)
                             continue;
 
                         var theater = TheaterHandler.CreateTheater(selectedShow);
 
-                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater);
+                        string ReservationId = ReservationHandler.GetReservationID();
+
+                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-
+                        Console.WriteLine("Your Reservation code is: " + ReservationId);
+                        Console.WriteLine("Press any button to continue");
+                        Console.ReadLine();
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
@@ -73,8 +80,24 @@ public class Program
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\n  NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
-                        Console.ReadKey();
+                        ReservationHandler.AddTicketsToReservations();
+                        var userReservations = ReservationHandler.GetReservationsByUser(loggedInUser);
+                        Console.WriteLine($"You have: {userReservations.Count} reservations!");
+                        if (userReservations.Count > 0)
+                        {
+                            foreach (var reservation in userReservations)
+                            {
+                                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+
+                                Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("You have no reservations.");
+                        }
+                        Console.WriteLine("PRESS ANY KEY TO GO BACK");
+                        Console.ReadLine();
                         break;
                     case 3:
                         loggedInUser = null;
@@ -82,7 +105,7 @@ public class Program
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\nThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\nWe hope to see you soon!");
+                        Console.WriteLine("\nWe hope to sea you soon!");
                         Thread.Sleep(1500);
                         break;
                     default:
