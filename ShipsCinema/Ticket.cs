@@ -1,4 +1,6 @@
-﻿public class Ticket
+﻿using System.Diagnostics.Tracing;
+
+public class Ticket
 {
     public int ShowId;
     public int UserId;
@@ -6,8 +8,9 @@
     public int Column;
     public double Price;
     public string Color;
+    public string? ReservationId;
 
-    public Ticket(int showId, int userId, int row, int column, double price, string color)
+    public Ticket(int showId, int userId, int row, int column, double price, string color, string? reservationId = null)
     {
         ShowId = showId;
         UserId = userId;
@@ -15,5 +18,7 @@
         Column = column;
         Price = price;
         Color = color;
+        ReservationId = reservationId;
     }
+
 }
