@@ -8,9 +8,9 @@ public class Ticket
     public int Column;
     public double Price;
     public string Color;
-    public string ReservationId;
+    public string? ReservationId;
 
-    public Ticket(int showId, int userId, int row, int column, double price, string color, string reservationId = null)
+    public Ticket(int showId, int userId, int row, int column, double price, string color, string? reservationId = null)
     {
         ShowId = showId;
         UserId = userId;

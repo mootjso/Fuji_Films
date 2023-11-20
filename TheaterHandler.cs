@@ -24,7 +24,7 @@ public static class TheaterHandler
         return theater;
     }
 
-    public static List<Ticket>? SelectSeats(User user, Theater theater, string ReservationId)
+    public static List<Ticket>? SelectSeats(User user, Theater theater, string? ReservationId)
     {
         Console.CursorVisible = false;
 
@@ -135,10 +135,14 @@ public static class TheaterHandler
 
                     if (ConfirmReservation(tickets, user.IsAdmin))
                     {
-                        JSONMethods.WriteToJSON(Theaters, FileName);
-                        TicketHandler.Tickets.AddRange(tickets);
-                        JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
-                        return tickets;
+                        if (!user.IsAdmin)
+                        {
+                            JSONMethods.WriteToJSON(Theaters, FileName);
+                            TicketHandler.Tickets.AddRange(tickets);
+                            JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
+                            return tickets;
+                        }
+                        return new List<Ticket>();
                     }
                     else
                     {
