@@ -55,10 +55,6 @@ public class Program
                     case 1:
                         Console.Clear();
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
-                        if (selectedShow == null)
-                        {
-                            return;
-                        }
                         if (selectedShow is null)
                             continue;
 
