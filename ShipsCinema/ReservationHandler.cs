@@ -64,17 +64,38 @@ public static class ReservationHandler
                     reservations.Add(reservation);
                     JSONMethods.WriteToJSON(reservations, FileName);
                 }
-                
+
             }
         }
     }
 
-    public static List<Reservation> GetReservationsByUser(User user)
+    public static void GetReservationsByUser(User user)
     {
+        List<Reservation> allReservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
+
         var reservationsUser = new List<Reservation>();
-        foreach (var reservation in Reservations)
+
+        foreach (var reservation in allReservations)
+        {
             if (reservation.UserId == user.Id)
+            {
                 reservationsUser.Add(reservation);
-        return reservationsUser;
+            }
+        }
+
+        Console.WriteLine($"You have: {reservationsUser.Count} reservations!");
+
+        if (reservationsUser.Count > 0)
+        {
+            foreach (var reservation in reservationsUser)
+            {
+                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("You have no reservations.");
+        }
     }
 }

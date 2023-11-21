@@ -81,21 +81,7 @@ public class Program
                         Console.Clear();
                         DisplayAsciiArt.Header();
                         ReservationHandler.AddTicketsToReservations();
-                        var userReservations = ReservationHandler.GetReservationsByUser(loggedInUser);
-                        Console.WriteLine($"You have: {userReservations.Count} reservations!");
-                        if (userReservations.Count > 0)
-                        {
-                            foreach (var reservation in userReservations)
-                            {
-                                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
-
-                                Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("You have no reservations.");
-                        }
+                        ReservationHandler.GetReservationsByUser(loggedInUser);
                         Console.WriteLine("PRESS ANY KEY TO GO BACK");
                         Console.ReadLine();
                         break;
