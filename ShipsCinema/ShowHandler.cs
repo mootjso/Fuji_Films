@@ -286,7 +286,7 @@ public static class ShowHandler
 
 
             if (index == dates.Count || index == dates.Count - 1)
-                break;
+                return null;
 
             string dateString = dates[index];
             DateTime date = DateTime.Parse(dateString);
