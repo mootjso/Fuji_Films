@@ -6,9 +6,10 @@
 
     private static void PickSnacks()
     {   
-        if (Ads.Count == 0)
+        if (Ads.Count == 0 && selectedSnacks.Count == 0)
         {
             selectedSnacks.Add("Stay tuned, snack enthusiasts! Exciting flavors and mouthwatering deals are opening soon!");
+            _picked = true;
             return;
         }
 
