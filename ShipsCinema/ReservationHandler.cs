@@ -83,15 +83,30 @@ public static class ReservationHandler
             }
         }
 
-        Console.WriteLine($"You have: {reservationsUser.Count} reservations!");
+        var overviewMenuOptions = new List<string>();
 
         if (reservationsUser.Count > 0)
         {
             foreach (var reservation in reservationsUser)
             {
                 Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
-                Console.WriteLine($"Reservation Code: {reservation.ReservationId} for the Movie: {movie.Title}");
+                if (!overviewMenuOptions.Contains(movie.Title))
+                {
+                    overviewMenuOptions.Add(movie.Title);
+                }
             }
+            string overviewMenuText = "Choose a movie from your reservations:\n";
+            int menuOptionNumber = 1;
+            foreach (string movieTitle in overviewMenuOptions)
+            {
+                overviewMenuText += $"{menuOptionNumber}. {movieTitle}\n";
+                menuOptionNumber++;
+            }
+
+            int selectedMovieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
+
+            // Hier een if statement maken die kijkt naar welke film gekozen is.
+            // En dan per film kijken welke reservatie codes er zijn (1x printen) met er achter de .Count() hoeveelheid (mogelijk ook de stoelen ligt er aan hoe mooi ik dat kan maken).
         }
         else
         {
