@@ -60,7 +60,7 @@ public static class AdminHandler
         string title, language, description, genre;
         int id, runTime, genreCount, ageRating;
         List<string> genres = new();
-
+        Console.CursorVisible = true;
         id = GetInputDataInt("ID");
         title = GetInputDataString("Title");
         language = GetInputDataString("Language");
@@ -73,12 +73,48 @@ public static class AdminHandler
             genres.Add(genre);
         }
 
-        runTime = GetInputDataInt("Runtime");
+        runTime = GetInputDataInt("Runtime (minutes)");
         ageRating = GetInputDataInt("Age Rating");
-
+        Movie movieToAdd = new Movie(id, title, language, description, genres, runTime, ageRating);
+        bool inMenu = true;
+        string choice;
+        while (inMenu)
+        {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            MovieHandler.PrintInfo(movieToAdd);
+            Console.WriteLine("\nAre you sure the movie details are correct? (Y/N)");
+            choice = Console.ReadLine().ToUpper();
+            switch (choice)
+            {
+                case "Y":
+                    inMenu = false;
+                    break;
+                case "N":
+                    inMenu = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Addition of movie \"{movieToAdd.Title}\" aborted");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadLine();
+                    return;
+                default:
+                    Console.WriteLine("Invalid input, please write \"Y\" or \"N\"");
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadLine();
+                    break;
+            }
+        }
+        Console.Clear();
+        DisplayAsciiArt.AdminHeader();
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
-        movies.Add(new Movie(id, title, language, description, genres, runTime, ageRating));
-        JSONMethods.WriteToJSON<Movie>(movies, JSONMethods.MovieFileName);
+        movies.Add(movieToAdd);
+        JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"Movie \"{movieToAdd.Title}\" has been added");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to continue");
+        Console.ReadLine();
     }
 
     public static void RemoveMovie()
@@ -179,13 +215,16 @@ public static class AdminHandler
     private static string GetInputDataString(string information)
     {
         string input = "";
-        Console.Write($"{information}: ");
         while (true)
         {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.Write($"{information}: ");
             input += Console.ReadLine();
             if (input.Length > 0) 
                 break;
-            Console.WriteLine("Invalid input");
+            Console.WriteLine("Invalid input\nPress any key to continue");
+            Console.ReadLine();
         }
         return input;
     }
@@ -193,15 +232,30 @@ public static class AdminHandler
     private static int GetInputDataInt(string information)
     {
         int input;
-        Console.Write($"{information}: ");
         while (true)
         {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.Write($"{information}");
+            if (information == "ID")
+            {
+                int highestId = GetHighestID();
+                if (highestId > 0)
+                    Console.Write($" (Highest ID is {highestId}): ");
+                else
+                {
+                    Console.Write($" (Highest Id: n/a): ");
+                }
+            }
+            else
+                Console.Write(": ");
             if (int.TryParse(Console.ReadLine(), out input))
             {
                 if (input > 0)
                     return input;
             }
-            Console.WriteLine("Invalid number");
+            Console.WriteLine("Invalid number\nPress any key to continue");
+            Console.ReadLine();
         }
     }
 
@@ -214,5 +268,15 @@ public static class AdminHandler
         Theater theater = TheaterHandler.CreateTheater(show);
 
         TheaterHandler.SelectSeats(adminAccount, theater, null);
+    }
+
+    public static int GetHighestID()
+    {
+        IEnumerable<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
+        if (movies.Count() > 0)
+        {
+            return movies.Max(m => m.Id);
+        }
+        return 0;
     }
 }
