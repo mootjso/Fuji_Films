@@ -251,6 +251,15 @@ public static class AdminHandler
                 Console.Write(": ");
             if (int.TryParse(Console.ReadLine(), out input))
             {
+                if (CheckIDAvailable(input))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"ID {input} is unvailable");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadLine();
+                    continue;
+                }
                 if (input > 0)
                     return input;
             }
@@ -278,5 +287,11 @@ public static class AdminHandler
             return movies.Max(m => m.Id);
         }
         return 0;
+    }
+
+    public static bool CheckIDAvailable(int id)
+    {
+        IEnumerable<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
+        return movies.Any(m => m.Id == id);
     }
 }
