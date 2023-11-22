@@ -96,11 +96,6 @@ public static class ReservationHandler
                 }
             }
             string overviewMenuText = "Choose a movie from your reservations:\n";
-            int menuOptionNumber = 1;
-            foreach (string movieTitle in overviewMenuOptions)
-            {
-                menuOptionNumber++;
-            }
 
             int selectedMovieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
 
