@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class ReservationHandler
@@ -83,6 +85,7 @@ public static class ReservationHandler
 
         var overviewMenuOptions = new List<string>();
         var overviewReservationCodes = new List<string>();
+        var overviewCorrectReservation = new List<string>();
 
         // Hier heb je reservations a sah :)
         if (reservationsUser.Count > 0)
@@ -109,12 +112,19 @@ public static class ReservationHandler
                 if (movie.Title == selectedMovieTitle)
                 {
                     // Nu check je per reservatie als de movie.id hetzelfde is als de geselecteerde film
-                    // En vervolgens check je als die nog niet in de list staat en voegt het toe aan overviewReservationCodes
+                    // En vervolgens check je als die nog niet in de list staat en voegt het toe aan overviewReservationCodes met de datum voor visuele aspect
+                    // En je voegt het toe aan overviewCorrectReservation waar later mee gewerkt wordt.
                     foreach (var reservationCode in reservationsUser)
                     {
                         if (reservationCode.MovieId == movie.Id)
-                            if (!overviewReservationCodes.Contains(reservationCode.ReservationId))
-                                overviewReservationCodes.Add(reservationCode.ReservationId);
+                        {
+                            Show show = ShowHandler.GetShowById(reservationCode.ShowId);
+                            if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateAndTime}"))
+                            {
+                                overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateAndTime}");
+                                overviewCorrectReservation.Add(reservationCode.ReservationId);
+                            }   
+                        }
                     }
 
                 }
@@ -125,7 +135,7 @@ public static class ReservationHandler
             // Hier maak je de menu met de reservatie codes
             int selectedReservation = Menu.Start(overviewReservationCodesText, overviewReservationCodes);
             // Dit is de gekozen reservatie code
-            string selectedReservationCode = overviewReservationCodes[selectedReservation];
+            string selectedReservationCode = overviewCorrectReservation[selectedReservation];
             int ReservationInt = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
@@ -135,7 +145,7 @@ public static class ReservationHandler
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"{ReservationInt}.\nRow: {reservation.Row}\nColumn: {reservation.Column}\n");
+                    Console.WriteLine($"{ReservationInt}.\nRow: {reservation.Row}\nChair: {reservation.Column}\n");
                     ReservationInt++;
                 }
             }
