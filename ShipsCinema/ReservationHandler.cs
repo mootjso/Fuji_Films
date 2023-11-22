@@ -64,17 +64,47 @@ public static class ReservationHandler
                     reservations.Add(reservation);
                     JSONMethods.WriteToJSON(reservations, FileName);
                 }
-                
+
             }
         }
     }
 
-    public static List<Reservation> GetReservationsByUser(User user)
+    public static void GetReservationsByUser(User user)
     {
+        List<Reservation> allReservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
+
         var reservationsUser = new List<Reservation>();
-        foreach (var reservation in Reservations)
+
+        foreach (var reservation in allReservations)
+        {
             if (reservation.UserId == user.Id)
+            {
                 reservationsUser.Add(reservation);
-        return reservationsUser;
+            }
+        }
+
+        var overviewMenuOptions = new List<string>();
+
+        if (reservationsUser.Count > 0)
+        {
+            foreach (var reservation in reservationsUser)
+            {
+                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                if (!overviewMenuOptions.Contains(movie.Title))
+                {
+                    overviewMenuOptions.Add(movie.Title);
+                }
+            }
+            string overviewMenuText = "Choose a movie from your reservations:\n";
+
+            int selectedMovieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
+
+            // Hier een if statement maken die kijkt naar welke film gekozen is.
+            // En dan per film kijken welke reservatie codes er zijn (1x printen) met er achter de .Count() hoeveelheid (mogelijk ook de stoelen ligt er aan hoe mooi ik dat kan maken).
+        }
+        else
+        {
+            Console.WriteLine("You have no reservations.");
+        }
     }
 }
