@@ -48,6 +48,7 @@ public static class MovieHandler
 
     public static void ViewCurrentMovies()
     {
+        Movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
