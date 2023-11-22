@@ -140,7 +140,9 @@ public static class ReservationHandler
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();
-            Console.WriteLine("These are your reservations for this code on this movie:\n");
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine($"These are your seats for reservation {overviewCorrectReservation[selectedReservation]}:\n");
             foreach (var reservation in reservationsUser)
             {
                 if (reservation.ReservationId == selectedReservationCode)
