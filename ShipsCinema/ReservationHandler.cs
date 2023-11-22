@@ -99,7 +99,6 @@ public static class ReservationHandler
             int menuOptionNumber = 1;
             foreach (string movieTitle in overviewMenuOptions)
             {
-                overviewMenuText += $"{menuOptionNumber}. {movieTitle}\n";
                 menuOptionNumber++;
             }
 
