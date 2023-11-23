@@ -251,7 +251,7 @@ public static class AdminHandler
                 Console.Write(": ");
             if (int.TryParse(Console.ReadLine(), out input))
             {
-                if (CheckIDAvailable(input))
+                if (CheckIDAvailable(input) && information == "ID")
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"ID {input} is unvailable");
