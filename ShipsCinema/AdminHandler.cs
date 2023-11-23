@@ -117,7 +117,8 @@ public static class AdminHandler
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
                 Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
-                string choice = Console.ReadLine().ToUpper();
+                string? choice = Console.ReadLine();
+                choice?.ToUpper();
                 switch (choice)
                 {
                     case "Y":
