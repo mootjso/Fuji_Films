@@ -35,7 +35,7 @@ public static class MovieHandler
         Console.Clear();
         DisplayAsciiArt.Header();
         Console.WriteLine("Current Movies\n");
-        MovieHandler.PrintInfo(movie);
+        PrintInfo(movie);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("\nPress any key to go back");
