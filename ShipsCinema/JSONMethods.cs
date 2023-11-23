@@ -29,7 +29,7 @@ public static class JSONMethods
     public static void WriteToJSON<T>(IEnumerable<T> objList, string fileName)
     {
         using StreamWriter writer = new(fileName);
-        string ListToJson = JsonConvert.SerializeObject(objList);
+        string ListToJson = JsonConvert.SerializeObject(objList, Formatting.Indented);
         writer.Write(ListToJson);
         writer.Close();
     }
