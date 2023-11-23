@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class LoginHandler
 {
@@ -31,7 +32,10 @@ public class LoginHandler
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Login to your account\n\nType 'q' at any of the prompts to go back.\n");
+            Console.WriteLine("Login to your account");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nType 'q' at any of the prompts to go back.");
+            Console.ResetColor();
 
             Console.Write("E-mailadres: ");
 
@@ -106,7 +110,10 @@ public class LoginHandler
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Register new account\n\nType 'q' at any of the prompts to go back.\n");
+            Console.WriteLine("Register new account");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nType 'q' at any of the prompts to go back.");
+            Console.ResetColor();
 
             // First Name
             Console.Write("First Name: ");
