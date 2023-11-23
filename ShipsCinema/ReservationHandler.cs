@@ -10,7 +10,7 @@ public static class ReservationHandler
 
     static ReservationHandler()
     {
-        Reservations = AppInitializer.GetReservationObjects();
+        Reservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
     }
 

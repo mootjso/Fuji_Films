@@ -8,13 +8,11 @@ public class LoginHandler
 
     public static User LogIn()
     {
-        Console.CursorVisible = true;
         LoadUsers();
         bool login = true;
 
         while (login)
         {
-            Console.CursorVisible = true;
             Console.Clear();
 
             DisplayAsciiArt.Header();
@@ -23,6 +21,8 @@ public class LoginHandler
             Console.WriteLine("Login to your account\n");
 
             Console.Write("E-mailadres: ");
+
+            Console.CursorVisible = true;
             string inputted_email = Console.ReadLine();
 
             User user = users.FirstOrDefault(u => u.Email == inputted_email);
@@ -70,9 +70,9 @@ public class LoginHandler
 
         Console.CursorVisible = false;
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Login successful, press any key to continue");
+        Console.WriteLine("\nLogin successful");
         Console.ResetColor();
-        Console.ReadKey();
+        Thread.Sleep(800);
 
         return loggedInUser;
     }

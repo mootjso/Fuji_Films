@@ -5,7 +5,7 @@ public static class MovieHandler
 
     static MovieHandler()
     {
-        Movies = AppInitializer.GetMovieObjects();
+        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
     }
     
     public static Movie? GetMovieById(int id)

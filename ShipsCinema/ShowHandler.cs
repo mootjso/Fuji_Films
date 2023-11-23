@@ -6,7 +6,7 @@ public static class ShowHandler
 
     static ShowHandler()
     {
-        Shows = AppInitializer.GetShowObjects();
+        Shows = JSONMethods.ReadJSON<Show>(FileName).ToList();
         if (Shows.Count > 0)
             LatestShowID = Shows.MaxBy(sm => sm.Id)!.Id;
         else

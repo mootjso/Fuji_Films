@@ -78,8 +78,8 @@ public class Program
                         DisplayAsciiArt.Header();
                         ReservationHandler.AddTicketsToReservations();
                         ReservationHandler.GetReservationsByUser(loggedInUser);
-                        Console.WriteLine("PRESS ANY KEY TO GO BACK");
-                        Console.ReadLine();
+                        Console.WriteLine("\nPress any key to go back");
+                        Console.ReadKey();
                         break;
                     case 3:
                         loggedInUser = null;
