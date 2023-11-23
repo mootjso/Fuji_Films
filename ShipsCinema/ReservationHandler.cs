@@ -155,7 +155,7 @@ public static class ReservationHandler
         // Hier heb je geen reservations jij pannenkoek!!! >:(
         else
         {
-            Console.WriteLine("You have no reservations.");
+            Console.WriteLine("You currently have no reservations.");
         }
     }
 }

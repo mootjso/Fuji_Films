@@ -34,7 +34,6 @@ public class Program
                         Thread.Sleep(1000);
                         Console.WriteLine("\nWe hope to see you soon!");
                         Thread.Sleep(1500);
-                        Environment.Exit(0);
                         break;
                     default:
                         break;
