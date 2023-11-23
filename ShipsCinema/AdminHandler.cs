@@ -92,6 +92,7 @@ public static class AdminHandler
                     break;
                 case "N":
                     inMenu = false;
+                    Console.CursorVisible = false;
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"Addition of movie \"{movieToAdd.Title}\" aborted");
                     Console.ResetColor();
