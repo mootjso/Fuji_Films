@@ -5,7 +5,7 @@ public static class TicketHandler
 
     static TicketHandler()
     {
-        Tickets = AppInitializer.GetTicketObjects();
+        Tickets = JSONMethods.ReadJSON<Ticket>(FileName).ToList();
         
     }
 

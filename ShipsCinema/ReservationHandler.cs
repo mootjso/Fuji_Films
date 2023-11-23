@@ -1,8 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 public static class ReservationHandler
 {
     public const string FileName = "reservations.json";
@@ -10,7 +5,7 @@ public static class ReservationHandler
 
     static ReservationHandler()
     {
-        Reservations = AppInitializer.GetReservationObjects();
+        Reservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
     }
 
@@ -59,9 +54,9 @@ public static class ReservationHandler
             {
                 {
                     // Hier wordt de reservation gemaakt en geadd met de juiste gegevens in reservations.json
-                    Show show = ShowHandler.GetShowById(ticket.ShowId);
-                    Movie movie = MovieHandler.GetMovieById(show.MovieId);
-                    var reservation = new Reservation(ticket.ReservationId, ticket.UserId, ticket.ShowId, movie.Id, ticket.Row, ticket.Column);
+                    Show? show = ShowHandler.GetShowById(ticket.ShowId)!;
+                    Movie? movie = MovieHandler.GetMovieById(show.MovieId)!;
+                    Reservation? reservation = new Reservation(ticket.ReservationId!, ticket.UserId, ticket.ShowId, movie.Id, ticket.Row, ticket.Column);
 
                     reservations.Add(reservation);
                     JSONMethods.WriteToJSON(reservations, FileName);
@@ -94,7 +89,7 @@ public static class ReservationHandler
             // Je maakt per check een movie en als de movie title niet in de lijst staat overviewMenuOptions dan voeg je hem toe
             foreach (var reservation in reservationsUser)
             {
-                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                Movie movie = MovieHandler.GetMovieById(reservation.MovieId)!;
                 if (!overviewMenuOptions.Contains(movie.Title))
                     overviewMenuOptions.Add(movie.Title);
             }
@@ -108,7 +103,7 @@ public static class ReservationHandler
             // Hier check je per reservatie de film als de title hetzelfde is als de geselecteerde title
             foreach (var reservation in reservationsUser)
             {
-                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                Movie? movie = MovieHandler.GetMovieById(reservation.MovieId)!;
                 if (movie.Title == selectedMovieTitle)
                 {
                     // Nu check je per reservatie als de movie.id hetzelfde is als de geselecteerde film
@@ -118,7 +113,7 @@ public static class ReservationHandler
                     {
                         if (reservationCode.MovieId == movie.Id)
                         {
-                            Show show = ShowHandler.GetShowById(reservationCode.ShowId);
+                            Show show = ShowHandler.GetShowById(reservationCode.ShowId)!;
                             if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateAndTime}"))
                             {
                                 overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateAndTime}");
@@ -155,7 +150,7 @@ public static class ReservationHandler
         // Hier heb je geen reservations jij pannenkoek!!! >:(
         else
         {
-            Console.WriteLine("You have no reservations.");
+            Console.WriteLine("You currently have no reservations.");
         }
     }
 }

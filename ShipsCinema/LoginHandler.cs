@@ -1,343 +1,362 @@
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class LoginHandler
 {
-    private static List<User> users;
+    private const string FileName = "UserAccounts.json";
+    private static List<User> Users;
     private static int lastUserId;
-    public static User loggedInUser { get; private set; }
+    public static User? loggedInUser { get; private set; } = null;
 
-    public static User LogIn()
+    static LoginHandler()
     {
-        Console.CursorVisible = true;
-        LoadUsers();
-        bool login = true;
+        Users = JSONMethods.ReadJSON<User>(FileName).ToList();
+        if (Users.Count >= 1)
+            lastUserId = Users.Max(u => u.Id);
+        else
+            lastUserId = 0;
+    }
 
-        while (login)
+    public static User? LogIn()
+    {
+        // Method returns null (if the user enters 'q' at any of the prompts) or a User object if login is successful
+        string? emailInput = string.Empty;
+        string? passwordInput = string.Empty;
+        User? User = null;
+
+        bool loggedIn = false;
+        while (!loggedIn)
         {
-            Console.CursorVisible = true;
             Console.Clear();
-
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Login to your account\n");
+            Console.WriteLine("Login to your account");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nType 'q' at any of the prompts to go back.");
+            Console.ResetColor();
 
             Console.Write("E-mailadres: ");
-            string inputted_email = Console.ReadLine();
 
-            User user = users.FirstOrDefault(u => u.Email == inputted_email);
-
-            if (user != null)
+            if (emailInput != string.Empty && User != null)
             {
-                bool correctPassword = false;
-
-                do
-                {
-                    Console.Write("Password: ");
-                    string password = GetMaskedPassword();
-
-                    if (user.Password == password)
-                    {
-                        loggedInUser = user;
-                        correctPassword = true;
-                        login = false;
-                    }
-                    else
-                    {
-                        Console.CursorVisible = false;
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Incorrect password, press any key to try again");
-                        Console.ResetColor();
-                        Console.ReadKey();
-                        Console.Clear();
-                        DisplayAsciiArt.Header();
-                        AdHandler.DisplaySnacks();
-                        Console.WriteLine("Login to your account\n");
-                        Console.Write("E-mailadres: ");
-                        Console.WriteLine(inputted_email);
-                    }
-                } while (!correctPassword);
+                Console.Write(emailInput);
+                Console.WriteLine();
             }
             else
             {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                emailInput = Console.ReadLine();
+                Console.ResetColor();
                 Console.CursorVisible = false;
+            }
+
+            if (emailInput == "q")
+                return null;
+
+            User = Users.FirstOrDefault(u => u.Email == emailInput);
+
+            if (User == null)
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("E-mailadres does not exist, press any key to continue");
                 Console.ResetColor();
                 Console.ReadKey();
+                continue;
+            }
+            else if (User != null)
+            {
+                Console.Write("Password: ");
+                string password = GetMaskedPassword();
+
+                if (password == "q")
+                    return null;
+
+                if (User.Password == password)
+                {
+                    loggedIn = true;
+                }
+                else
+                {
+                    Console.CursorVisible = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nIncorrect password, press any key to try again");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    Console.Clear();
+                }
             }
         }
 
-        Console.CursorVisible = false;
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Login successful, press any key to continue");
+        Console.WriteLine("\nLogin successful");
         Console.ResetColor();
-        Console.ReadKey();
+        Thread.Sleep(800);
 
-        return loggedInUser;
+        return User;
     }
 
-    public static User Register()
+    public static User? Register()
     {
-        LoadUsers();
-        bool makeAccount = true;
-        User newUser = null;
-
-        while (makeAccount)
+        User? newUser = null;
+        string? firstName = string.Empty, lastName = string.Empty, phoneNumber = string.Empty, email = string.Empty, password = string.Empty;
+        
+        bool AccountCreated = false;
+        while (!AccountCreated)
         {
             Console.Clear();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
 
-            Console.WriteLine("Register new account\n");
-
-            Console.CursorVisible = true;
-            Console.Write("First Name: ");
-            string firstName = Console.ReadLine();
-
-            Console.Write("Last Name: ");
-            string lastName = Console.ReadLine();
-
-            Console.Write("Phone Number: ");
-            string phoneNumber;
-            bool validPhoneNumber;
-            PhoneNumberValidator phoneNumberValidator = new PhoneNumberValidator();
-
-            do
-            {
-                Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
-
-                Console.WriteLine("Register new account\n");
-                Console.WriteLine($"First Name: {firstName}");
-                Console.WriteLine($"Last Name: {lastName}");
-
-                Console.Write("Phone Number: ");
-                phoneNumber = Console.ReadLine();
-                validPhoneNumber = phoneNumberValidator.IsValid(phoneNumber);
-
-                if (!validPhoneNumber)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(
-                        "Invalid phone number, please enter a valid number with 8 to 15 digits, press any key to continue"
-                    );
-                    Console.CursorVisible = false;
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.CursorVisible = true;
-                }
-            } while (!validPhoneNumber);
-
-            string email;
-            bool validEmail;
-            EmailValidator emailValidator = new EmailValidator();
-
-            do
-            {
-                Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
-
-                Console.WriteLine("Register new account\n");
-                Console.WriteLine($"First Name: {firstName}");
-                Console.WriteLine($"Last Name: {lastName}");
-                Console.WriteLine($"Phone Number: {phoneNumber}");
-
-                Console.Write("Email: ");
-                email = Console.ReadLine();
-                validEmail = emailValidator.IsValid(email);
-
-                if (!validEmail)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(
-                        "Invalid email, please enter a valid email address with atleast 4 characters and an '@', press any key to continue"
-                    );
-                    Console.CursorVisible = false;
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.CursorVisible = true;
-                }
-                else if (users.Any(user => user.Email == email))
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(
-                        "Email is already registered, please choose a different email, press any key to continue"
-                    );
-                    Console.CursorVisible = false;
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.CursorVisible = true;
-                    validEmail = false; // To continue the loop
-                }
-            } while (!validEmail);
-
-            // Password entry and validation
-            string password;
-            bool validPassword;
-            PasswordValidator passwordValidator = new PasswordValidator();
-
-            do
-            {
-                Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
-
-                Console.WriteLine("Register new account\n");
-                Console.WriteLine($"First Name: {firstName}");
-                Console.WriteLine($"Last Name: {lastName}");
-                Console.WriteLine($"Phone Number: {phoneNumber}");
-                Console.WriteLine($"Email: {email}");
-
-                Console.WriteLine(
-                    "\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit"
-                );
-                Console.Write("\nPassword: ");
-                password = GetMaskedPassword();
-                validPassword = passwordValidator.IsValid(password);
-
-                if (!validPassword)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(
-                        "Password does not meet the requirements, press any key to try again"
-                    );
-                    Console.CursorVisible = false;
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.CursorVisible = true;
-                }
-            } while (!validPassword);
-
-            // Confirm password entry
-            string confirmPassword;
-            do
-            {
-                Console.Write("Confirm Password: ");
-                confirmPassword = GetMaskedPassword();
-
-                if (confirmPassword != password)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Passwords do not match, press any key to try again");
-                    Console.CursorVisible = false;
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.CursorVisible = true;
-                }
-            } while (confirmPassword != password);
-
-            newUser = new User(
-                ++lastUserId,
-                firstName,
-                lastName,
-                email,
-                password,
-                phoneNumber,
-                false
-            );
-            users.Add(newUser);
-            loggedInUser = newUser;
-            SaveUsers();
-
-            Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Account {email}, has been created, press any key to continue");
+            Console.WriteLine("Register new account");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nType 'q' at any of the prompts to go back.");
             Console.ResetColor();
-            Console.ReadKey(true);
-            makeAccount = false;
+
+            // First Name
+            Console.Write("First Name: ");
+            if (ValidateNameInput(firstName))
+            {
+                Console.ForegroundColor = Program.InputColor;
+                Console.Write(firstName + "\n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                firstName = Console.ReadLine();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                if (firstName == "q")
+                    return null;
+                if (!ValidateNameInput(firstName))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nThe name '{firstName}' is invalid, please enter 3 or more letters.");
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                    firstName = string.Empty;
+                    continue;
+                }
+            }
+            // Last Name
+            Console.Write("Last Name: ");
+            if (ValidateNameInput(lastName))
+            {
+                Console.ForegroundColor = Program.InputColor;
+                Console.Write(lastName + "\n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                lastName = Console.ReadLine();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                if (lastName == "q")
+                    return null;
+                if (!ValidateNameInput(lastName))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nThe name '{lastName}' is invalid, please enter 3 or more letters.");
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                    lastName = string.Empty;
+                    continue;
+                }
+            }
+            // Phone Number
+            Console.Write("Phone Number: ");
+            if (ValidatePhoneNumber(phoneNumber))
+            {
+                Console.ForegroundColor = Program.InputColor;
+                Console.Write(phoneNumber + "\n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                phoneNumber = Console.ReadLine();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                if (phoneNumber == "q")
+                    return null;
+                if (!ValidatePhoneNumber(phoneNumber))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nThe phone number '{phoneNumber}' is invalid, please enter between 8 and 15 digits, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    phoneNumber = string.Empty;
+                    continue;
+                }
+            }
+            // Email
+            Console.Write("Email Address: ");
+            if (ValidateEmail(email))
+            {
+                Console.ForegroundColor = Program.InputColor;
+                Console.Write(email + "\n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                email = Console.ReadLine();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                if (email == "q")
+                    return null;
+                if (!ValidateEmail(email))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\n'{email}' is invalid, please enter a valid email e.g. 'example@email.com', press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    email = string.Empty;
+                    continue;
+                }
+            }
+            // Password entry and validation
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Password requirements: \n- Minimum 6 characters\n- 1 Uppercase letter\n- 1 Lowercase letter\n- 1 Digit");
+            Console.ResetColor();
+            Console.Write("Password: ");
+            if (ValidatePassword(password))
+            {
+                Console.ForegroundColor = Program.InputColor;
+                Console.Write(password + "\n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.CursorVisible = true;
+                Console.ForegroundColor = Program.InputColor;
+                password = GetMaskedPassword();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                if (password == "q")
+                    return null;
+                if (!ValidatePassword(password))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nThe password is invalid, press any key to continue");
+                    Console.ResetColor();
+                    Console.ReadKey();
+                    password = string.Empty;
+                    continue;
+                }
+                else
+                {
+                    Console.Write("Confirm password: ");
+                    Console.CursorVisible = true;
+                    Console.ForegroundColor = Program.InputColor;
+                    string password2 = GetMaskedPassword();
+                    Console.ResetColor();
+                    Console.CursorVisible = false;
+                    if (password2 == "q")
+                        return null;
+                    if (!(password == password2))
+                    {
+                        password = string.Empty;
+                        password2 = string.Empty;
+                        Console.ForegroundColor= ConsoleColor.Red;
+                        Console.WriteLine("\nThe passwords do not match, press any key to try again.");
+                        Console.ResetColor();
+                        Console.ReadKey();
+                        continue;
+                    } 
+                }
+            }
+
+            newUser = new User(++lastUserId, firstName!, lastName!, email!, password, phoneNumber!);
+            Users.Add(newUser);
+            JSONMethods.WriteToJSON(Users, FileName);
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nAccount {email}, has been created, press any key to continue");
+            Console.ResetColor();
+            Console.ReadKey();
+            AccountCreated = true;
         }
+
         return newUser;
     }
 
-    public static void LoadUsers()
+    public static bool ValidateNameInput(string? input)
     {
-        string filename = "UserAccounts.json";
+        if (input == null) 
+            return false;
+        
+        string pattern = @"^[a-zA-Z]{3,}$";
+        Regex regex = new Regex(pattern);
 
-        if (File.Exists(filename))
-        {
-            string json = File.ReadAllText(filename);
-            users = JsonConvert.DeserializeObject<List<User>>(json);
-            lastUserId = users.Max(u => u.Id);
-        }
-        else
-        {
-            users = new List<User>();
-            lastUserId = 0;
-        }
-    }
-
-    public static void SaveUsers()
-    {
-        string filename = "UserAccounts.json";
-        string json = JsonConvert.SerializeObject(users, Formatting.Indented);
-        File.WriteAllText(filename, json);
-    }
-
-    public class PasswordValidator
-    {
-        public bool IsValid(string password)
-        {
-            if (password.Length < 6 || password.Length > 256)
-                return false;
-
-            if (!HasUppercase(password) || !HasLowercase(password) || !HasDigits(password))
-                return false;
-
+        if (regex.IsMatch(input))
             return true;
-        }
 
-        private bool HasUppercase(string password)
-        {
-            foreach (char letter in password)
-                if (char.IsUpper(letter))
-                    return true;
-
-            return false;
-        }
-
-        private bool HasLowercase(string password)
-        {
-            foreach (char letter in password)
-                if (char.IsLower(letter))
-                    return true;
-
-            return false;
-        }
-
-        private bool HasDigits(string password)
-        {
-            foreach (char letter in password)
-                if (char.IsDigit(letter))
-                    return true;
-
-            return false;
-        }
+        return false;
     }
 
-    public class PhoneNumberValidator
+    public static bool ValidatePassword(string? password)
     {
-        public bool IsValid(string phoneNumber)
-        {
-            // Check if the phone number contains only digits and has a length between 8 and 15.
-            return System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
-        }
+        bool HasUpper = false, HasLower = false, HasDigits = false;
+
+        if (password == null) 
+            return false;
+        
+        if (password.Length < 6 || password.Length > 256)
+            return false;
+
+        foreach (char letter in password)
+            if (char.IsUpper(letter))
+                HasUpper = true;
+
+        foreach (char letter in password)
+            if (char.IsLower(letter))
+                HasLower = true;
+
+        foreach (char letter in password)
+            if (char.IsDigit(letter))
+                HasDigits = true;
+
+        if (!HasUpper || !HasLower || !HasDigits)
+            return false;
+
+        return true;
     }
 
-    public class EmailValidator
+    public static bool ValidatePhoneNumber(string? phoneNumber)
     {
-        public bool IsValid(string email)
-        {
-            if (email.Length < 4 || !email.Contains("@"))
-                return false;
-            return true;
-        }
+        if (phoneNumber == null)
+            return false;
+        
+        return Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
+    }
+
+    public static bool ValidateEmail(string? email)
+    {
+        if (email == null)
+            return false;
+
+        // [characters] '@' [characters] '.' [characters]
+        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+        Regex regex = new Regex(pattern);
+        return regex.IsMatch(email);
     }
 
     private static string GetMaskedPassword()
     {
+        Console.CursorVisible = true;
+        Console.ForegroundColor = Program.InputColor;
+
         string password = "";
         ConsoleKeyInfo key;
 
@@ -361,6 +380,8 @@ public class LoginHandler
             }
         } while (key.Key != ConsoleKey.Enter);
 
+        Console.ResetColor();
+        Console.CursorVisible = false;
         Console.WriteLine();
         return password;
     }

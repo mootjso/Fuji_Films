@@ -6,7 +6,7 @@ public static class TheaterHandler
 
     static TheaterHandler()
     {
-        Theaters = AppInitializer.GetTheaterObjects();
+        Theaters = JSONMethods.ReadJSON<Theater>(FileName).ToList();
     }
 
     public static Theater CreateTheater(Show show)

@@ -8,7 +8,7 @@
     public string PhoneNumber { get; set; }
     public bool IsAdmin { get; set; }
 
-    public User(int id, string firstName, string lastName, string email, string password, string phoneNumber, bool isAdmin)
+    public User(int id, string firstName, string lastName, string email, string password, string phoneNumber, bool isAdmin = false)
     {
         Id = id;
         FirstName = firstName;

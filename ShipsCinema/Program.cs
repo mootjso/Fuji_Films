@@ -1,5 +1,7 @@
 public class Program
 {
+    public const ConsoleColor InputColor = ConsoleColor.Cyan;
+    
     private static void Main()
     {
         User? loggedInUser = null;
@@ -7,7 +9,6 @@ public class Program
         {
             string menuText = "Welcome to Ships Cinema!\n\nAre you an existing user or would you like to register a new account?\n";
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
-
             while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
@@ -17,35 +18,38 @@ public class Program
                 {
                     case 0:
                         loggedInUser = LoginHandler.LogIn();
-
-                        if (loggedInUser.IsAdmin)
-                        {
-                            AdminHandler.StartMenu(loggedInUser);
-                            loggedInUser = null;
-                        }
+                        if (loggedInUser == null)
+                            continue;
                         break;
                     case 1:
                         loggedInUser = LoginHandler.Register();
+                        if (loggedInUser == null)
+                            continue;
                         break;
                     case 2:
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\nThank you for your visit!");
+                        Console.WriteLine("\n\n\tThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\nWe hope to see you soon!");
+                        Console.WriteLine("\n\tWe hope to sea you soon!");
                         Thread.Sleep(1500);
-                        Environment.Exit(0);
-                        break;
+                        continue;
                     default:
                         break;
                 }
             }
 
-            List<string> menuOptionsLoggedIn = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
+            if (loggedInUser.IsAdmin)
+            {
+                AdminHandler.StartMenu(loggedInUser);
+                loggedInUser = null;
+            } 
+
+            menuOptions = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
             while (loggedInUser != null)
             {
                 menuText = $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";
-                int selection = Menu.Start(menuText, menuOptionsLoggedIn);
+                int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
                     case 0:
@@ -78,16 +82,16 @@ public class Program
                         DisplayAsciiArt.Header();
                         ReservationHandler.AddTicketsToReservations();
                         ReservationHandler.GetReservationsByUser(loggedInUser);
-                        Console.WriteLine("PRESS ANY KEY TO GO BACK");
-                        Console.ReadLine();
+                        Console.WriteLine("\nPress any key to go back");
+                        Console.ReadKey();
                         break;
                     case 3:
                         loggedInUser = null;
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\nThank you for your visit!");
+                        Console.WriteLine("\n\n\tThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\nWe hope to sea you soon!");
+                        Console.WriteLine("\n\tWe hope to sea you soon!");
                         Thread.Sleep(1500);
                         break;
                     default:
