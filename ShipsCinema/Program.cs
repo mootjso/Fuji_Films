@@ -31,7 +31,7 @@ public class Program
                         DisplayAsciiArt.Header();
                         Console.WriteLine("\n\n\tThank you for your visit!");
                         Thread.Sleep(1000);
-                        Console.WriteLine("\n\tWe hope to see you soon!");
+                        Console.WriteLine("\n\tWe hope to sea you soon!");
                         Thread.Sleep(1500);
                         continue;
                     default:
