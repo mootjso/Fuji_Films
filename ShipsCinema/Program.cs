@@ -87,12 +87,12 @@ public class Program
                         break;
                     case 3:
                         loggedInUser = null;
-                        //Console.Clear();
-                        //DisplayAsciiArt.Header();
-                        //Console.WriteLine("\n\n\tThank you for your visit!");
-                        //Thread.Sleep(1000);
-                        //Console.WriteLine("\n\tWe hope to sea you soon!");
-                        //Thread.Sleep(1500);
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\n\tThank you for your visit!");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("\n\tWe hope to sea you soon!");
+                        Thread.Sleep(1500);
                         break;
                     default:
                         break;
