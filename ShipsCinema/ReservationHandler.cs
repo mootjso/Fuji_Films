@@ -1,4 +1,6 @@
+using System;
 using System.Diagnostics;
+using System.Reflection;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class ReservationHandler
@@ -74,34 +76,83 @@ public static class ReservationHandler
         List<Reservation> allReservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
         var reservationsUser = new List<Reservation>();
-
+        // Ik zet hier alle reservations van de user uit de json file naar deze list
         foreach (var reservation in allReservations)
         {
             if (reservation.UserId == user.Id)
-            {
                 reservationsUser.Add(reservation);
-            }
         }
 
         var overviewMenuOptions = new List<string>();
+        var overviewReservationCodes = new List<string>();
+        var overviewCorrectReservation = new List<string>();
 
+        // Hier heb je reservations a sah :)
         if (reservationsUser.Count > 0)
         {
+            // Hier check je ff per reservatie in de list waar alle reservaties van de user staat
+            // Je maakt per check een movie en als de movie title niet in de lijst staat overviewMenuOptions dan voeg je hem toe
             foreach (var reservation in reservationsUser)
             {
                 Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
                 if (!overviewMenuOptions.Contains(movie.Title))
-                {
                     overviewMenuOptions.Add(movie.Title);
+            }
+
+            string overviewMenuText = "Choose a movie from your reservations:\n";
+            // Hier maak de menu :) met de films
+            int selectedMovie = Menu.Start(overviewMenuText, overviewMenuOptions);
+            // Dit is de gekozen film
+            string selectedMovieTitle = overviewMenuOptions[selectedMovie];
+
+            // Hier check je per reservatie de film als de title hetzelfde is als de geselecteerde title
+            foreach (var reservation in reservationsUser)
+            {
+                Movie movie = MovieHandler.GetMovieById(reservation.MovieId);
+                if (movie.Title == selectedMovieTitle)
+                {
+                    // Nu check je per reservatie als de movie.id hetzelfde is als de geselecteerde film
+                    // En vervolgens check je als die nog niet in de list staat en voegt het toe aan overviewReservationCodes met de datum voor visuele aspect
+                    // En je voegt het toe aan overviewCorrectReservation waar later mee gewerkt wordt.
+                    foreach (var reservationCode in reservationsUser)
+                    {
+                        if (reservationCode.MovieId == movie.Id)
+                        {
+                            Show show = ShowHandler.GetShowById(reservationCode.ShowId);
+                            if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateAndTime}"))
+                            {
+                                overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateAndTime}");
+                                overviewCorrectReservation.Add(reservationCode.ReservationId);
+                            }   
+                        }
+                    }
+
                 }
             }
-            string overviewMenuText = "Choose a movie from your reservations:\n";
 
-            int selectedMovieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
+            // Hier maak je vervolgens een menu van de verschillende reservatie codes die bij de film horen die je had geselecteerd
+            string overviewReservationCodesText = "Please choose the reservation you would like to use:\n";
+            // Hier maak je de menu met de reservatie codes
+            int selectedReservation = Menu.Start(overviewReservationCodesText, overviewReservationCodes);
+            // Dit is de gekozen reservatie code
+            string selectedReservationCode = overviewCorrectReservation[selectedReservation];
+            int ReservationInt = 1;
 
-            // Hier een if statement maken die kijkt naar welke film gekozen is.
-            // En dan per film kijken welke reservatie codes er zijn (1x printen) met er achter de .Count() hoeveelheid (mogelijk ook de stoelen ligt er aan hoe mooi ik dat kan maken).
+            // Hier print je de stoelen positie die onder die reservatie code staat
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine($"These are your seats for reservation {overviewCorrectReservation[selectedReservation]}:\n");
+            foreach (var reservation in reservationsUser)
+            {
+                if (reservation.ReservationId == selectedReservationCode)
+                {
+                    Console.WriteLine($"{ReservationInt}.\nRow: {reservation.Row}\nChair: {reservation.Column}\n");
+                    ReservationInt++;
+                }
+            }
         }
+        // Hier heb je geen reservations jij pannenkoek!!! >:(
         else
         {
             Console.WriteLine("You have no reservations.");
