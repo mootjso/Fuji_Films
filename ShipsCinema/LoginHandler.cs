@@ -264,6 +264,8 @@ public class LoginHandler
                         return null;
                     if (!(password == password2))
                     {
+                        password = string.Empty;
+                        password2 = string.Empty;
                         Console.ForegroundColor= ConsoleColor.Red;
                         Console.WriteLine("\nThe passwords do not match, press any key to try again.");
                         Console.ResetColor();
