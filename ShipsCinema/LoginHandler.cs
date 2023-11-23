@@ -110,7 +110,7 @@ public class LoginHandler
 
             // First Name
             Console.Write("First Name: ");
-            if (ValidNameInput(firstName))
+            if (ValidateNameInput(firstName))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(firstName + "\n");
@@ -125,7 +125,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (firstName == "q")
                     return null;
-                if (!ValidNameInput(firstName))
+                if (!ValidateNameInput(firstName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe name '{firstName}' is invalid, please enter 3 or more letters.");
@@ -138,7 +138,7 @@ public class LoginHandler
             }
             // Last Name
             Console.Write("Last Name: ");
-            if (ValidNameInput(lastName))
+            if (ValidateNameInput(lastName))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(lastName + "\n");
@@ -153,7 +153,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (lastName == "q")
                     return null;
-                if (!ValidNameInput(lastName))
+                if (!ValidateNameInput(lastName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe name '{lastName}' is invalid, please enter 3 or more letters.");
@@ -193,7 +193,7 @@ public class LoginHandler
             }
             // Email
             Console.Write("Email Address: ");
-            if (ValidateEmailFormat(email))
+            if (ValidateEmail(email))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(email + "\n");
@@ -208,7 +208,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (email == "q")
                     return null;
-                if (!ValidateEmailFormat(email))
+                if (!ValidateEmail(email))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\n'{email}' is invalid, please enter a valid email e.g. 'example@email.com', press any key to continue");
@@ -221,7 +221,7 @@ public class LoginHandler
             // Password entry and validation
             Console.WriteLine("\nPassword requirements: \n-Minimum 6 characters\n-1 Uppercase letter\n-1 Lowercase letter\n-1 Digit");
             Console.Write("Password: ");
-            if (PasswordIsValid(password))
+            if (ValidatePassword(password))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(password + "\n");
@@ -236,7 +236,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (password == "q")
                     return null;
-                if (!PasswordIsValid(password))
+                if (!ValidatePassword(password))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe password is invalid, press any key to continue");
@@ -268,7 +268,7 @@ public class LoginHandler
 
             newUser = new User(++lastUserId, firstName!, lastName!, email!, password, phoneNumber!);
             Users.Add(newUser);
-            SaveUsers();
+            JSONMethods.WriteToJSON(Users, FileName);
 
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"\nAccount {email}, has been created, press any key to continue");
@@ -280,14 +280,7 @@ public class LoginHandler
         return newUser;
     }
 
-    public static void SaveUsers()
-    {
-        string filename = "UserAccounts.json";
-        string json = JsonConvert.SerializeObject(Users, Formatting.Indented);
-        File.WriteAllText(filename, json);
-    }
-
-    public static bool ValidNameInput(string? input)
+    public static bool ValidateNameInput(string? input)
     {
         if (input == null) 
             return false;
@@ -301,7 +294,7 @@ public class LoginHandler
         return false;
     }
 
-    public static bool PasswordIsValid(string? password)
+    public static bool ValidatePassword(string? password)
     {
         bool HasUpper = false, HasLower = false, HasDigits = false;
 
@@ -337,7 +330,7 @@ public class LoginHandler
         return Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
     }
 
-    public static bool ValidateEmailFormat(string? email)
+    public static bool ValidateEmail(string? email)
     {
         if (email == null)
             return false;

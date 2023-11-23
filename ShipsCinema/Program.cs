@@ -11,8 +11,8 @@ public class Program
             List<string> menuOptions = new() { "I am an existing user", "Register a new account", "Exit" };
             while (loggedInUser == null)
             {
-                //DisplayAsciiArt.Standby();
-                
+                DisplayAsciiArt.Standby();
+
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
                 {
@@ -27,12 +27,12 @@ public class Program
                             continue;
                         break;
                     case 2:
-                        //Console.Clear();
-                        //DisplayAsciiArt.Header();
-                        //Console.WriteLine("\n\n\tThank you for your visit!");
-                        //Thread.Sleep(1000);
-                        //Console.WriteLine("\n\tWe hope to see you soon!");
-                        //Thread.Sleep(1500);
+                        Console.Clear();
+                        DisplayAsciiArt.Header();
+                        Console.WriteLine("\n\n\tThank you for your visit!");
+                        Thread.Sleep(1000);
+                        Console.WriteLine("\n\tWe hope to see you soon!");
+                        Thread.Sleep(1500);
                         continue;
                     default:
                         break;
