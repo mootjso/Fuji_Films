@@ -227,7 +227,7 @@ public class LoginHandler
             }
             // Password entry and validation
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nPassword requirements: \n- Minimum 6 characters\n-  Uppercase letter\n- 1 Lowercase letter\n- 1 Digit");
+            Console.WriteLine("Password requirements: \n- Minimum 6 characters\n- 1 Uppercase letter\n- 1 Lowercase letter\n- 1 Digit");
             Console.ResetColor();
             Console.Write("Password: ");
             if (ValidatePassword(password))
