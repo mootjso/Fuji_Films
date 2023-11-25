@@ -52,6 +52,7 @@ public static class MovieHandler
     public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
     {
         Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+        int oldMovieCount = Movies.Count;
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
@@ -86,6 +87,9 @@ public static class MovieHandler
                 selection += (pageNumber * 10);
                 Movie movie = Movies[selection];
                 func(movie);
+                int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
+                if (newMovieCount != oldMovieCount)
+                    return;
             }
             firstTitleIndex = pageSize * pageNumber;
             // Prevent Error when page has less than 10 entries

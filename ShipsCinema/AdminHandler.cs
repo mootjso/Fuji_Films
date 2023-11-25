@@ -118,6 +118,37 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
+    private static void RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies, bool inMenu)
+    {
+        while (inMenu)
+        {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
+            string? choice = Console.ReadLine();
+            choice?.ToUpper();
+            switch (choice)
+            {
+                case "Y":
+                    movies = movies.Where(m => m.Id != movieToRemove.Id).ToList();
+                    JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
+                    Console.WriteLine($"Movie \"{movieToRemove.Title}\" has been removed");
+                    Console.WriteLine("Press any key to continue");
+                    inMenu = false;
+                    break;
+                case "N":
+                    Console.WriteLine($"Deletion of \"{movieToRemove.Title}\" aborted");
+                    Console.WriteLine("Press any key to continue");
+                    inMenu = false;
+                    break;
+                default:
+                    Console.WriteLine("Invalid option, please pick \"Y\" or \"N\"");
+                    Console.WriteLine("Press any key to continue");
+                    break;
+            }
+        }
+    }
+
     private static void RemoveMovieByID()
     {
         int id;
@@ -149,40 +180,16 @@ public static class AdminHandler
         else
         {
             bool inMenu = true;
-            while (inMenu)
-            {
-                Console.Clear();
-                DisplayAsciiArt.AdminHeader();
-                Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
-                string? choice = Console.ReadLine();
-                choice?.ToUpper();
-                switch (choice)
-                {
-                    case "Y":
-                        movies.Remove(movieToRemove);
-                        JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
-                        Console.WriteLine($"Movie \"{movieToRemove.Title}\" has been removed");
-                        Console.WriteLine("Press any key to continue");
-                        inMenu = false;
-                        break;
-                    case "N":
-                        Console.WriteLine($"Deletion of \"{movieToRemove.Title}\" aborted");
-                        Console.WriteLine("Press any key to continue");
-                        inMenu = false;
-                        break;
-                    default:
-                        Console.WriteLine("Invalid option, please pick \"Y\" or \"N\"");
-                        Console.WriteLine("Press any key to continue");
-                        break;   
-                }
-            }
+            RemoveMovieFromJson(movieToRemove, movies, inMenu);
         }
         Console.ReadLine();
     }
 
     private static void RemoveMovieBySelection()
     {
-        // To be implemented
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
+        MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m, movies, true), true);
+        Console.ReadLine();
     }
 
     private static void RemoveMovieMenu()
