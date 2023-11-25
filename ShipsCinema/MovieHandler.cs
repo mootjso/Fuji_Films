@@ -30,10 +30,13 @@ public static class MovieHandler
         Console.WriteLine($"Age Rating: {movie.AgeRating}");
     }
 
-    public static void DisplayMovieDetails(Movie movie)
+    public static void DisplayMovieDetails(Movie movie, bool isAdmin = false)
     {
         Console.Clear();
-        DisplayAsciiArt.Header();
+        if (isAdmin)
+            DisplayAsciiArt.AdminHeader();
+        else
+            DisplayAsciiArt.Header();
         Console.WriteLine("Current Movies\n");
         PrintInfo(movie);
 
@@ -46,9 +49,9 @@ public static class MovieHandler
 
     public static List<string> GetMovieTitles() => Movies.Select(movie => movie.Title).ToList();
 
-    public static void ViewCurrentMovies()
+    public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
     {
-        Movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
+        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
@@ -57,7 +60,7 @@ public static class MovieHandler
         }
         string menuText = "Current Movies\n\nSelect a movie for more information:";
         List<string> menuOptionsFull = GetMovieTitles();
-        List<string> menuOptions = new();
+        List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)
             menuOptions = menuOptionsFull.GetRange(0, 10);
         else
@@ -71,7 +74,7 @@ public static class MovieHandler
 
         while (true)
         {
-            int selection = Menu.Start(menuText, menuOptions);
+            int selection = Menu.Start(menuText, menuOptions, isAdmin);
             if (selection == menuOptions.Count)
                 break; // Go back to main menu
             else if (selection == menuOptions.Count - 1 && pageNumber < (maxPages - 1)) // Next page
@@ -81,8 +84,8 @@ public static class MovieHandler
             else if (selection >= 0 && selection < menuOptions.Count - 2)
             {
                 selection += (pageNumber * 10);
-                Movie movie = MovieHandler.Movies[selection];
-                DisplayMovieDetails(movie);
+                Movie movie = Movies[selection];
+                func(movie);
             }
             firstTitleIndex = pageSize * pageNumber;
             // Prevent Error when page has less than 10 entries

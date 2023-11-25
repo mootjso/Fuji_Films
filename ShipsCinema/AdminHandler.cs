@@ -206,9 +206,7 @@ public static class AdminHandler
                     break;
                 case 2:
                     Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("Not implemented yet.");
-                    Console.ReadLine();
+                    MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m, true), true);
                     break;
                 case 3:
                     inMenu = false;
