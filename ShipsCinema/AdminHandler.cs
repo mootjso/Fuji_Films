@@ -118,7 +118,7 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
-    public static void RemoveMovie()
+    private static void RemoveMovieByID()
     {
         int id;
         while (true)
@@ -180,6 +180,11 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
+    private static void RemoveMovieBySelection()
+    {
+        // To be implemented
+    }
+
     private static void EditMovieList()
     {
         List<string> menuOptions = new() { "Add Movie", "Remove Movie", "View Movies", "Back" };
@@ -197,7 +202,7 @@ public static class AdminHandler
                     break;
                 case 1:
                     Console.Clear();
-                    RemoveMovie();
+                    RemoveMovieByID();
                     break;
                 case 2:
                     Console.Clear();

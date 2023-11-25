@@ -57,13 +57,17 @@ public static class MovieHandler
         }
         string menuText = "Current Movies\n\nSelect a movie for more information:";
         List<string> menuOptionsFull = GetMovieTitles();
-        List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
+        List<string> menuOptions = new();
+        if (menuOptionsFull.Count >= 10)
+            menuOptions = menuOptionsFull.GetRange(0, 10);
+        else
+            menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
         menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
         int firstTitleIndex;
-        int endIndex = 1;
+        int endIndex;
 
         while (true)
         {
