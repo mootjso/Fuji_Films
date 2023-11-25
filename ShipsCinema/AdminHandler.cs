@@ -185,6 +185,34 @@ public static class AdminHandler
         // To be implemented
     }
 
+    private static void RemoveMovieMenu()
+    {
+        List<string> menuOptions = new() { "Remove Movie by ID", "Remove Movie by Selection", "Back" };
+
+        bool inMenu = true;
+        while (inMenu)
+        {
+            int index = Menu.Start("Movie Listings\n\nSelect an option:", menuOptions, true);
+
+            switch (index)
+            {
+                case 0:
+                    Console.Clear();
+                    RemoveMovieByID();
+                    break;
+                case 1:
+                    Console.Clear();
+                    RemoveMovieBySelection();
+                    break;
+                case 2:
+                    inMenu = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     private static void EditMovieList()
     {
         List<string> menuOptions = new() { "Add Movie", "Remove Movie", "View Movies", "Back" };
@@ -202,7 +230,7 @@ public static class AdminHandler
                     break;
                 case 1:
                     Console.Clear();
-                    RemoveMovieByID();
+                    RemoveMovieMenu();
                     break;
                 case 2:
                     Console.Clear();

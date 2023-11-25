@@ -55,7 +55,7 @@ public static class MovieHandler
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption);
+            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption, isAdmin);
             return;
         }
         string menuText = "Current Movies\n\nSelect a movie for more information:";
