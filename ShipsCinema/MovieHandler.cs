@@ -20,11 +20,8 @@ public static class MovieHandler
     {
         Console.WriteLine($"{movie.Title}");
         Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("\nGenres: ");
-        foreach (var genre in movie.Genres)
-        {
-            Console.Write($"{genre}; ");
-        }
+        Console.Write("Genres: ");
+        Console.Write(string.Join(", ", movie.Genres));
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
         Console.WriteLine($"Age Rating: {movie.AgeRating}");
@@ -44,7 +41,23 @@ public static class MovieHandler
         Console.ReadKey();
     }
 
-    public static List<string> GetMovieTitles() => Movies.Select(movie => movie.Title).ToList();
+    public static List<string> GetMovieTitles()
+    {
+        string title, genres, genresTemp;
+        List<string> titles = new();
+        foreach (var movie in Movies)
+        {
+            title = movie.Title.Substring(0, Math.Min(movie.Title.Length, 27));
+            if (title.Length != movie.Title.Length)
+                title += "...";
+            genresTemp = string.Join(", ", movie.Genres);
+            genres = genresTemp.Substring(0, Math.Min(genresTemp.Length, 27));
+            if (genres.Length != genresTemp.Length)
+                genres += "...";
+            titles.Add($"{title, -30} | {movie.Language.ToUpper(), -1} | {genres, -30} | {movie.Runtime, -4} min | {movie.AgeRating}");
+        }
+        return titles;
+    }
 
     public static void ViewCurrentMovies()
     {
