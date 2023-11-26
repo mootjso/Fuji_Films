@@ -3,7 +3,7 @@ namespace TicketPurchaseTests
 [TestClass]
 public class TicketHandlerTests
 {
-    protected static string FileName = TicketHandler.FileName;
+    private static string FileName = TicketHandler.FileName;
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
@@ -83,7 +83,7 @@ public class TicketHandlerTests
 [TestClass]
 public class ReservationHandlerTests
 {
-    protected static string FileName2 = ReservationHandler.FileName;
+    private static string FileName2 = ReservationHandler.FileName;
 
 
 
