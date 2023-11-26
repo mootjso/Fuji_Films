@@ -43,7 +43,7 @@ public static class MovieHandler
 
     public static List<string> GetMovieTitles()
     {
-        string title, genres, genresTemp;
+        string title, genres, genresTemp, runTime, ageRating;
         List<string> titles = new();
         foreach (var movie in Movies)
         {
@@ -54,7 +54,9 @@ public static class MovieHandler
             genres = genresTemp.Substring(0, Math.Min(genresTemp.Length, 27));
             if (genres.Length != genresTemp.Length)
                 genres += "...";
-            titles.Add($"{title, -30} | {movie.Language.ToUpper(), -1} | {genres, -30} | {movie.Runtime, -4} min | {movie.AgeRating}");
+            runTime = $"{movie.Runtime}".PadLeft(3);
+            ageRating = $"{movie.AgeRating}".PadLeft(2);
+            titles.Add($"{title, -30} | {movie.Language.ToUpper(), -1} | {genres, -30} | {runTime, -4} min | {ageRating}");
         }
         return titles;
     }
