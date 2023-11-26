@@ -11,10 +11,9 @@ public class TicketHandlerTests
         // Clear the test JSON file
         File.WriteAllText(FileName, "[]");
 
-        // Set the test tickets
         List<Ticket> testTickets = new List<Ticket>
         {
-            // Add your test tickets here
+
             new Ticket(1, 1, 1, 1, 10.0, "Red"),
             new Ticket(1, 2, 8, 5, 15.0, "Blue"),
             new Ticket(2, 1, 3, 3, 20.0, "Yellow"),
