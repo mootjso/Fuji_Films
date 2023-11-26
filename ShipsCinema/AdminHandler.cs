@@ -3,7 +3,7 @@ public static class AdminHandler
     public static void StartMenu(User adminAccount)
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Add/Remove/View Movies", "Add/Remove show","Change movie details", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial report", "Movies: Add/Remove/Edit/View", "Add/Remove show", "Take out seat(s)", "Log out"};
         
         while (true)
         {   
@@ -12,9 +12,8 @@ public static class AdminHandler
             const int FinancialReportOption = 0;
             const int AddRemoveMovieOption = 1;
             const int AddRemoveShowOption = 2;
-            const int ChangeMovieDetailsOption = 3;
-            const int TakeOutSeatsOption = 4;
-            const int LogOutOption = 5;
+            const int TakeOutSeatsOption = 3;
+            const int LogOutOption = 4;
   
             switch (selection)
             {
@@ -32,10 +31,6 @@ public static class AdminHandler
                     Console.Clear();
                     ShowHandler.EditShowSchedule();
                     break;       
-                case ChangeMovieDetailsOption:
-                    Console.Clear();
-                    ChangeMovieDetails.EditMovieDescription();
-                    break;
                 case TakeOutSeatsOption:
                     Console.Clear();
                     TakeOutSeats(adminAccount);
@@ -125,8 +120,7 @@ public static class AdminHandler
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
             Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
-            string? choice = Console.ReadLine();
-            choice?.ToUpper();
+            string choice = Console.ReadLine().ToUpper();
             switch (choice)
             {
                 case "Y":
@@ -222,7 +216,7 @@ public static class AdminHandler
 
     private static void EditMovieList()
     {
-        List<string> menuOptions = new() { "Add Movie", "Remove Movie", "View Movies", "Back" };
+        List<string> menuOptions = new() { "Add Movie", "Remove Movie", "Edit Movie", "View Movies", "Back" };
 
         bool inMenu = true;
         while (inMenu)
@@ -241,9 +235,13 @@ public static class AdminHandler
                     break;
                 case 2:
                     Console.Clear();
-                    MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m, true), true);
+                    ChangeMovieDetails.EditMovieDescription();
                     break;
                 case 3:
+                    Console.Clear();
+                    MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m, true), true);
+                    break;
+                case 4:
                     inMenu = false;
                     break;
                 default:

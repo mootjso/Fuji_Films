@@ -66,7 +66,7 @@ public static class MovieHandler
             menuOptions = menuOptionsFull.GetRange(0, 10);
         else
             menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
-        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+        menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
@@ -82,6 +82,8 @@ public static class MovieHandler
                 pageNumber++;
             else if (selection == menuOptions.Count - 2 && pageNumber != 0) // Previous page
                 pageNumber--;
+            else if (selection == menuOptions.Count - 3)
+                return;
             else if (selection >= 0 && selection < menuOptions.Count - 2)
             {
                 selection += (pageNumber * 10);
@@ -98,7 +100,7 @@ public static class MovieHandler
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+            menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
         }
     }
 }
