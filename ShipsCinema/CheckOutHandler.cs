@@ -7,6 +7,10 @@
         Revenue = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
 
     }
+    // per show bij houden.
+    // dan kunnen we per tijd bekijken.
+
+    // ook per movie
 
 
 }
