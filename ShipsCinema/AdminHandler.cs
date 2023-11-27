@@ -72,14 +72,16 @@ public static class AdminHandler
         ageRating = GetInputDataInt("Age Rating");
         Movie movieToAdd = new Movie(id, title, language, description, genres, runTime, ageRating);
         bool inMenu = true;
-        string choice;
+        string? choice;
         while (inMenu)
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
             MovieHandler.PrintInfo(movieToAdd);
             Console.WriteLine("\nAre you sure the movie details are correct? (Y/N)");
-            choice = Console.ReadLine().ToUpper();
+            choice = Console.ReadLine();
+            if (choice != null)
+                choice = choice.ToUpper();
             switch (choice)
             {
                 case "Y":
@@ -121,7 +123,9 @@ public static class AdminHandler
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
             Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
-            string choice = Console.ReadLine().ToUpper();
+            string? choice = Console.ReadLine();
+            if (choice != null)
+                choice = choice.ToUpper();
             switch (choice)
             {
                 case "Y":
@@ -174,7 +178,6 @@ public static class AdminHandler
             Console.WriteLine($"No movie with ID {id} found");
         else
         {
-            bool inMenu = true;
             RemoveMovieFromJson(movieToRemove, movies);
         }
         Console.ReadLine();
@@ -239,7 +242,7 @@ public static class AdminHandler
                     break;
                 case 3:
                     Console.Clear();
-                    MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m, true), true);
+                    MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m, true), true);
                     break;
                 case 4:
                     inMenu = false;

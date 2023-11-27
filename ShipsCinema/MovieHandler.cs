@@ -46,6 +46,7 @@ public static class MovieHandler
 
     public static List<string> GetMovieTitles()
     {
+        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
         string title, language, genres, genresTemp, runTime, ageRating;
         List<string> titles = new();
         foreach (var movie in Movies)
@@ -132,6 +133,26 @@ public static class MovieHandler
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
             menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
+        }
+    }
+
+    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
+    {
+        List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
+        string menuText = $"{movie.Title}\n\nSelect an option:";
+        int selection = Menu.Start(menuText, menuOptions, isAdmin);
+        switch (selection)
+        {
+            case 0:
+                DisplayMovieDetails(movie, isAdmin);
+                break;
+            case 1:
+                ShowHandler.PrintMovieDates(movie, isAdmin);
+                break;
+            case 2:
+                return;
+            default:
+                break;
         }
     }
 }
