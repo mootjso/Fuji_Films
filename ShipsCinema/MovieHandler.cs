@@ -46,6 +46,7 @@ public static class MovieHandler
 
     public static List<string> GetMovieTitles()
     {
+        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
         string title, language, genres, genresTemp, runTime, ageRating;
         List<string> titles = new();
         foreach (var movie in Movies)

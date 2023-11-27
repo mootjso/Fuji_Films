@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipsCinema", "ShipsCinema\ShipsCinema.csproj", "{B83EB817-B706-4E96-8342-F6EDAFD0A5FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipsCinemaTest", "MovieListingsTest\ShipsCinemaTest.csproj", "{5E5943CA-CBDD-4FD1-A62F-F5182B3451F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShipsCinemaTest", "ShipsCinemaTest\ShipsCinemaTest.csproj", "{5E5943CA-CBDD-4FD1-A62F-F5182B3451F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
