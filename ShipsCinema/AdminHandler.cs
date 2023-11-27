@@ -3,7 +3,7 @@ public static class AdminHandler
     public static void StartMenu(User adminAccount)
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Movies: Add/Remove/Edit/View", "Show: Add/Remove", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial report", "Movies: Add/Remove/Edit/View", "Shows: Add/Remove", "Take out seat(s)", "Log out"};
         
         while (true)
         {   
