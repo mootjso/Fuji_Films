@@ -51,6 +51,9 @@ public static class MovieHandler
 
     public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
     {
+        // parameter func -> lambda to perform certain action on movie object
+        // 1. View Movie Details -> m => DisplayMovieDetails(m)
+        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie list
         Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
         int oldMovieCount = Movies.Count;
         if (Movies.Count == 0)
@@ -90,6 +93,8 @@ public static class MovieHandler
                 Movie movie = Movies[selection];
                 func(movie);
                 int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
+                // Check if movie has been deleted, return if yes
+                // That way you don't go back to the movie menu, deleted movie would still be visible there
                 if (newMovieCount != oldMovieCount)
                     return;
             }
