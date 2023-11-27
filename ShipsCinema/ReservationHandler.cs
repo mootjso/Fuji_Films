@@ -82,7 +82,7 @@ public static class ReservationHandler
         var overviewReservationCodes = new List<string>();
         var overviewCorrectReservation = new List<string>();
 
-        // Hier heb je reservations a sah :)
+        // Hier heb je reservations :)
         if (reservationsUser.Count > 0)
         {
             // Hier check je ff per reservatie in de list waar alle reservaties van de user staat
@@ -147,7 +147,7 @@ public static class ReservationHandler
                 }
             }
         }
-        // Hier heb je geen reservations jij pannenkoek!!! >:(
+        // Hier heb je geen reservations!!! >:(
         else
         {
             Console.WriteLine("You currently have no reservations.");
