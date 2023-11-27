@@ -23,9 +23,9 @@ namespace MovieListingsTest
         public void TestReadMoviesFromJSON()
         {
             List<Movie> movieToWrite = new()
-        {
+            {
             new Movie(1, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18)
-        };
+            };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
             List<Movie> readMovie = JSONMethods.ReadJSON<Movie>(_fileName).ToList();
             Movie movie = readMovie[0];
@@ -42,10 +42,10 @@ namespace MovieListingsTest
         public void TestGetMovieById()
         {
             List<Movie> movieToWrite = new()
-        {
+            {
             new Movie(1, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18),
             new Movie (2, "Movie2", "nl", "Second Movie", new List<string> { "Thriller", "Comedy" }, 120, 16)
-        };
+            };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
 
             Movie? movie = MovieHandler.GetMovieById(2);

@@ -20,11 +20,8 @@ public static class MovieHandler
     {
         Console.WriteLine($"{movie.Title}");
         Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("\nGenres: ");
-        foreach (var genre in movie.Genres)
-        {
-            Console.Write($"{genre}; ");
-        }
+        Console.Write("Genres: ");
+        Console.Write(string.Join(", ", movie.Genres));
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
         Console.WriteLine($"Age Rating: {movie.AgeRating}");
@@ -47,7 +44,34 @@ public static class MovieHandler
         Console.ReadKey();
     }
 
-    public static List<string> GetMovieTitles() => Movies.Select(movie => movie.Title).ToList();
+    public static List<string> GetMovieTitles()
+    {
+        string title, language, genres, genresTemp, runTime, ageRating;
+        List<string> titles = new();
+        foreach (var movie in Movies)
+        {
+            language = movie.Language.ToUpper() switch
+            {
+                "EN" => "English",
+                "FR" => "French",
+                "NL" => "Dutch",
+                "FI" => "Finish",
+                "DU" => "German",
+                _ => movie.Language.ToUpper()
+            };
+            title = movie.Title.Substring(0, Math.Min(movie.Title.Length, 27));
+            if (title.Length != movie.Title.Length)
+                title += "...";
+            genresTemp = string.Join(", ", movie.Genres);
+            genres = genresTemp.Substring(0, Math.Min(genresTemp.Length, 27));
+            if (genres.Length != genresTemp.Length)
+                genres += "...";
+            runTime = $"{movie.Runtime}".PadLeft(3);
+            ageRating = $"{movie.AgeRating}+";
+            titles.Add($"{title, -30} | {language, -10} | {genres, -30} | {runTime + " min", -8} | {ageRating}");
+        }
+        return titles;
+    }
 
     public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
     {
@@ -62,7 +86,9 @@ public static class MovieHandler
             Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption, isAdmin);
             return;
         }
-        string menuText = "Current Movies\n\nSelect a movie for more information:";
+        string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
+            $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
+            $"  {new string('-', 93)}";
         List<string> menuOptionsFull = GetMovieTitles();
         List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)

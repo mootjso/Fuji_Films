@@ -10,9 +10,9 @@ public static class JSONMethods
             long fileSize = new FileInfo(fileName).Length;
             if (fileSize > 0)
             {
-                StreamReader reader = new(fileName);
+                using StreamReader reader = new(fileName);
                 string content = reader.ReadToEnd();
-                IEnumerable<T> objList = JsonConvert.DeserializeObject<List<T>>(content)!;
+                IEnumerable<T> objList = JsonConvert.DeserializeObject<IEnumerable<T>>(content)!;
                 reader.Close();
 
                 return objList;
