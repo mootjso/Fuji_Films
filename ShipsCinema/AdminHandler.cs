@@ -183,7 +183,6 @@ public static class AdminHandler
     {
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
         MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m, movies, true), true);
-        Console.ReadLine();
     }
 
     private static void RemoveMovieMenu()
