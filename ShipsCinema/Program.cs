@@ -54,7 +54,7 @@ public class Program
                 {
                     case 0:
                         Console.Clear();
-                        MovieHandler.ViewCurrentMovies();
+                        MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m));
                         break;
                     case 1:
                         Console.Clear();
