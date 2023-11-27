@@ -81,8 +81,10 @@ public static class ShowHandler
                 Console.ReadKey();
                 return;
             }
-
-            int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles, true);
+            string menuText = $"Show Schedule\n\nSelect a movie:\n" +
+            $"  {"Title",-30} | {"Language",-10} | {"Genres",-30} | {"Runtime",-8} | Age\n" +
+            $"  {new string('-', 93)}";
+            int index = Menu.Start(menuText, movieTitles, true);
             if (index == movieTitles.Count)  // If user presses left arrow key leave current while loop
                 break;
             Movie movie = MovieHandler.Movies[index];
