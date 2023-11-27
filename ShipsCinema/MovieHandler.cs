@@ -43,10 +43,19 @@ public static class MovieHandler
 
     public static List<string> GetMovieTitles()
     {
-        string title, genres, genresTemp, runTime, ageRating;
+        string title, language, genres, genresTemp, runTime, ageRating;
         List<string> titles = new();
         foreach (var movie in Movies)
         {
+            language = movie.Language.ToUpper() switch
+            {
+                "EN" => "English",
+                "FR" => "French",
+                "NL" => "Dutch",
+                "FI" => "Finish",
+                "DU" => "German",
+                _ => movie.Language.ToUpper()
+            };
             title = movie.Title.Substring(0, Math.Min(movie.Title.Length, 27));
             if (title.Length != movie.Title.Length)
                 title += "...";
@@ -55,8 +64,8 @@ public static class MovieHandler
             if (genres.Length != genresTemp.Length)
                 genres += "...";
             runTime = $"{movie.Runtime}".PadLeft(3);
-            ageRating = $"{movie.AgeRating}".PadLeft(2);
-            titles.Add($"{title, -30} | {movie.Language.ToUpper(), -1} | {genres, -30} | {runTime, -4} min | {ageRating}");
+            ageRating = $"{movie.AgeRating}+";
+            titles.Add($"{title, -30} | {language, -10} | {genres, -30} | {runTime + " min", -8} | {ageRating}");
         }
         return titles;
     }
@@ -70,7 +79,9 @@ public static class MovieHandler
             Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption);
             return;
         }
-        string menuText = "Current Movies\n\nSelect a movie for more information:";
+        string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
+            $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
+            $"  {new string('-', 93)}";
         List<string> menuOptionsFull = GetMovieTitles();
         List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
         menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
@@ -78,7 +89,7 @@ public static class MovieHandler
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
         int firstTitleIndex;
-        int endIndex = 1;
+        int endIndex;
 
         while (true)
         {
