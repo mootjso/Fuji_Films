@@ -20,20 +20,20 @@ public static class MovieHandler
     {
         Console.WriteLine($"{movie.Title}");
         Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("\nGenres: ");
-        foreach (var genre in movie.Genres)
-        {
-            Console.Write($"{genre}; ");
-        }
+        Console.Write("Genres: ");
+        Console.Write(string.Join(", ", movie.Genres));
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
         Console.WriteLine($"Age Rating: {movie.AgeRating}");
     }
 
-    public static void DisplayMovieDetails(Movie movie)
+    public static void DisplayMovieDetails(Movie movie, bool isAdmin = false)
     {
         Console.Clear();
-        DisplayAsciiArt.Header();
+        if (isAdmin)
+            DisplayAsciiArt.AdminHeader();
+        else
+            DisplayAsciiArt.Header();
         Console.WriteLine("Current Movies\n");
         PrintInfo(movie);
 
@@ -44,41 +44,85 @@ public static class MovieHandler
         Console.ReadKey();
     }
 
-    public static List<string> GetMovieTitles() => Movies.Select(movie => movie.Title).ToList();
-
-    public static void ViewCurrentMovies()
+    public static List<string> GetMovieTitles()
     {
-        Movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
+        string title, language, genres, genresTemp, runTime, ageRating;
+        List<string> titles = new();
+        foreach (var movie in Movies)
+        {
+            language = movie.Language.ToUpper() switch
+            {
+                "EN" => "English",
+                "FR" => "French",
+                "NL" => "Dutch",
+                "FI" => "Finish",
+                "DU" => "German",
+                _ => movie.Language.ToUpper()
+            };
+            title = movie.Title.Substring(0, Math.Min(movie.Title.Length, 27));
+            if (title.Length != movie.Title.Length)
+                title += "...";
+            genresTemp = string.Join(", ", movie.Genres);
+            genres = genresTemp.Substring(0, Math.Min(genresTemp.Length, 27));
+            if (genres.Length != genresTemp.Length)
+                genres += "...";
+            runTime = $"{movie.Runtime}".PadLeft(3);
+            ageRating = $"{movie.AgeRating}+";
+            titles.Add($"{title, -30} | {language, -10} | {genres, -30} | {runTime + " min", -8} | {ageRating}");
+        }
+        return titles;
+    }
+
+    public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
+    {
+        // parameter func -> lambda to perform certain action on movie object
+        // 1. View Movie Details -> m => DisplayMovieDetails(m)
+        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie list
+        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+        int oldMovieCount = Movies.Count;
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption);
+            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption, isAdmin);
             return;
         }
-        string menuText = "Current Movies\n\nSelect a movie for more information:";
+        string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
+            $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
+            $"  {new string('-', 93)}";
         List<string> menuOptionsFull = GetMovieTitles();
-        List<string> menuOptions = menuOptionsFull.GetRange(0, 10);
-        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+        List<string> menuOptions;
+        if (menuOptionsFull.Count >= 10)
+            menuOptions = menuOptionsFull.GetRange(0, 10);
+        else
+            menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
+        menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
         int firstTitleIndex;
-        int endIndex = 1;
+        int endIndex;
 
         while (true)
         {
-            int selection = Menu.Start(menuText, menuOptions);
+            int selection = Menu.Start(menuText, menuOptions, isAdmin);
             if (selection == menuOptions.Count)
                 break; // Go back to main menu
             else if (selection == menuOptions.Count - 1 && pageNumber < (maxPages - 1)) // Next page
                 pageNumber++;
             else if (selection == menuOptions.Count - 2 && pageNumber != 0) // Previous page
                 pageNumber--;
+            else if (selection == menuOptions.Count - 3)
+                return;
             else if (selection >= 0 && selection < menuOptions.Count - 2)
             {
                 selection += (pageNumber * 10);
-                Movie movie = MovieHandler.Movies[selection];
-                DisplayMovieDetails(movie);
+                Movie movie = Movies[selection];
+                func(movie);
+                int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
+                // Check if movie has been deleted, return if yes
+                // That way you don't go back to the movie menu, deleted movie would still be visible there
+                if (newMovieCount != oldMovieCount)
+                    return;
             }
             firstTitleIndex = pageSize * pageNumber;
             // Prevent Error when page has less than 10 entries
@@ -87,7 +131,7 @@ public static class MovieHandler
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+            menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
         }
     }
 }
