@@ -4,6 +4,7 @@ namespace TicketPurchaseTests
 public class TicketHandlerTests
 {
     private static string FileName = TicketHandler.FileName;
+    private static List<Ticket> original_FileName = JSONMethods.ReadJSON<Ticket>(FileName).ToList();
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
@@ -13,13 +14,17 @@ public class TicketHandlerTests
 
         List<Ticket> testTickets = new List<Ticket>
         {
-
             new Ticket(1, 1, 1, 1, 10.0, "Red"),
             new Ticket(1, 2, 8, 5, 15.0, "Blue"),
             new Ticket(2, 1, 3, 3, 20.0, "Yellow"),
         };
         JSONMethods.WriteToJSON(testTickets, FileName);
 
+    }
+    [ClassCleanup]
+    public static void CleanupJSONFile()
+    {
+       JSONMethods.WriteToJSON(original_FileName, FileName); 
     }
 
     [TestMethod]
@@ -84,7 +89,7 @@ public class TicketHandlerTests
 public class ReservationHandlerTests
 {
     private static string FileName2 = ReservationHandler.FileName;
-
+    private static List<Reservation> original_FileName2 = JSONMethods.ReadJSON<Reservation>(FileName2).ToList();
 
 
     [ClassInitialize]
@@ -104,7 +109,13 @@ public class ReservationHandlerTests
         JSONMethods.WriteToJSON(testReservations, FileName2);
 
     }
-    
+
+    [ClassCleanup]
+    public static void CleanupJSON()
+    {
+       JSONMethods.WriteToJSON(original_FileName2, FileName2); 
+    }
+
     [TestMethod]
     public void TestReservationID()
     {
@@ -130,7 +141,5 @@ public class ReservationHandlerTests
         Assert.AreNotEqual(4, reservationTest.Column);
 
     }
-
-
 }
 }
