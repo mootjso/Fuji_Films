@@ -113,8 +113,9 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
-    private static void RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies, bool inMenu)
+    private static void RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies)
     {
+        bool inMenu = true;
         while (inMenu)
         {
             Console.Clear();
@@ -174,7 +175,7 @@ public static class AdminHandler
         else
         {
             bool inMenu = true;
-            RemoveMovieFromJson(movieToRemove, movies, inMenu);
+            RemoveMovieFromJson(movieToRemove, movies);
         }
         Console.ReadLine();
     }
@@ -182,7 +183,7 @@ public static class AdminHandler
     private static void RemoveMovieBySelection()
     {
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
-        MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m, movies, true), true);
+        MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m, movies), true);
     }
 
     private static void RemoveMovieMenu()
