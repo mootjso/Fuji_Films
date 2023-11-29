@@ -65,15 +65,18 @@ namespace MovieListingsTest
         [TestMethod]
         public void TestGetMovieTitles()
         {
+            Movie movie1 = new(1, "Movie1", "en", "First Movie", new List<string> { "Adventure" }, 105, 18);
+            string movieString1 = $"{"Movie1",-30} | {"English",-10} | {"Adventure" ,-30} | {"105" + " min",-8} | 18+";
+
             List<Movie> movieToWrite = new()
             {
-                new Movie(1, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18),
-                new Movie (2, "Movie2", "nl", "Second Movie", new List<string> { "Thriller", "Comedy" }, 120, 16)
+                movie1,
+                new Movie(2, "Movie 2", "en", "kaas", new List<string> { "Family" }, 120, 12)
             };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
 
             List<string> movieTitles = MovieHandler.GetMovieTitles();
-            CollectionAssert.AreEqual(new List<string> { "Movie1", "Movie2" }, movieTitles);
+            Assert.AreEqual(movieString1, movieTitles[0]);
         }
     }
 }
