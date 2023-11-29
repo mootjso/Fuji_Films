@@ -106,7 +106,7 @@ public static class TheaterHandler
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
 
-                        Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
+                        Console.WriteLine($"You have selected seat {selectedSeat}.");
                         if (!user.IsAdmin)
                             Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 

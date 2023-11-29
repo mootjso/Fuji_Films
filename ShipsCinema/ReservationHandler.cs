@@ -142,7 +142,7 @@ public static class ReservationHandler
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"{ReservationInt}.\nRow: {reservation.Row}\nChair: {reservation.Column}\n");
+                    Console.WriteLine($"{ReservationInt}.\n{reservation}\n");
                     ReservationInt++;
                 }
             }
