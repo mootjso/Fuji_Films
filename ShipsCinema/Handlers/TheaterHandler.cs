@@ -106,7 +106,7 @@ public static class TheaterHandler
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
 
-                        Console.WriteLine($"You have selected seat {selectedSeat.PositionName}.");
+                        Console.WriteLine($"You have selected seat {selectedSeat}.");
                         if (!user.IsAdmin)
                             Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 
@@ -124,7 +124,7 @@ public static class TheaterHandler
                     // Invalid seat selected
                     else
                     {
-                        Console.WriteLine($"Seat {selectedSeat.PositionName} is already taken or cannot be chosen.");
+                        Console.WriteLine($"{selectedSeat} is already taken or cannot be chosen.");
                         Console.WriteLine("Press any key to choose another seat.");
                         Console.ReadKey();
                     }
@@ -362,8 +362,8 @@ public static class TheaterHandler
         Console.Write("Selected seat(s): ");
         List<string> seatPositions = new();
         foreach (var seat in seats)
-            seatPositions.Add(seat.PositionName);
+            seatPositions.Add($"{seat}");
 
-        Console.Write($"{string.Join(", ", seatPositions)}");
+        Console.Write($"{string.Join("; ", seatPositions)}");
     }
 }
