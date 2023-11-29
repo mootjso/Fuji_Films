@@ -135,4 +135,24 @@ public static class MovieHandler
             menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
         }
     }
+
+    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
+    {
+        List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
+        string menuText = $"{movie.Title}\n\nSelect an option:";
+        int selection = Menu.Start(menuText, menuOptions, isAdmin);
+        switch (selection)
+        {
+            case 0:
+                DisplayMovieDetails(movie, isAdmin);
+                break;
+            case 1:
+                ShowHandler.PrintMovieDates(movie, isAdmin);
+                break;
+            case 2:
+                return;
+            default:
+                break;
+        }
+    }
 }
