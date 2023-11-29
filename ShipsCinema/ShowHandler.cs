@@ -405,5 +405,6 @@ public static class ShowHandler
         Console.ResetColor();
 
         Console.ReadKey();
+        MovieHandler.MovieSelectionMenu(movie, isAdmin);
     }
 }

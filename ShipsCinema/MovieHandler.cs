@@ -42,6 +42,7 @@ public static class MovieHandler
         Console.ResetColor();
         
         Console.ReadKey();
+        MovieSelectionMenu(movie, isAdmin);
     }
 
     public static List<string> GetMovieTitles()
@@ -96,7 +97,7 @@ public static class MovieHandler
             menuOptions = menuOptionsFull.GetRange(0, 10);
         else
             menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
-        menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
+        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]", "[Back]" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
@@ -108,13 +109,13 @@ public static class MovieHandler
             int selection = Menu.Start(menuText, menuOptions, isAdmin);
             if (selection == menuOptions.Count)
                 break; // Go back to main menu
-            else if (selection == menuOptions.Count - 1 && pageNumber < (maxPages - 1)) // Next page
+            else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
                 pageNumber++;
-            else if (selection == menuOptions.Count - 2 && pageNumber != 0) // Previous page
+            else if (selection == menuOptions.Count - 3 && pageNumber != 0) // Previous page
                 pageNumber--;
-            else if (selection == menuOptions.Count - 3)
+            else if (selection == menuOptions.Count - 1)
                 return;
-            else if (selection >= 0 && selection < menuOptions.Count - 2)
+            else if (selection >= 0 && selection < menuOptions.Count - 3)
             {
                 selection += (pageNumber * 10);
                 Movie movie = Movies[selection];
@@ -132,7 +133,7 @@ public static class MovieHandler
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "[Back]", "[Previous Page]", "[Next Page]" });
+            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]", "[Back]" });
         }
     }
 
