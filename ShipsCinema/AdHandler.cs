@@ -34,10 +34,15 @@
     public static void DisplaySnacks()
     {
         PickSnacks();
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("------- TASTY OFFERINGS -------");
         foreach (string Snack in selectedSnacks)
+        {
             Console.WriteLine(Snack);
-        Console.WriteLine("-------------------------------");
+        }
+        Console.ForegroundColor= ConsoleColor.DarkYellow;
+        Console.WriteLine("---------------------------------------------------------------------");
         Console.WriteLine();
+        Console.ResetColor();
     }
 }
