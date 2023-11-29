@@ -45,9 +45,9 @@ public static class MovieHandler
         MovieSelectionMenu(movie, isAdmin);
     }
 
-    public static List<string> GetMovieTitles()
+    public static List<string> GetMovieTitles(List<Movie> movies)
     {
-        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+        Movies = movies;
         string title, language, genres, genresTemp, runTime, ageRating;
         List<string> titles = new();
         foreach (var movie in Movies)
@@ -91,7 +91,7 @@ public static class MovieHandler
         string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
             $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
             $"  {new string('-', 93)}";
-        List<string> menuOptionsFull = GetMovieTitles();
+        List<string> menuOptionsFull = GetMovieTitles(ShowHandler.GetScheduledMovies());
         List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)
             menuOptions = menuOptionsFull.GetRange(0, 10);
