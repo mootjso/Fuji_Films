@@ -4,7 +4,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class LoginHandler
 {
-    private const string FileName = "UserAccounts.json";
+    private const string FileName = "Datasources/UserAccounts.json";
     private static List<User> Users;
     private static int lastUserId;
     public static User? loggedInUser { get; private set; } = null;
