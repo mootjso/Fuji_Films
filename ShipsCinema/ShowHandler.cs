@@ -67,7 +67,7 @@ public static class ShowHandler
         while (inMenu)
         {
             // Movie Selection
-            List<string> movieTitles = MovieHandler.GetMovieTitles();
+            List<string> movieTitles = MovieHandler.GetMovieTitles(JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList());
             if (movieTitles.Count == 0)
             {
                 Console.Clear();
@@ -405,5 +405,17 @@ public static class ShowHandler
         Console.ResetColor();
 
         Console.ReadKey();
+        MovieHandler.MovieSelectionMenu(movie, isAdmin);
+    }
+
+    public static List<Movie> GetScheduledMovies()
+    {
+        var movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
+        var showings = JSONMethods.ReadJSON<Show>(FileName);
+        var query =
+            from movie in movies
+            join showing in showings on movie.Id equals showing.MovieId
+            select movie;
+        return query.Distinct().ToList();
     }
 }
