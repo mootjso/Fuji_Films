@@ -74,7 +74,7 @@ public class Program
                         Console.ReadLine();
                         Console.Clear();
                         DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
+                        CheckOutHandler.AddShowToRevenue();
                         Console.ReadKey();
                         break;
                     case 2:
