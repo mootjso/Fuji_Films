@@ -81,8 +81,10 @@ public static class ShowHandler
                 Console.ReadKey();
                 return;
             }
-
-            int index = Menu.Start("Show Schedule\n\nSelect a movie:", movieTitles, true);
+            string menuText = $"Show Schedule\n\nSelect a movie:\n" +
+            $"  {"Title",-30} | {"Language",-10} | {"Genres",-30} | {"Runtime",-8} | Age\n" +
+            $"  {new string('-', 93)}";
+            int index = Menu.Start(menuText, movieTitles, true);
             if (index == movieTitles.Count)  // If user presses left arrow key leave current while loop
                 break;
             Movie movie = MovieHandler.Movies[index];
@@ -362,5 +364,46 @@ public static class ShowHandler
         List<DateTime> sortedDates = dates.OrderBy(d => d).ToList();
         List<string> sortedDateStrings = sortedDates.Select(d => d.ToString("dd-MM-yyyy")).ToList();
         return sortedDateStrings;
+    }
+
+    public static void PrintMovieDates(Movie movie, bool isAdmin = false)
+    {
+        Console.Clear();
+
+        var shows = JSONMethods.ReadJSON<Show>(FileName);
+        var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
+        var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
+        DateTime date;
+
+        if (isAdmin)
+            DisplayAsciiArt.AdminHeader();
+        else
+            DisplayAsciiArt.Header();
+
+        Console.WriteLine($"Showings of {movie.Title}\n");
+
+        foreach (var day in showsFilteredGrouped)
+        {
+            date = day.First().DateAndTime;
+            Console.WriteLine($"{date.DayOfWeek} {date:D}");
+            foreach (var show in day)
+            {
+                Console.WriteLine($"  {show.StartTimeString} - Auditorium {show.TheaterNumber}");
+            }
+            Console.WriteLine();
+        }
+
+        if (showsFiltered.Count() == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"{movie.Title} has not been scheduled yet");
+            Console.ResetColor();
+        }
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("\nPress any key to go back");
+        Console.ResetColor();
+
+        Console.ReadKey();
     }
 }
