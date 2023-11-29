@@ -19,5 +19,5 @@
         ReservationId = reservationId;
     }
 
-    public override string ToString() => $"Row {Row}, Column {Column}";
+    public override string ToString() => $"Row {Row}, Seat {Column}";
 }

@@ -99,6 +99,7 @@ public static class ReservationHandler
             int selectedMovie = Menu.Start(overviewMenuText, overviewMenuOptions);
             // Dit is de gekozen film
             string selectedMovieTitle = overviewMenuOptions[selectedMovie];
+            Show showForReservation = null;
 
             // Hier check je per reservatie de film als de title hetzelfde is als de geselecteerde title
             foreach (var reservation in reservationsUser)
@@ -114,9 +115,10 @@ public static class ReservationHandler
                         if (reservationCode.MovieId == movie.Id)
                         {
                             Show show = ShowHandler.GetShowById(reservationCode.ShowId)!;
-                            if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateAndTime}"))
+                            showForReservation = show;
+                            if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}"))
                             {
-                                overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateAndTime}");
+                                overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}");
                                 overviewCorrectReservation.Add(reservationCode.ReservationId);
                             }   
                         }
@@ -137,12 +139,17 @@ public static class ReservationHandler
             Console.Clear();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
-            Console.WriteLine($"These are your seats for reservation {overviewCorrectReservation[selectedReservation]}:\n");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine($"{selectedMovieTitle}");
+            Console.ResetColor();
+            Console.WriteLine($"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}");
+            Console.ResetColor();
+            Console.WriteLine($"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n");
             foreach (var reservation in reservationsUser)
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"{ReservationInt}.\n{reservation}\n");
+                    Console.WriteLine($"Ticket {ReservationInt}:".PadRight(12) + $"Row {reservation.Row}\n" + "".PadLeft(12) + $"Seat: {reservation.Column}\n");
                     ReservationInt++;
                 }
             }
@@ -152,5 +159,10 @@ public static class ReservationHandler
         {
             Console.WriteLine("You currently have no reservations.");
         }
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("Press any key to go back");
+        Console.ReadKey();
+        Console.ResetColor();
     }
 }
