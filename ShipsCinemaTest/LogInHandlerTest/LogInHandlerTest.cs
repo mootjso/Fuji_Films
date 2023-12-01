@@ -1,7 +1,7 @@
 namespace LogInHandlerTest;
 
 [TestClass]
-public class UnitTest1
+public class TestLoginHandler
 {
     private static string FileName = LoginHandler.FileName;
     private static List<User> original_FileName = JSONMethods.ReadJSON<User>(FileName).ToList();
@@ -13,9 +13,8 @@ public class UnitTest1
 
         List<User> testUsers = new List<User>
         {
-            new User(1, "John", "Doe", "john.doe@email.com", "password123", "0612345678"),
-            new User(2, "Barld", "Boot", "barld.boot@email.com", "securepass", "0612345679", true),
-            new User(3, "Bob", "Johnson", "bob.johnson@email.com", "pass123", "0612545678")
+            new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
+            new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
         };
         JSONMethods.WriteToJSON(testUsers, FileName);
 
@@ -39,6 +38,7 @@ public class UnitTest1
         Assert.AreEqual("john.doe@email.com", user.Email);
         Assert.AreEqual("password123", user.Password);
         Assert.AreEqual("0612345678", user.PhoneNumber);
+
         Assert.IsFalse(user.IsAdmin);
 
         Assert.IsTrue(user_admin.IsAdmin);
@@ -48,38 +48,86 @@ public class UnitTest1
     public void TestValidateNameInput()
     {
         bool result = LoginHandler.ValidateNameInput("John");
-        bool wrong_result = LoginHandler.ValidateNameInput("Po");
+
+        bool wrongResult = LoginHandler.ValidateNameInput("Po");
+        bool nullResult = LoginHandler.ValidateNameInput(null);
+        bool resultNumber = LoginHandler.ValidateNameInput("John5");
+
         Assert.IsTrue(result);
-        Assert.IsFalse(wrong_result);
+
+        Assert.IsFalse(wrongResult);
+        Assert.IsFalse(nullResult);
+        Assert.IsFalse(resultNumber);
     }
 
     [TestMethod]
     public void TestValidatePassword()
     {
-        bool result_lowercase_missing = LoginHandler.ValidatePassword("PASSWORD123");
-        bool result_digit_missing = LoginHandler.ValidatePassword("PASSWORDS");
-        bool result_Uppercase_missing = LoginHandler.ValidatePassword("password123");
-        bool result_null = LoginHandler.ValidatePassword("");
+        bool lowercaseMissing = LoginHandler.ValidatePassword("PASSWORD123");
+        bool digitMissing = LoginHandler.ValidatePassword("PASSWORDS");
+        bool UppercaseMissing = LoginHandler.ValidatePassword("password123");
+        bool resultNull = LoginHandler.ValidatePassword(null);
 
 
-        bool result_long = LoginHandler.ValidatePassword("PASSwooooooooooooooooooooooooooooooooooord123");
-        bool result_normal = LoginHandler.ValidatePassword("RightPassWord123");
+        bool resultLong = LoginHandler.ValidatePassword("PASSwooooooooooooooooooooooooooooooooooord123");
+        bool resultNormal = LoginHandler.ValidatePassword("RightPassWord123");
 
-        Assert.IsFalse(result_lowercase_missing);
-        Assert.IsFalse(result_digit_missing);
-        Assert.IsFalse(result_Uppercase_missing);
-        Assert.IsNotNull(result_null);
+        Assert.IsFalse(lowercaseMissing);
+        Assert.IsFalse(digitMissing);
+        Assert.IsFalse(UppercaseMissing);
+        Assert.IsNotNull(resultNull);
 
-        Assert.IsTrue(result_long);
-        Assert.IsTrue(result_normal);
+        Assert.IsTrue(resultLong);
+        Assert.IsTrue(resultNormal);
     }
 
     [TestMethod]
     public void TestValidatePhoneNumber()
     {
-        bool result_short = LoginHandler.ValidatePhoneNumber("31063");
-        bool result_long = LoginHandler.ValidatePhoneNumber("31063");
-        bool result_letters = LoginHandler.ValidatePhoneNumber("31063");
-        
+        bool resultShort = LoginHandler.ValidatePhoneNumber("31063");
+        bool resultLong = LoginHandler.ValidatePhoneNumber("31063432693733101");
+        bool resultLetters = LoginHandler.ValidatePhoneNumber("31063ds21");
+        bool resultNegative = LoginHandler.ValidatePhoneNumber("-067128249");
+        bool resultSymbol = LoginHandler.ValidatePhoneNumber("+067128249");
+        bool resultNull = LoginHandler.ValidatePhoneNumber(null);
+
+        bool resultGood = LoginHandler.ValidatePhoneNumber("067128249");
+        bool resultGood2 = LoginHandler.ValidatePhoneNumber("067128249142649");
+
+        Assert.IsFalse(resultLong);
+        Assert.IsFalse(resultShort);
+        Assert.IsFalse(resultLetters);       
+        Assert.IsFalse(resultNegative); 
+        Assert.IsFalse(resultSymbol);
+        Assert.IsFalse(resultNull);
+
+        Assert.IsTrue(resultGood);
+        Assert.IsTrue(resultGood2);
+    }
+
+    [TestMethod]
+    public void TestValidateEmail()
+    {
+        bool missingAt = LoginHandler.ValidateEmail("Johnoutlook.com");
+        bool resultNull = LoginHandler.ValidateEmail(null);
+        bool missingDomain = LoginHandler.ValidateEmail("John@.com");
+        bool missingDot = LoginHandler.ValidateEmail("John@outlookcom");
+        bool missingTopDomain = LoginHandler.ValidateEmail("John@outlook.");
+        bool missingUsername = LoginHandler.ValidateEmail("@outlook.com");
+
+        bool onlyNumbers = LoginHandler.ValidateEmail("3983748@outlook.com");
+        bool resultAllowed = LoginHandler.ValidateEmail("John@outlook.com");
+        bool resultAllowed2 = LoginHandler.ValidateEmail("johndoe@gmail.com");
+
+        Assert.IsFalse(missingAt);
+        Assert.IsFalse(resultNull);
+        Assert.IsFalse(missingDomain);
+        Assert.IsFalse(missingDot);
+        Assert.IsFalse(missingTopDomain);
+        Assert.IsFalse(missingUsername);
+
+        Assert.IsTrue(onlyNumbers);
+        Assert.IsTrue(resultAllowed);
+        Assert.IsTrue(resultAllowed2);
     }
 }
