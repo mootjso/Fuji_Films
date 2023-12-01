@@ -54,7 +54,7 @@ public class Program
                 {
                     case 0:
                         Console.Clear();
-                        MovieHandler.ViewCurrentMovies(m => MovieHandler.DisplayMovieDetails(m));
+                        MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m));
                         break;
                     case 1:
                         Console.Clear();
@@ -82,8 +82,7 @@ public class Program
                         DisplayAsciiArt.Header();
                         ReservationHandler.AddTicketsToReservations();
                         ReservationHandler.GetReservationsByUser(loggedInUser);
-                        Console.WriteLine("\nPress any key to go back");
-                        Console.ReadKey();
+                        
                         break;
                     case 3:
                         loggedInUser = null;

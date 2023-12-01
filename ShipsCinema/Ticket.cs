@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Tracing;
-
-public class Ticket
+﻿public class Ticket
 {
     public int ShowId;
     public int UserId;
@@ -21,4 +19,5 @@ public class Ticket
         ReservationId = reservationId;
     }
 
+    public override string ToString() => $"Row {Row}, Seat {Column}";
 }
