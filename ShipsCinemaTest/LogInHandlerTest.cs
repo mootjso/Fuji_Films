@@ -35,7 +35,7 @@ public class TestLoginHandler
         Assert.AreEqual(1, user.Id);
         Assert.AreEqual("John", user.FirstName);
         Assert.AreEqual("Doe", user.LastName);
-        Assert.AreEqual("john.doe@email.com", user.Email);
+        Assert.AreEqual("john.doe@outlook.com", user.Email);
         Assert.AreEqual("password123", user.Password);
         Assert.AreEqual("0612345678", user.PhoneNumber);
 
