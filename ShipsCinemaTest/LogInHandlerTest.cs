@@ -3,27 +3,28 @@ namespace LogInHandlerTest;
 [TestClass]
 public class TestLoginHandler
 {
-    private static string FileName = LoginHandler.FileName;
-    private static List<User> original_FileName = JSONMethods.ReadJSON<User>(FileName).ToList();
+    private static string _fileName = LoginHandler.FileName;
+    private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
+
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
         // Clear the test JSON file
-        File.WriteAllText(FileName, "[]");
+        File.WriteAllText(_fileName, "[]");
 
         List<User> testUsers = new List<User>
         {
             new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
             new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
         };
-        JSONMethods.WriteToJSON(testUsers, FileName);
+        JSONMethods.WriteToJSON(testUsers, _fileName);
 
     }
 
     [ClassCleanup]
     public static void CleanupJSONFile()
     {
-       JSONMethods.WriteToJSON(original_FileName, FileName); 
+       JSONMethods.WriteToJSON(_originalFileName, _fileName); 
     }
 
     [TestMethod]
