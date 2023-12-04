@@ -60,14 +60,13 @@ public static class TheaterHandler
             }
             
 
-            DrawSeatOverview(theater, selectedRow, selectedColumn, user);
+            DrawSeatOverview(theater, selectedRow, selectedColumn, user, selectedSeats);
             DrawMovieScreen(theater);
             if (!user.IsAdmin)
             {
                 DisplayPriceInfo();
                 totalPrice = TicketHandler.GetTotalPrice(tickets);
-                DisplaySelectedSeats(selectedSeats);
-                Console.WriteLine($"\nTotal price of reservation: {totalPrice} EUR\n");
+                Console.WriteLine($"Total price of reservation: {totalPrice} EUR\n");
             }
 
             keyInfo = Console.ReadKey(true);
@@ -97,16 +96,29 @@ public static class TheaterHandler
                 // User selects a seat
                 case ConsoleKey.Enter:
                     Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
-                    
+
+                    // Deselect seat
+                    if (selectedSeats.Contains(selectedSeat))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine($"Press 'Enter' to deselect this seat, press any other key to keep the seat selected.");
+                        Console.ResetColor();
+                        ConsoleKeyInfo pressedKey = Console.ReadKey();
+                        if (pressedKey.Key == ConsoleKey.Enter)
+                        {
+                            selectedSeat.IsAvailable = true;
+                            selectedSeat.UserId = -1;
+                            selectedSeats.Remove(selectedSeat);
+                        }  
+                    }
                     // Valid seat selected
-                    if (selectedSeat.IsSeat && selectedSeat.UserId == -1 && selectedSeat.IsAvailable)
+                    else if (selectedSeat.IsSeat && selectedSeat.UserId == -1 && selectedSeat.IsAvailable)
                     {
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
 
-                        Console.WriteLine($"You have selected seat {selectedSeat}.");
                         if (!user.IsAdmin)
                             Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
 
@@ -124,8 +136,10 @@ public static class TheaterHandler
                     // Invalid seat selected
                     else
                     {
-                        Console.WriteLine($"{selectedSeat} is already taken or cannot be chosen.");
+                        Console.ForegroundColor= ConsoleColor.Magenta;
+                        Console.WriteLine($"This seat is already taken or cannot be chosen.");
                         Console.WriteLine("Press any key to choose another seat.");
+                        Console.ResetColor();
                         Console.ReadKey();
                     }
                     break;
@@ -171,13 +185,12 @@ public static class TheaterHandler
         return null;
     }
 
-    public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn, User user)
+    public static void DrawSeatOverview(Theater theater, int selectedRow, int selectedColumn, User user, List<Seat> selectedSeats)
     {
         int rows = theater.Seats.Max(seat => seat.Row);
         int columns = theater.Seats.Max(seat => seat.Column);
         for (int i = 0; i < rows + 1; i++)
         {
-            // Write the Letter-labels on the side of the grid
             Console.ResetColor();
 
             for (int j = 0; j < columns + 1; j++)
@@ -198,6 +211,13 @@ public static class TheaterHandler
                     {
                         Console.Write("  ");
                         Console.ResetColor();
+                        continue;
+                    }
+                    // Seat has been reserved by current user in a previous reservation
+                    if (seat.UserId == user.Id && selectedSeats.Contains(seat))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("O ");
                         continue;
                     }
                     // Seat has been reserved by current user
@@ -275,22 +295,25 @@ public static class TheaterHandler
     public static void DisplayPriceInfo()
     {
         Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.Write($"■ : {Theater.RedSeatPrice} EUR\t");
+        Console.Write($"■: {Theater.RedSeatPrice} EUR\t");
 
         Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.Write($"■ : {Theater.YellowSeatPrice} EUR\t");
+        Console.Write($"■: {Theater.YellowSeatPrice} EUR\t");
 
         Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"■ : {Theater.BlueSeatPrice} EUR");
+        Console.Write($"■: {Theater.BlueSeatPrice} EUR");
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write("\nO: Your seat(s)\t");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write("O: Others\t");
+
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write("X: Unavailable");
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("\nO : Your seat\t");
-
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Write("O : Others\t");
-
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Write("X : Unavailable");
+        Console.Write("\nO: Your seat(s) from previous reservations");
         Console.WriteLine("\n");
 
         Console.ResetColor();
@@ -298,6 +321,7 @@ public static class TheaterHandler
 
     public static bool ConfirmReservation(List<Ticket> tickets, bool isAdmin = false)
     {
+        Console.ForegroundColor = ConsoleColor.Magenta;
         // No seats selected
         if (tickets.Count <= 0)
         {
@@ -306,17 +330,18 @@ public static class TheaterHandler
             else
                 Console.WriteLine("You have not selected any seats to take out.");
 
-            Console.WriteLine("Press any key to continue");
+            Console.WriteLine("Press any key to continue.");
 
             Console.ReadKey();
             return false;
         }
-
+        
         if (!isAdmin)
             Console.WriteLine("Press 'Enter' to continue to checkout, press any other key to go back to seat selection.");
         else
             Console.WriteLine("Press 'Enter' to confirm and take out the selected seats, press any other key to go back to seat selection.");
-
+        
+        Console.ResetColor();
         ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
         // User confirms their selection and continues to checkout
@@ -330,28 +355,19 @@ public static class TheaterHandler
 
     public static bool ConfirmSeatSelection(User user)
     {
+        Console.ForegroundColor = ConsoleColor.Magenta;
         if (!user.IsAdmin)
         {
-            Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel)");
+            Console.WriteLine("\nAre you sure you want to choose this seat? (Press 'Enter' to confirm, press any other key to cancel).");
         }
         else if (user.IsAdmin)
-            Console.WriteLine("\nAre you sure you want to take out this seat? (Press Enter to confirm, press any other key to cancel)");
-
+            Console.WriteLine("\nAre you sure you want to take out this seat? (Press 'Enter' to confirm, press any other key to cancel).");
+        Console.ResetColor();
         ConsoleKeyInfo keyInfo = Console.ReadKey();
         if (keyInfo.Key == ConsoleKey.Enter)
         {
             return true;
         }
         return false;
-    }
-
-    public static void DisplaySelectedSeats(List<Seat> seats)
-    {
-        Console.Write("Selected seat(s): ");
-        List<string> seatPositions = new();
-        foreach (var seat in seats)
-            seatPositions.Add($"{seat}");
-
-        Console.Write($"{string.Join("; ", seatPositions)}");
     }
 }
