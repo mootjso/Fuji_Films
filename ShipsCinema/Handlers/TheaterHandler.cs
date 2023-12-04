@@ -101,7 +101,7 @@ public static class TheaterHandler
                     if (selectedSeats.Contains(selectedSeat))
                     {
                         Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.WriteLine($"Press enter to deselect seat '{selectedSeat}', press any other key to keep the seat selected.");
+                        Console.WriteLine($"Press 'Enter' to deselect this seat, press any other key to keep the seat selected.");
                         Console.ResetColor();
                         ConsoleKeyInfo pressedKey = Console.ReadKey();
                         if (pressedKey.Key == ConsoleKey.Enter)
@@ -137,7 +137,7 @@ public static class TheaterHandler
                     else
                     {
                         Console.ForegroundColor= ConsoleColor.Magenta;
-                        Console.WriteLine($"{selectedSeat} is already taken or cannot be chosen.");
+                        Console.WriteLine($"This seat is already taken or cannot be chosen.");
                         Console.WriteLine("Press any key to choose another seat.");
                         Console.ResetColor();
                         Console.ReadKey();
@@ -358,10 +358,10 @@ public static class TheaterHandler
         Console.ForegroundColor = ConsoleColor.Magenta;
         if (!user.IsAdmin)
         {
-            Console.WriteLine("\nAre you sure you want to choose this seat? (Press Enter to confirm, press any other key to cancel).");
+            Console.WriteLine("\nAre you sure you want to choose this seat? (Press 'Enter' to confirm, press any other key to cancel).");
         }
         else if (user.IsAdmin)
-            Console.WriteLine("\nAre you sure you want to take out this seat? (Press Enter to confirm, press any other key to cancel).");
+            Console.WriteLine("\nAre you sure you want to take out this seat? (Press 'Enter' to confirm, press any other key to cancel).");
         Console.ResetColor();
         ConsoleKeyInfo keyInfo = Console.ReadKey();
         if (keyInfo.Key == ConsoleKey.Enter)
