@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 public static class ShowHandler
 {
     public const string FileName = "shows.json";
@@ -110,6 +112,13 @@ public static class ShowHandler
 
             Show show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
 
+            bool isAvailable = TheaterIsAvailable(show);
+            Console.WriteLine($"Theater is available: {isAvailable}");
+            Console.ReadKey();
+            // Check if Theater is available
+            // foreach Show in all shows check if show.TheaterNumber == selectedTheaterNum
+            //      check if startTime of that show is not during the new planned show
+
             // Confirm or cancel selection
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
             int selection = ConfirmSelection(show, movie, menuHeader, true);
@@ -135,6 +144,21 @@ public static class ShowHandler
             break;
         }
     }
+
+    public static bool TheaterIsAvailable(Show newShow)
+    {
+        foreach (Show show in Shows)
+        {
+            if (show.TheaterNumber == newShow.TheaterNumber)
+            {
+                DateTime endTimeOldShow = show.DateAndTime.AddMinutes(15);
+                Console.WriteLine(endTimeOldShow);
+                return (endTimeOldShow < newShow.DateAndTime);
+            }
+        }
+        return true;
+    }
+
     public static List<string> GetMovieTitles(List<Movie> movies)
     {
         List<string> movieTitles = new();
