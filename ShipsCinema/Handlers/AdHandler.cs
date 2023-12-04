@@ -1,7 +1,7 @@
 ﻿public static class AdHandler
 {
     private static bool _picked = false;
-    public static List<string> Ads = JSONMethods.ReadJSON<string>("ads.json").ToList();
+    public static List<string> Ads = JSONMethods.ReadJSON<string>("Datasources/ads.json").ToList();
     public static List<string> selectedSnacks = new();
 
     private static void PickSnacks()
