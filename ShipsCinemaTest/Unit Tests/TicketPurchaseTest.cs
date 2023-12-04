@@ -6,8 +6,8 @@ public class TicketHandlerTests
     private static string FileName = TicketHandler.FileName;
     private static List<Ticket> original_FileName = JSONMethods.ReadJSON<Ticket>(FileName).ToList();
 
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    [TestInitialize]
+    public void TestInitialize()
     {
         // Clear the test JSON file
         File.WriteAllText(FileName, "[]");
@@ -88,16 +88,15 @@ public class TicketHandlerTests
 [TestClass]
 public class ReservationHandlerTests
 {
-    private static string FileName2 = ReservationHandler.FileName;
-    private static List<Reservation> original_FileName2 = JSONMethods.ReadJSON<Reservation>(FileName2).ToList();
+    private static string FileName = ReservationHandler.FileName;
+    private static List<Reservation> original_FileName2 = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
 
     [ClassInitialize]
     public static void ClassInitialize(TestContext context)
     {
         // Clear the  JSON file
-        File.WriteAllText(FileName2, "[]");
-
+        File.WriteAllText(FileName, "[]");
 
         List<Reservation> testReservations = new List<Reservation>
         {
@@ -106,14 +105,14 @@ public class ReservationHandlerTests
             new Reservation("xyz9-uvw8-pqr7", 3, 5, 6, 15, 3),
 
         };
-        JSONMethods.WriteToJSON(testReservations, FileName2);
+        JSONMethods.WriteToJSON(testReservations, FileName);
 
     }
 
     [ClassCleanup]
     public static void CleanupJSON()
     {
-       JSONMethods.WriteToJSON(original_FileName2, FileName2); 
+       JSONMethods.WriteToJSON(original_FileName2, FileName); 
     }
 
     [TestMethod]
@@ -128,7 +127,7 @@ public class ReservationHandlerTests
     [TestMethod]
     public void TestWriteReservationsToJSON()
     {
-        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>(FileName2).ToList();
+        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
         Reservation reservationTest = reservations[2];
 
         Assert.AreEqual(3, reservations.Count); // Check if the number of reservations is correct
