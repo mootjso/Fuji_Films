@@ -91,7 +91,11 @@ public static class MovieHandler
         string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
             $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
             $"  {new string('-', 93)}";
-        List<string> menuOptionsFull = GetMovieTitles(ShowHandler.GetScheduledMovies());
+        List<string> menuOptionsFull;
+        if (isAdmin)
+            menuOptionsFull = GetMovieTitles(Movies);
+        else
+            menuOptionsFull = GetMovieTitles(ShowHandler.GetScheduledMovies());
         List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)
             menuOptions = menuOptionsFull.GetRange(0, 10);

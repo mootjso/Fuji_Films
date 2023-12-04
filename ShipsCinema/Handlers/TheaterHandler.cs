@@ -175,22 +175,10 @@ public static class TheaterHandler
     {
         int rows = theater.Seats.Max(seat => seat.Row);
         int columns = theater.Seats.Max(seat => seat.Column);
-
-        // Write top line of numbers for the grid
-        Console.Write("  ");
-        for (int j = 1; j <= columns + 1; j++)
-        {
-            Console.Write(j + " ");
-        }
-        Console.Write("\n");
-
-        char rowLabel = 'A';
         for (int i = 0; i < rows + 1; i++)
         {
             // Write the Letter-labels on the side of the grid
             Console.ResetColor();
-            Console.Write(rowLabel + " ");
-            rowLabel++;
 
             for (int j = 0; j < columns + 1; j++)
             {
@@ -202,7 +190,7 @@ public static class TheaterHandler
                 }
                 else
                     Console.ResetColor();
-                
+
                 if (seat.IsAvailable)
                 {
                     // Not a seat
