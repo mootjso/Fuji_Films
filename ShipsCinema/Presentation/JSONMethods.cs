@@ -1,8 +1,6 @@
-using Newtonsoft.Json;
-
 public static class JSONMethods
 {
-    public static string MovieFileName = "movies.json";
+    public static string MovieFileName = "Datasources/movies.json";
     public static IEnumerable<T> ReadJSON<T>(string fileName)
     {
         if (File.Exists(fileName))
