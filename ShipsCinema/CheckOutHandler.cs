@@ -31,9 +31,10 @@ public class CheckOutHandler
             if (!showExists)
             {
                 double totalRevenueUpToNow = GetTotalRevenueUpToNow(show.Id);
+                int month = show.DateAndTime.Month;
 
-                Movie? movie = MovieHandler.GetMovieById(show.Id)!;
-                Revenue? revenue = new Revenue(show.Id, movie.Title, totalRevenueUpToNow);
+                Movie? movie = MovieHandler.GetMovieById(show.MovieId)!;
+                Revenue? revenue = new Revenue(show.Id, movie.Title, totalRevenueUpToNow, month);
 
                 revenues.Add(revenue);
                 JSONMethods.WriteToJSON(revenues, FileName);
@@ -54,34 +55,91 @@ public class CheckOutHandler
         return revenue;
     }
 
-    public static bool CheckOut()
+    public static void AddToExistingRevenue(int showId, double moneyAdded)
     {
-        AdHandler.DisplaySnacks();
-        Console.WriteLine("Please enter your credit card number:\nEXAMPLE 4321-2432-2432\n");
-        Console.ForegroundColor = ConsoleColor.Blue;
-        string creditCardInput = Console.ReadLine();
-        if (creditCardInput.Contains("-"));
-            string creditCard = $"{creditCardInput.Substring(0,4)}{creditCardInput.Substring(5,4)}{creditCardInput.Substring(10,4)}";
+        List<Revenue> revenues = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
 
-        if (creditCard.Length != 12)
+        foreach (var revenue in revenues)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Credit card does NOT exist!\nTRANSACTION CANCELLED\n");
+            if (revenue.ShowId == showId)
+            {
+                revenue.TotalRevenue += moneyAdded;
+                break;
+            }
+        }
+        JSONMethods.WriteToJSON(revenues, FileName);
+    }
+
+    public static void CheckOut()
+    {
+        while(true)
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Please enter your credit card number:\nEXAMPLE 4321-2432-2432\n");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string creditCardInput = Console.ReadLine();
+            if (creditCardInput.Contains("-"))
+            {
+                creditCardInput = $"{creditCardInput.Substring(0, 4)}{creditCardInput.Substring(5, 4)}{creditCardInput.Substring(10, 4)}";
+            }
+            if (creditCardInput.Length != 12)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Credit card does NOT exist!\nRETRY!\n");
+                Console.WriteLine("Press any button to continue");
+                Console.ReadLine();
+                continue;
+            }
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Please input the experation date:\nEXAMPLE MM/YY, 02/25\n");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string experationCodeInput = Console.ReadLine();
+            if (experationCodeInput.Contains("/"))
+            {
+                experationCodeInput = $"{experationCodeInput.Substring(0, 2)}{experationCodeInput.Substring(3, 2)}";
+            }
+            if (experationCodeInput.Length != 4)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Wrong experation code!\nRETRY!\n");
+                Console.WriteLine("Press any button to continue");
+                Console.ReadLine();
+                continue;
+            }
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Please input the CVC code (on the back):\nEXAMPLE 454\n");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            string cvc = Console.ReadLine();
+            if (cvc.Length != 3)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Wrong Card Verification Code!\nRETRY!\n");
+                Console.WriteLine("Press any button to continue");
+                Console.ReadLine();
+                Console.Clear();
+                continue;
+            }
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.White;
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Tickets successfully booked!\n");
             Console.WriteLine("Press any button to continue");
             Console.ReadLine();
             Console.Clear();
-            return false;
+            return;
         }
-
-
-        Console.WriteLine("Please input the experation date:\nEXAMPLE MM/YY, 02/25\n");
-        Console.ForegroundColor = ConsoleColor.Blue;
-        string experationCodeInput = Console.ReadLine();
-        if (experationCodeInput.Contains("/"));
-            string experationCode = $"{experationCodeInput.Substring(0,2)}{experationCodeInput.Substring(3,2)}";
-
-        Console.WriteLine("Please input the CVC code (on the back):\nEXAMPLE 454\n");
-        Console.ForegroundColor = ConsoleColor.Blue;
-        string CVC = Console.ReadLine();
     }
 }
