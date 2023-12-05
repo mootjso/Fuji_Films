@@ -12,15 +12,19 @@
 
     public static void Header()
     {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.Write(AsciiArt.header);
         Console.WriteLine("---------------------------------------------------------------------");
+        Console.ResetColor();
     }
 
 
     public static void AdminHeader()
     {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
         Console.Write(AsciiArt.AdminHeader);
-        Console.WriteLine("---------------------------------");
+        Console.WriteLine("---------------------------------------------------------------------");
+        Console.ResetColor();
     }
 
     public static void Standby()

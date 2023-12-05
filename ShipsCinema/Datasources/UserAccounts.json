@@ -1,0 +1,20 @@
+[
+  {
+    "Id": 1,
+    "FirstName": "Geert",
+    "LastName": "Wilders",
+    "Email": "u",
+    "Password": "u",
+    "PhoneNumber": "u",
+    "IsAdmin": false
+  },
+  {
+    "Id": 2,
+    "FirstName": "a",
+    "LastName": "a",
+    "Email": "a",
+    "Password": "a",
+    "PhoneNumber": "a",
+    "IsAdmin": true
+  }
+]

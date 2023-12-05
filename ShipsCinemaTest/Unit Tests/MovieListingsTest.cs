@@ -74,8 +74,9 @@ namespace MovieListingsTest
                 new Movie(2, "Movie 2", "en", "kaas", new List<string> { "Family" }, 120, 12)
             };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
+            List<Movie> MoviesFromJSON = JSONMethods.ReadJSON<Movie>(_fileName).ToList();
 
-            List<string> movieTitles = MovieHandler.GetMovieTitles();
+            List<string> movieTitles = MovieHandler.GetMovieTitles(MoviesFromJSON);
             Assert.AreEqual(movieString1, movieTitles[0]);
         }
     }

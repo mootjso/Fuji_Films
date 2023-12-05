@@ -18,4 +18,6 @@ public class Reservation
         Row = row;
         Column = column;
     }
+
+    public override string ToString() => $"Row: {Row}, Seat: {Column}";
 }
