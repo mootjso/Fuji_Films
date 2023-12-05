@@ -2,7 +2,7 @@
 
 public class CheckOutHandler
 {
-    public const string FileName = "revenuePerShow.json";
+    public const string FileName = "Datasources/revenuePerShow.json";
     public static List<Revenue> Revenue;
 
     static CheckOutHandler()
@@ -75,7 +75,7 @@ public class CheckOutHandler
         while(true)
         {
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
             Console.WriteLine("Please enter your credit card number:\nEXAMPLE 4321-2432-2432\n");
@@ -95,7 +95,7 @@ public class CheckOutHandler
             }
 
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
             Console.WriteLine("Please input the experation date:\nEXAMPLE MM/YY, 02/25\n");
@@ -115,7 +115,7 @@ public class CheckOutHandler
             }
 
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
             Console.WriteLine("Please input the CVC code (on the back):\nEXAMPLE 454\n");
@@ -132,7 +132,7 @@ public class CheckOutHandler
             }
 
             Console.Clear();
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
             Console.WriteLine("Tickets successfully booked!\n");
