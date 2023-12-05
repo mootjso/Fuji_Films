@@ -3,11 +3,11 @@
 public class CheckOutHandler
 {
     public const string FileName = "Datasources/revenuePerShow.json";
-    public static List<Revenue> Revenue;
+    public static List<Revenue> Revenues;
 
     static CheckOutHandler()
     {
-        Revenue = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
+        Revenues = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
 
     }
 
