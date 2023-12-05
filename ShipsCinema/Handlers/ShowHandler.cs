@@ -1,6 +1,6 @@
 public static class ShowHandler
 {
-    public const string FileName = "shows.json";
+    public const string FileName = "Datasources/shows.json";
     private static int LatestShowID;
     public static List<Show> Shows;
 
