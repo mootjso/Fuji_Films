@@ -153,6 +153,13 @@ public static class TheaterHandler
                         {
                             TicketHandler.Tickets.AddRange(tickets);
                             JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
+                            foreach (var ticket in tickets)
+                            {
+                                if (ticket.ShowId == selectedShow.Id)
+                                {
+                                    CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
+                                }
+                            }
                             return tickets;
                         }
                         JSONMethods.WriteToJSON(Theaters, FileName);
