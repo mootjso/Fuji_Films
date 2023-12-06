@@ -23,8 +23,8 @@ public static class ReservationHandler
     public static void AddTicketsToReservations()
     {
         // Hier leest hij de json files voor hieronder
-        List<Ticket> tickets = JSONMethods.ReadJSON<Ticket>("tickets.json").ToList();
-        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>("reservations.json").ToList();
+        List<Ticket> tickets = JSONMethods.ReadJSON<Ticket>(TicketHandler.FileName).ToList();
+        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>(ReservationHandler.FileName).ToList();
         // Elke ticket in de tickets.json wordt hier per ticket gechecked
         foreach (var ticket in tickets)
         {
