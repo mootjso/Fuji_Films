@@ -110,14 +110,12 @@ public static class ShowHandler
             string dateString = dates[index];
             DateTime selectedTime = TimeSelection(movie, dateString);
 
-            Show show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
+            Show? show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
 
-            bool isAvailable = TheaterIsAvailable(show);
-            Console.WriteLine($"Theater is available: {isAvailable}");
-            Console.ReadKey();
-            // Check if Theater is available
-            // foreach Show in all shows check if show.TheaterNumber == selectedTheaterNum
-            //      check if startTime of that show is not during the new planned show
+            // Check if Theater is available at the chosen time
+            show = TheaterIsAvailable(show, dateString);
+            if (show == null)
+                return;
 
             // Confirm or cancel selection
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
@@ -145,18 +143,56 @@ public static class ShowHandler
         }
     }
 
-    public static bool TheaterIsAvailable(Show newShow)
+    public static Show? TheaterIsAvailable(Show newShow, string dateString)
     {
-        foreach (Show show in Shows)
+        Movie newMovie = MovieHandler.GetMovieById(newShow.MovieId)!;
+        foreach (Show oldShow in Shows)
         {
-            if (show.TheaterNumber == newShow.TheaterNumber)
+            if (oldShow.TheaterNumber == newShow.TheaterNumber)
             {
-                DateTime endTimeOldShow = show.DateAndTime.AddMinutes(15);
-                Console.WriteLine(endTimeOldShow);
-                return (endTimeOldShow < newShow.DateAndTime);
+                Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
+                DateTime startTimeOldShow = oldShow.DateAndTime;
+                DateTime endTimeOldShow = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+                if (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nThe theater is already booked at this time by the following showing: ");
+                    Console.ForegroundColor= ConsoleColor.Magenta;
+                    Console.Write($"{oldMovie.Title} {oldShow.StartTimeString} - {oldShow.EndTimeString}");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine($"\n\nChange the new start time to: {endTimeOldShow.ToString("HH:mm")}? ( Press 'Y' or 'N' to enter a custom time)");
+                    Console.ResetColor();
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    if (keyInfo.Key == ConsoleKey.Y )
+                    {
+                        newShow = new Show(newMovie, endTimeOldShow, newShow.TheaterNumber);
+                        return newShow;
+                    }
+                    else
+                    {
+                        DateTime newTime;
+                        do
+                        {
+                            newTime = TimeSelection(newMovie, dateString);
+                            if (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"\nEnter a time later than: {endTimeOldShow.ToString("HH:mm")}");
+                                Console.ForegroundColor = ConsoleColor.DarkGray;
+                                Console.WriteLine("\nPress any key to try again.");
+                                Console.ReadKey();
+                                Console.ResetColor();
+                            }
+                        }
+                        while (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow);
+                        newShow = new Show(newMovie, newTime, newShow.TheaterNumber);
+                    }
+                    
+                    return null;
+                }  
             }
         }
-        return true;
+        return newShow;
     }
 
     public static List<string> GetMovieTitles(List<Movie> movies)
