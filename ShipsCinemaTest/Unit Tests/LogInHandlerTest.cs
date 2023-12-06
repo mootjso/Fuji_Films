@@ -1,10 +1,10 @@
-namespace LogInHandlerTest;
-
-[TestClass]
-public class TestLoginHandler
+namespace LoginHandlerTest
 {
-    private static string _fileName = LoginHandler.FileName;
-    private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
+    [TestClass]
+    public class TestLoginHandler
+    {
+        private static string _fileName = LoginHandler.FileName;
+        private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
 
     [TestInitialize]
     public void TestInitialize()
@@ -20,29 +20,29 @@ public class TestLoginHandler
         JSONMethods.WriteToJSON(testUsers, _fileName);
     }
 
-    [ClassCleanup]
-    public static void CleanupJSONFile()
-    {
-       JSONMethods.WriteToJSON(_originalFileName, _fileName); 
-    }
+        [ClassCleanup]
+        public static void CleanupJSONFile()
+        {
+            JSONMethods.WriteToJSON(_originalFileName, _fileName);
+        }
 
-    [TestMethod]
-    public void TestReadFromJSON()
-    {
-        User user = LoginHandler.Users[0];
-        User user_admin = LoginHandler.Users[1];
+        [TestMethod]
+        public void TestReadFromJSON()
+        {
+            User user = LoginHandler.Users[0];
+            User user_admin = LoginHandler.Users[1];
 
-        Assert.AreEqual(1, user.Id);
-        Assert.AreEqual("John", user.FirstName);
-        Assert.AreEqual("Doe", user.LastName);
-        Assert.AreEqual("john.doe@outlook.com", user.Email);
-        Assert.AreEqual("password123", user.Password);
-        Assert.AreEqual("0612345678", user.PhoneNumber);
+            Assert.AreEqual(1, user.Id);
+            Assert.AreEqual("John", user.FirstName);
+            Assert.AreEqual("Doe", user.LastName);
+            Assert.AreEqual("john.doe@outlook.com", user.Email);
+            Assert.AreEqual("password123", user.Password);
+            Assert.AreEqual("0612345678", user.PhoneNumber);
 
-        Assert.IsFalse(user.IsAdmin);
+            Assert.IsFalse(user.IsAdmin);
 
-        Assert.IsTrue(user_admin.IsAdmin);
-    }
+            Assert.IsTrue(user_admin.IsAdmin);
+        }
 
     [DataTestMethod]
     [DataRow("John")]
