@@ -5,20 +5,19 @@ namespace LoginHandlerTest
     {
         private static string _fileName = LoginHandler.FileName;
         private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
+        [TestInitialize]
+    public void TestInitialize()
+    {
+        // Clear the test JSON file
+        File.WriteAllText(_fileName, "[]");
 
-        [ClassInitialize]
-        public static void ClassInitialize(TestContext context)
+        List<User> testUsers = new List<User>
         {
-            // Clear the test JSON file
-            File.WriteAllText(_fileName, "[]");
-
-            List<User> testUsers = new List<User>
-            {
-                new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
-                new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
-            };
-            JSONMethods.WriteToJSON(testUsers, _fileName);
-        }
+            new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
+            new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
+        };
+        JSONMethods.WriteToJSON(testUsers, _fileName);
+    }
 
         [ClassCleanup]
         public static void CleanupJSONFile()
@@ -44,90 +43,98 @@ namespace LoginHandlerTest
             Assert.IsTrue(user_admin.IsAdmin);
         }
 
-        [TestMethod]
-        public void TestValidateNameInput()
-        {
-            bool result = ValidateNameInput.IsValid("John");
+    [DataTestMethod]
+    [DataRow("John")]
+    [DataRow("Doe")]
+    [DataRow("Sam")]
+    [DataRow("Obama")]
+    public void TestValidateNameInputCorrect(string name)
+    {
+        bool result = ValidateNameInput.IsValid(name);
 
-            bool wrongResult = ValidateNameInput.IsValid("Po");
-            bool nullResult = ValidateNameInput.IsValid(null);
-            bool resultNumber = ValidateNameInput.IsValid("John5");
-
-            Assert.IsTrue(result);
-
-            Assert.IsFalse(wrongResult);
-            Assert.IsFalse(nullResult);
-            Assert.IsFalse(resultNumber);
-        }
-
-        [TestMethod]
-        public void TestValidatePassword()
-        {
-            bool lowercaseMissing = ValidatePassword.IsValid("PASSWORD123");
-            bool digitMissing = ValidatePassword.IsValid("PASSWORDS");
-            bool UppercaseMissing = ValidatePassword.IsValid("password123");
-            bool resultNull = ValidatePassword.IsValid(null);
-
-            bool resultLong = ValidatePassword.IsValid("PASSwooooooooooooooooooooooooooooooooooord123");
-            bool resultNormal = ValidatePassword.IsValid("RightPassWord123");
-
-            Assert.IsFalse(lowercaseMissing);
-            Assert.IsFalse(digitMissing);
-            Assert.IsFalse(UppercaseMissing);
-            Assert.IsFalse(resultNull);
-
-            Assert.IsTrue(resultLong);
-            Assert.IsTrue(resultNormal);
-        }
-
-        [TestMethod]
-        public void TestValidatePhoneNumber()
-        {
-            bool resultShort = ValidatePhoneNumber.IsValid("31063");
-            bool resultLong = ValidatePhoneNumber.IsValid("31063432693733101");
-            bool resultLetters = ValidatePhoneNumber.IsValid("31063ds21");
-            bool resultNegative = ValidatePhoneNumber.IsValid("-067128249");
-            bool resultSymbol = ValidatePhoneNumber.IsValid("+067128249");
-            bool resultNull = ValidatePhoneNumber.IsValid(null);
-
-            bool resultGood = ValidatePhoneNumber.IsValid("067128249");
-            bool resultGood2 = ValidatePhoneNumber.IsValid("067128249142649");
-
-            Assert.IsFalse(resultLong);
-            Assert.IsFalse(resultShort);
-            Assert.IsFalse(resultLetters);
-            Assert.IsFalse(resultNegative);
-            Assert.IsFalse(resultSymbol);
-            Assert.IsFalse(resultNull);
-
-            Assert.IsTrue(resultGood);
-            Assert.IsTrue(resultGood2);
-        }
-
-        [TestMethod]
-        public void TestValidateEmail()
-        {
-            bool missingAt = ValidateEmail.IsValid("Johnoutlook.com");
-            bool resultNull = ValidateEmail.IsValid(null);
-            bool missingDomain = ValidateEmail.IsValid("John@.com");
-            bool missingDot = ValidateEmail.IsValid("John@outlookcom");
-            bool missingTopDomain = ValidateEmail.IsValid("John@outlook.");
-            bool missingUsername = ValidateEmail.IsValid("@outlook.com");
-
-            bool onlyNumbers = ValidateEmail.IsValid("3983748@outlook.com");
-            bool resultAllowed = ValidateEmail.IsValid("John@outlook.com");
-            bool resultAllowed2 = ValidateEmail.IsValid("johndoe@gmail.com");
-
-            Assert.IsFalse(missingAt);
-            Assert.IsFalse(resultNull);
-            Assert.IsFalse(missingDomain);
-            Assert.IsFalse(missingDot);
-            Assert.IsFalse(missingTopDomain);
-            Assert.IsFalse(missingUsername);
-
-            Assert.IsTrue(onlyNumbers);
-            Assert.IsTrue(resultAllowed);
-            Assert.IsTrue(resultAllowed2);
-        }
+        Assert.IsTrue(result);
     }
+    
+    [DataTestMethod]
+    [DataRow("Po")]
+    [DataRow(null)]
+    [DataRow("John5")]
+    public void TestValidateNameInputIncorrect(string name)
+    {
+        bool result = ValidateNameInput.IsValid(name);
+
+        Assert.IsFalse(result);
+    }
+
+    [DataTestMethod]
+    [DataRow("PASSwooooooooooooooooooooooooooooooooooord123")]
+    [DataRow("RightPassWord123")]
+    public void TestValidatePasswordCorrect(string password)
+    {
+        bool result = ValidatePassword.IsValid(password);
+
+        Assert.IsTrue(result);
+    }
+
+    [DataTestMethod]
+    [DataRow("PASSWORD123")]
+    [DataRow("PASSWORDS")]
+    [DataRow("password123")]
+    [DataRow(null)]
+    public void TestValidatePasswordincorrect(string password)
+    {
+        bool result = ValidatePassword.IsValid(password);
+
+        Assert.IsFalse(result);
+    }
+
+    [DataTestMethod]
+    [DataRow("067128249")]
+    [DataRow("067128249142649")]
+    public void TestValidatePhoneNumberCorrect(string phonenumber)
+    {
+        bool result = ValidatePhoneNumber.IsValid(phonenumber);
+
+        Assert.IsTrue(result);
+    }
+
+    [DataTestMethod]
+    [DataRow("31063")]
+    [DataRow("31063432693733101")]
+    [DataRow("31063ds21")]
+    [DataRow("-067128249")]
+    [DataRow("+067128249")]
+    [DataRow(null)]
+    public void TestValidatePhoneNumberIncorrect(string phonenumber)
+    {
+        bool result = ValidatePhoneNumber.IsValid(phonenumber);
+
+        Assert.IsFalse(result);
+    }
+
+    [DataTestMethod]
+    [DataRow("3983748@outlook.com", true)]
+    [DataRow("John@outlook.com", true)]
+    [DataRow("johndoe@gmail.com", true)]
+    public void TestValidateEmailCorrect(string email, bool expectedOutput)
+    {
+        bool result = ValidateEmail.IsValid(email);
+
+        Assert.AreEqual(expectedOutput, result);
+    }
+    
+    [DataTestMethod]
+    [DataRow("Johnoutlook.com", false)]
+    [DataRow(null, false)]
+    [DataRow("John@.com", false)]
+    [DataRow("John@outlookcom", false)]
+    [DataRow("John@outlook.", false)]
+    [DataRow("@outlook.com", false)]
+    public void TestValidateEmailIncorrect(string email, bool expectedOutput)
+    {
+        bool result = ValidateEmail.IsValid(email);
+
+        Assert.AreEqual(expectedOutput, result);
+    }
+}
 }
