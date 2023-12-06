@@ -70,12 +70,7 @@ public class Program
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-                        Console.WriteLine("Your Reservation code is: " + ReservationId);
-                        Console.WriteLine("Press any button to continue");
-                        Console.ReadLine();
-                        Console.Clear();
                         DisplayAsciiArt.Header();
-                        CheckOutHandler.CheckOut();
                         break;
                     case 2:
                         Console.Clear();

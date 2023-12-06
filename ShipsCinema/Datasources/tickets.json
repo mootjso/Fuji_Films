@@ -1,1 +1,20 @@
-[{"ShowId":1,"UserId":1,"Row":0,"Column":2,"Price":10.0,"Color":"Blue","ReservationId":"9fbb-2132-8e43"},{"ShowId":2,"UserId":1,"Row":0,"Column":2,"Price":10.0,"Color":"Blue","ReservationId":"8f09-357c-5afb"}]
+[
+  {
+    "ShowId": 1,
+    "UserId": 1,
+    "Row": 0,
+    "Column": 2,
+    "Price": 10.0,
+    "Color": "Blue",
+    "ReservationId": "9fbb-2132-8e43"
+  },
+  {
+    "ShowId": 2,
+    "UserId": 1,
+    "Row": 0,
+    "Column": 2,
+    "Price": 10.0,
+    "Color": "Blue",
+    "ReservationId": "8f09-357c-5afb"
+  }
+]

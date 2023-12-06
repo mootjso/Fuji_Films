@@ -151,6 +151,12 @@ public static class TheaterHandler
                     {
                         if (!user.IsAdmin)
                         {
+                            Console.WriteLine("Your Reservation code is: " + ReservationId);
+                            Console.WriteLine("Press any button to continue");
+                            Console.ReadLine();
+                            Console.Clear();
+                            CheckOutHandler.CheckOut();
+                            
                             TicketHandler.Tickets.AddRange(tickets);
                             JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
                             foreach (var ticket in tickets)
