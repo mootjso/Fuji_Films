@@ -1,5 +1,4 @@
-
-namespace TicketPurchaseTests;
+namespace ReservationTest;
 
 [TestClass]
 public class ReservationHandlerTests

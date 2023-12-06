@@ -5,8 +5,7 @@ namespace LoginHandlerTest
     {
         private static string _fileName = LoginHandler.FileName;
         private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
-
-    [TestInitialize]
+        [TestInitialize]
     public void TestInitialize()
     {
         // Clear the test JSON file
@@ -51,7 +50,7 @@ namespace LoginHandlerTest
     [DataRow("Obama")]
     public void TestValidateNameInputCorrect(string name)
     {
-        bool result = LoginHandler.ValidateNameInput(name);
+        bool result = ValidateNameInput.IsValid(name);
 
         Assert.IsTrue(result);
     }
@@ -62,7 +61,7 @@ namespace LoginHandlerTest
     [DataRow("John5")]
     public void TestValidateNameInputIncorrect(string name)
     {
-        bool result = LoginHandler.ValidateNameInput(name);
+        bool result = ValidateNameInput.IsValid(name);
 
         Assert.IsFalse(result);
     }
@@ -72,7 +71,7 @@ namespace LoginHandlerTest
     [DataRow("RightPassWord123")]
     public void TestValidatePasswordCorrect(string password)
     {
-        bool result = LoginHandler.ValidatePassword(password);
+        bool result = ValidatePassword.IsValid(password);
 
         Assert.IsTrue(result);
     }
@@ -84,7 +83,7 @@ namespace LoginHandlerTest
     [DataRow(null)]
     public void TestValidatePasswordincorrect(string password)
     {
-        bool result = LoginHandler.ValidatePassword(password);
+        bool result = ValidatePassword.IsValid(password);
 
         Assert.IsFalse(result);
     }
@@ -94,7 +93,7 @@ namespace LoginHandlerTest
     [DataRow("067128249142649")]
     public void TestValidatePhoneNumberCorrect(string phonenumber)
     {
-        bool result = LoginHandler.ValidatePhoneNumber(phonenumber);
+        bool result = ValidatePhoneNumber.IsValid(phonenumber);
 
         Assert.IsTrue(result);
     }
@@ -108,7 +107,7 @@ namespace LoginHandlerTest
     [DataRow(null)]
     public void TestValidatePhoneNumberIncorrect(string phonenumber)
     {
-        bool result = LoginHandler.ValidatePhoneNumber(phonenumber);
+        bool result = ValidatePhoneNumber.IsValid(phonenumber);
 
         Assert.IsFalse(result);
     }
@@ -119,7 +118,7 @@ namespace LoginHandlerTest
     [DataRow("johndoe@gmail.com", true)]
     public void TestValidateEmailCorrect(string email, bool expectedOutput)
     {
-        bool result = LoginHandler.ValidateEmail(email);
+        bool result = ValidateEmail.IsValid(email);
 
         Assert.AreEqual(expectedOutput, result);
     }
@@ -133,8 +132,9 @@ namespace LoginHandlerTest
     [DataRow("@outlook.com", false)]
     public void TestValidateEmailIncorrect(string email, bool expectedOutput)
     {
-        bool result = LoginHandler.ValidateEmail(email);
+        bool result = ValidateEmail.IsValid(email);
 
         Assert.AreEqual(expectedOutput, result);
     }
+}
 }

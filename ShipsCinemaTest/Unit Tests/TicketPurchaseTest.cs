@@ -1,4 +1,4 @@
-namespace TicketPurchaseTests
+namespace TicketPurchase
 {
 [TestClass]
 public class TicketHandlerTests
