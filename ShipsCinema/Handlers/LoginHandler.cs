@@ -30,7 +30,7 @@ public class LoginHandler
 
             Console.WriteLine("Login to your account");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nType 'q' at any of the prompts to go back.");
+            Console.WriteLine("\nEnter 'q' at any of the prompts to go back.");
             Console.ResetColor();
 
             Console.Write("E-mailadres: ");

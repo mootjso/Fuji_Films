@@ -352,22 +352,4 @@ public static class TheaterHandler
 
         return false;
     }
-
-    public static bool ConfirmSeatSelection(User user)
-    {
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        if (!user.IsAdmin)
-        {
-            Console.WriteLine("\nAre you sure you want to choose this seat? (Press 'Enter' to confirm, press any other key to cancel).");
-        }
-        else if (user.IsAdmin)
-            Console.WriteLine("\nAre you sure you want to take out this seat? (Press 'Enter' to confirm, press any other key to cancel).");
-        Console.ResetColor();
-        ConsoleKeyInfo keyInfo = Console.ReadKey();
-        if (keyInfo.Key == ConsoleKey.Enter)
-        {
-            return true;
-        }
-        return false;
-    }
 }

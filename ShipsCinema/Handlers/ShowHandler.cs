@@ -108,7 +108,7 @@ public static class ShowHandler
 
             // Time selection
             string dateString = dates[index];
-            DateTime selectedTime = TimeSelection(movie, dateString);
+            DateTime selectedTime = TimeSelection(movie, dateString, selectedTheaterNum);
 
             Show? show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
 
@@ -119,7 +119,7 @@ public static class ShowHandler
 
             // Confirm or cancel selection
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader, true);
+            int selection = ConfirmSelection(menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -143,52 +143,99 @@ public static class ShowHandler
         }
     }
 
-    public static Show? TheaterIsAvailable(Show newShow, string dateString)
+    private static bool TimeIsValid(Show newShow, Movie newMovie) // Checks if a chosen start time is valid, if no other showings are planned during the runtime of that showing
     {
-        Movie newMovie = MovieHandler.GetMovieById(newShow.MovieId)!;
+        DateTime startTimeNewShow = newShow.DateAndTime;
+        DateTime endTimeNewShow = newShow.DateAndTime.AddMinutes(15 + newMovie.Runtime);
+
         foreach (Show oldShow in Shows)
         {
             if (oldShow.TheaterNumber == newShow.TheaterNumber)
             {
                 Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
                 DateTime startTimeOldShow = oldShow.DateAndTime;
-                DateTime endTimeOldShow = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
-                if (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow)
+                DateTime laterPossibleStart = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+                DateTime earliestPossibleStart = startTimeOldShow.AddMinutes(-newMovie.Runtime - 15);
+
+                if (endTimeNewShow > startTimeOldShow || startTimeNewShow > laterPossibleStart)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static DateTime GetEarliestPossibleStartTime()
+    {
+
+    }
+
+    private static DateTime GetEarliestPossibleStartTime()
+    {
+
+    }
+
+    public static Show TheaterIsAvailable(Show newShow, string dateString)
+    {
+        Movie newMovie = MovieHandler.GetMovieById(newShow.MovieId)!;
+        DateTime startTimeNewShow = newShow.DateAndTime;
+        DateTime endTimeNewShow = newShow.DateAndTime.AddMinutes(15 + newMovie.Runtime);
+        
+        if (TimeIsValid(newShow, newMovie))
+            return newShow;
+
+        
+
+
+        foreach (Show oldShow in Shows)
+        {
+            if (oldShow.TheaterNumber == newShow.TheaterNumber)
+            {
+                Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
+                DateTime startTimeOldShow = oldShow.DateAndTime;
+                DateTime laterPossibleStart = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+                DateTime earliestPossibleStart = startTimeOldShow.AddMinutes(-newMovie.Runtime - 15);
+
+
+                if (endTimeNewShow > startTimeOldShow || startTimeNewShow > laterPossibleStart)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe theater is already booked at this time by the following showing: ");
-                    Console.ForegroundColor= ConsoleColor.Magenta;
+                    Console.ForegroundColor= ConsoleColor.Blue;
                     Console.Write($"{oldMovie.Title} {oldShow.StartTimeString} - {oldShow.EndTimeString}");
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine($"\n\nChange the new start time to: {endTimeOldShow.ToString("HH:mm")}? ( Press 'Y' or 'N' to enter a custom time)");
+                    Console.ResetColor();
+                    Console.WriteLine($"\n\n[1] Change to earlier start time: {earliestPossibleStart:HH:mm}\n[2] Change to later start time: {laterPossibleStart:HH:mm}\n[3] Enter a custom time");
                     Console.ResetColor();
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
-                    if (keyInfo.Key == ConsoleKey.Y )
+                    if (keyInfo.Key == ConsoleKey.D1 ) // Admin chooses the earlier possible start time
                     {
-                        newShow = new Show(newMovie, endTimeOldShow, newShow.TheaterNumber);
+                        newShow.DateAndTime = earliestPossibleStart;
                         return newShow;
                     }
-                    else
+                    else if (keyInfo.Key == ConsoleKey.D2) // Admin chooses the later possible start time
                     {
-                        DateTime newTime;
+                        newShow.DateAndTime = laterPossibleStart;
+                        return newShow;
+                    }
+                    else // Admin wants to enter a custom time
+                    {
+                        DateTime customTime;
                         do
                         {
-                            newTime = TimeSelection(newMovie, dateString);
-                            if (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow)
+                            customTime = TimeSelection(newMovie, dateString, newShow.TheaterNumber);
+                            if (customTime > startTimeOldShow && customTime < laterPossibleStart)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"\nEnter a time later than: {endTimeOldShow.ToString("HH:mm")}");
+                                Console.WriteLine($"\nEnter a time before '{earliestPossibleStart:HH:mm}' or after '{laterPossibleStart:HH:mm}'");
                                 Console.ForegroundColor = ConsoleColor.DarkGray;
-                                Console.WriteLine("\nPress any key to try again.");
+                                Console.WriteLine("\nPress any key to try again");
                                 Console.ReadKey();
                                 Console.ResetColor();
                             }
                         }
-                        while (newShow.DateAndTime <= endTimeOldShow && newShow.DateAndTime >= startTimeOldShow);
-                        newShow = new Show(newMovie, newTime, newShow.TheaterNumber);
+                        while (customTime > startTimeOldShow && customTime < laterPossibleStart);
+                        newShow.DateAndTime = customTime;
                     }
-                    
-                    return null;
                 }  
             }
         }
@@ -246,7 +293,7 @@ public static class ShowHandler
             // Confirm or cancel selection
             string theaterSize = show.TheaterNumber == 1 ? "Small (150 seats)" : show.TheaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {theaterSize}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader, true);
+            int selection = ConfirmSelection(menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -284,14 +331,15 @@ public static class ShowHandler
         return dates;
     }
 
-    private static int ConfirmSelection(Show show, Movie movie, string menuHeader, bool isAdmin = false)
+    private static int ConfirmSelection(string menuHeader, bool isAdmin = false)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
         return Menu.Start(menuHeader, menuOptions, isAdmin);
     }
 
-    private static DateTime TimeSelection(Movie movieToAdd, string dateString)
+    private static DateTime TimeSelection(Movie movieToAdd, string dateString, int theaterNumber = 0)
     {
+        string selectedTheater = theaterNumber == 1 ? "Small (150 seats)" : theaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
         DateTime resultDateTime = DateTime.Now;
         bool correctInput = false;
         while (!(correctInput))
@@ -299,7 +347,7 @@ public static class ShowHandler
             Console.Clear();
             Console.CursorVisible = true;
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nDate: {dateString}");
+            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nTheater: {selectedTheater}\nDate: {dateString}");
             Console.Write("\nStart time of the movie (HH:mm): ");
             string? timeString = Console.ReadLine();
             Console.CursorVisible = false;
