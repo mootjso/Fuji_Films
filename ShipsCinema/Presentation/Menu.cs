@@ -46,7 +46,7 @@ public static class Menu
                 case ConsoleKey.Enter:
                     inMenu = false;
                     return selectedOption;
-                case ConsoleKey.LeftArrow: // Added to let user go to previous screen without adding extra menu option
+                case ConsoleKey.Escape: // Added to let user go to previous screen without adding extra menu option
                     inMenu = false;
                     return options.Count;
             }
@@ -76,7 +76,7 @@ public static class Menu
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
-        Console.WriteLine("\n\nUse the up/down arrow keys to navigate, press Enter to select and left arrow to go back");
+        Console.WriteLine("\nControls:\n[Up/down arrow keys] Navigation\n[Enter] Select an option\n[Esc] Go back");
         Console.ResetColor();
     }
 }

@@ -37,7 +37,9 @@ public class LoginHandler
 
             if (emailInput != string.Empty && User != null)
             {
+                Console.ForegroundColor = Program.InputColor;
                 Console.Write(emailInput);
+                Console.ResetColor();
                 Console.WriteLine();
             }
             else
