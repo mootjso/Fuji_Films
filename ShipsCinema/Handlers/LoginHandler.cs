@@ -1,5 +1,3 @@
-using System.Text.RegularExpressions;
-
 public class LoginHandler
 {
     public const string FileName = "Datasources/UserAccounts.json";
@@ -100,7 +98,7 @@ public class LoginHandler
     {
         User? newUser = null;
         string? firstName = string.Empty, lastName = string.Empty, phoneNumber = string.Empty, email = string.Empty, password = string.Empty;
-        
+
         bool AccountCreated = false;
         while (!AccountCreated)
         {
@@ -115,7 +113,7 @@ public class LoginHandler
 
             // First Name
             Console.Write("First Name: ");
-            if (ValidateNameInput(firstName))
+            if (ValidateNameInput.IsValid(firstName))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(firstName + "\n");
@@ -130,7 +128,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (firstName == "q")
                     return null;
-                if (!ValidateNameInput(firstName))
+                if (!ValidateNameInput.IsValid(firstName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe name '{firstName}' is invalid, please enter 3 or more letters.");
@@ -143,7 +141,7 @@ public class LoginHandler
             }
             // Last Name
             Console.Write("Last Name: ");
-            if (ValidateNameInput(lastName))
+            if (ValidateNameInput.IsValid(lastName))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(lastName + "\n");
@@ -158,7 +156,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (lastName == "q")
                     return null;
-                if (!ValidateNameInput(lastName))
+                if (!ValidateNameInput.IsValid(lastName))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe name '{lastName}' is invalid, please enter 3 or more letters.");
@@ -171,7 +169,7 @@ public class LoginHandler
             }
             // Phone Number
             Console.Write("Phone Number: ");
-            if (ValidatePhoneNumber(phoneNumber))
+            if (ValidatePhoneNumber.IsValid(phoneNumber))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(phoneNumber + "\n");
@@ -186,7 +184,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (phoneNumber == "q")
                     return null;
-                if (!ValidatePhoneNumber(phoneNumber))
+                if (!ValidatePhoneNumber.IsValid(phoneNumber))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe phone number '{phoneNumber}' is invalid, please enter between 8 and 15 digits, press any key to continue");
@@ -198,7 +196,7 @@ public class LoginHandler
             }
             // Email
             Console.Write("Email Address: ");
-            if (ValidateEmail(email))
+            if (ValidateEmail.IsValid(email))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(email + "\n");
@@ -213,7 +211,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (email == "q")
                     return null;
-                if (!ValidateEmail(email))
+                if (!ValidateEmail.IsValid(email))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\n'{email}' is invalid, please enter a valid email e.g. 'example@email.com', press any key to continue");
@@ -228,7 +226,7 @@ public class LoginHandler
             Console.WriteLine("Password requirements: \n- Minimum 6 characters\n- 1 Uppercase letter\n- 1 Lowercase letter\n- 1 Digit");
             Console.ResetColor();
             Console.Write("Password: ");
-            if (ValidatePassword(password))
+            if (ValidatePassword.IsValid(password))
             {
                 Console.ForegroundColor = Program.InputColor;
                 Console.Write(password + "\n");
@@ -243,7 +241,7 @@ public class LoginHandler
                 Console.CursorVisible = false;
                 if (password == "q")
                     return null;
-                if (!ValidatePassword(password))
+                if (!ValidatePassword.IsValid(password))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nThe password is invalid, press any key to continue");
@@ -266,12 +264,12 @@ public class LoginHandler
                     {
                         password = string.Empty;
                         password2 = string.Empty;
-                        Console.ForegroundColor= ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("\nThe passwords do not match, press any key to try again.");
                         Console.ResetColor();
                         Console.ReadKey();
                         continue;
-                    } 
+                    }
                 }
             }
 
@@ -287,67 +285,6 @@ public class LoginHandler
         }
 
         return newUser;
-    }
-
-    public static bool ValidateNameInput(string? input)
-    {
-        if (input == null) 
-            return false;
-        
-        string pattern = @"^[a-zA-Z]{3,}$";
-        Regex regex = new Regex(pattern);
-
-        if (regex.IsMatch(input))
-            return true;
-
-        return false;
-    }
-
-    public static bool ValidatePassword(string? password)
-    {
-        bool HasUpper = false, HasLower = false, HasDigits = false;
-
-        if (password == null) 
-            return false;
-        
-        if (password.Length < 6 || password.Length > 256)
-            return false;
-
-        foreach (char letter in password)
-            if (char.IsUpper(letter))
-                HasUpper = true;
-
-        foreach (char letter in password)
-            if (char.IsLower(letter))
-                HasLower = true;
-
-        foreach (char letter in password)
-            if (char.IsDigit(letter))
-                HasDigits = true;
-
-        if (!HasUpper || !HasLower || !HasDigits)
-            return false;
-
-        return true;
-    }
-
-    public static bool ValidatePhoneNumber(string? phoneNumber)
-    {
-        if (phoneNumber == null)
-            return false;
-        
-        return Regex.IsMatch(phoneNumber, @"^\d{8,15}$");
-    }
-
-    public static bool ValidateEmail(string? email)
-    {
-        if (email == null)
-            return false;
-
-        // [characters] '@' [characters] '.' [characters]
-        string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-        Regex regex = new Regex(pattern);
-        return regex.IsMatch(email);
     }
 
     private static string GetMaskedPassword()
@@ -383,4 +320,5 @@ public class LoginHandler
         Console.WriteLine();
         return password;
     }
+
 }

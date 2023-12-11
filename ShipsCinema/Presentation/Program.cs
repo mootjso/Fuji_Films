@@ -57,6 +57,7 @@ public class Program
                         MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m));
                         break;
                     case 1:
+                        CheckOutHandler.AddShowToRevenue();
                         Console.Clear();
                         Show? selectedShow = ShowHandler.SelectShowFromSchedule();
                         if (selectedShow is null)
@@ -69,13 +70,8 @@ public class Program
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-                        Console.WriteLine("Your Reservation code is: " + ReservationId);
-                        Console.WriteLine("Press any button to continue");
-                        Console.ReadLine();
-                        Console.Clear();
-                        DisplayAsciiArt.Header();
-                        Console.WriteLine("\n\nCHECKOUT FUNCTIONALITY NOT IMPLEMENTED\n\nPRESS ANY KEY TO GO BACK");
-                        Console.ReadKey();
+
+                        CheckOutHandler.CheckOut();
                         break;
                     case 2:
                         Console.Clear();

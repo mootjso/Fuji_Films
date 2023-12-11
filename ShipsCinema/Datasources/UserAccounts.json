@@ -1,20 +1,20 @@
 [
   {
     "Id": 1,
-    "FirstName": "Geert",
-    "LastName": "Wilders",
-    "Email": "u",
-    "Password": "u",
-    "PhoneNumber": "u",
-    "IsAdmin": false
+    "FirstName": "Admin",
+    "LastName": "Admin",
+    "Email": "a",
+    "Password": "a",
+    "PhoneNumber": "06666666",
+    "IsAdmin": true
   },
   {
     "Id": 2,
-    "FirstName": "a",
-    "LastName": "a",
-    "Email": "a",
-    "Password": "a",
-    "PhoneNumber": "a",
-    "IsAdmin": true
+    "FirstName": "Admin",
+    "LastName": "Admin",
+    "Email": "u",
+    "Password": "u",
+    "PhoneNumber": "06666666",
+    "IsAdmin": false
   }
 ]
