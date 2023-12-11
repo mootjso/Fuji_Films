@@ -156,7 +156,7 @@ public class CheckOutHandler
                     Console.WriteLine("Tickets successfully booked!\n");
                     Console.ResetColor();
                     Console.WriteLine("Press any button to continue");
-                    Console.ReadLine();
+                    Console.ReadKey();
                     Console.Clear();
                     return;
                 }
