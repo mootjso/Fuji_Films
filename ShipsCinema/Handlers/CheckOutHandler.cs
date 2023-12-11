@@ -8,7 +8,6 @@ public class CheckOutHandler
     static CheckOutHandler()
     {
         Revenues = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
-
     }
 
     public static void AddShowToRevenue()
@@ -75,23 +74,26 @@ public class CheckOutHandler
         bool checkOut = true;
         bool confirm = false;
 
+        Console.CursorVisible = true;
         while (checkOut)
         {
             Console.Clear();
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
-            Console.WriteLine("Please enter your credit card number:\nEXAMPLE 4321-2432-2432-3424\n");
+            Console.WriteLine("Please enter your credit card number:\nEXAMPLE: 4321-2432-2432-3424");
             Console.ForegroundColor = ConsoleColor.Blue;
             string creditCardInput = Console.ReadLine();
             Console.ResetColor();
             if (creditCardInput.Length != 19)
             {
+                Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Credit card does NOT exist!\nRETRY!\nPlease type it like this (don't forget the '-'): XXXX-XXXX-XXXX-XXXX\n");
+                Console.WriteLine("Credit card does NOT exist!\nPlease try again\nEnter the following format including the '-': XXXX-XXXX-XXXX-XXXX");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to continue");
+                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
+                Console.CursorVisible = true;
                 continue;
             }
 
@@ -99,16 +101,18 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
-            Console.WriteLine("Please input the experation date:\nEXAMPLE MM/YY, 02/25\n");
+            Console.WriteLine("Please input the expiration date:\nRequired format: MM/YY, Example: 02/25");
             Console.ForegroundColor = ConsoleColor.Blue;
             string experationCodeInput = Console.ReadLine();
             if (experationCodeInput.Length != 5)
             {
+                Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Wrong experation code!\nRETRY!\nPlease type it like this (don't forget the '/'): XX/XX\n");
+                Console.WriteLine("Incorrect format, please try again.\nEnter the following format including the '/': XX/XX");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to continue");
+                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
+                Console.CursorVisible = true;
                 continue;
             }
 
@@ -116,30 +120,33 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
-            Console.WriteLine("Please input the CVC code (on the back):\nEXAMPLE 454\n");
+            Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nEXAMPLE: 454");
             Console.ForegroundColor = ConsoleColor.Blue;
             string cvc = Console.ReadLine();
             Console.ResetColor();
             if (cvc.Length != 3)
             {
+                Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Wrong Card Verification Code!\nRETRY!\n");
+                Console.WriteLine("Wrong Card Verification Code, please use the correct format (e.g.: 454)");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to continue");
+                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
                 Console.Clear();
+                Console.CursorVisible = true;
                 continue;
             }
+            
+            Console.CursorVisible = false;
             confirm = true;
-
             while (confirm == true)
             {
                 Console.Clear();
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
-                Console.WriteLine($"Please confirm the following credit card details:\n\nCredit card number: {creditCardInput}\nExperation date: {experationCodeInput}\nCVC: {cvc}\n\nIs this correct? (Y/N)\n");
-                string confirmInput = Console.ReadLine().ToLower();
-                if (confirmInput == "y")
+                Console.WriteLine($"Please confirm the following credit card details:\n\nCredit card number: {creditCardInput}\nExpiration date: {experationCodeInput}\nCVC: {cvc}\n\nIs this correct? (Y/N)\n");
+                ConsoleKey pressedKey = Console.ReadKey().Key;
+                if (pressedKey == ConsoleKey.Y)
                 {
                     Console.Clear();
                     Console.ResetColor();
@@ -153,16 +160,10 @@ public class CheckOutHandler
                     Console.Clear();
                     return;
                 }
-                else if (confirmInput == "n")
+                else if (pressedKey == ConsoleKey.N)
                 {
                     confirm = false;
                     break;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input, please only input either:\n y or n!\n\nRETRY!\n");
-                    Console.ResetColor();
                 }
             }
         }
