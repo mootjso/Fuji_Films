@@ -1,18 +1,1 @@
-[
-  {
-    "ReservationId": "9fbb-2132-8e43",
-    "UserId": 1,
-    "ShowId": 1,
-    "MovieId": 0,
-    "Row": 0,
-    "Column": 2
-  },
-  {
-    "ReservationId": "8f09-357c-5afb",
-    "UserId": 1,
-    "ShowId": 2,
-    "MovieId": 1,
-    "Row": 0,
-    "Column": 2
-  }
-]
+[]

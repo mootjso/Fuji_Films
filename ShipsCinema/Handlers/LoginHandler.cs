@@ -70,17 +70,6 @@ public class LoginHandler
                 if (password == "q")
                     return null;
 
-                if (!ValidatePassword.IsValid(password))
-                {
-                    Console.CursorVisible = false;
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nIncorrect password, press any key to try again");
-                    Console.ResetColor();
-                    Console.ReadKey();
-                    Console.Clear();
-                    continue;
-                }
-
                 if (User.Password == password)
                 {
                     loggedIn = true;

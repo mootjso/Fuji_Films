@@ -70,7 +70,8 @@ public class Program
                         List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
                         if (tickets is null)
                             continue;
-                        DisplayAsciiArt.Header();
+
+                        CheckOutHandler.CheckOut();
                         break;
                     case 2:
                         Console.Clear();
