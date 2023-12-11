@@ -132,7 +132,7 @@ public class CheckOutHandler
             }
             confirm = true;
 
-            while (confirm = true)
+            while (confirm == true)
             {
                 Console.Clear();
                 DisplayAsciiArt.Header();

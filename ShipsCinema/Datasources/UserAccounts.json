@@ -7,6 +7,14 @@
     "Password": "Admin123.",
     "PhoneNumber": "06666666",
     "IsAdmin": true
+  },
+  {
+    "Id": 2,
+    "FirstName": "Admin",
+    "LastName": "Admin",
+    "Email": "u",
+    "Password": "Admin123",
+    "PhoneNumber": "06666666",
+    "IsAdmin": false
   }
-
 ]
