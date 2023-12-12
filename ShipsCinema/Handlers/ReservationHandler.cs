@@ -148,12 +148,20 @@ public static class ReservationHandler
             Console.WriteLine($"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}");
             Console.ResetColor();
             Console.WriteLine($"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n");
+            int reservationInt = 1;
+            Console.WriteLine("Ticket No. | Row | Seat");
+            Console.WriteLine(new string('-', 28));
+
             foreach (var reservation in reservationsUser)
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"Ticket {ReservationInt}:".PadRight(12) + $"Row {reservation.Row}\n" + "".PadLeft(12) + $"Seat: {reservation.Column}\n");
-                    ReservationInt++;
+                    string ticketInfo = $"Ticket {reservationInt}".PadRight(10);
+                    string rowInfo = $"Row {reservation.Row}".PadRight(6);
+                    string seatInfo = $"Seat: {reservation.Column}";
+
+                    Console.WriteLine($"{ticketInfo} | {rowInfo} | {seatInfo}");
+                    reservationInt++;
                 }
             }
         }
