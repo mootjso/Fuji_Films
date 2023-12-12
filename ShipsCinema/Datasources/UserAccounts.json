@@ -3,10 +3,18 @@
     "Id": 1,
     "FirstName": "Admin",
     "LastName": "Admin",
-    "Email": "admin@shipscinema.com",
-    "Password": "Admin123.",
+    "Email": "a",
+    "Password": "a",
     "PhoneNumber": "06666666",
     "IsAdmin": true
+  },
+  {
+    "Id": 2,
+    "FirstName": "Admin",
+    "LastName": "Admin",
+    "Email": "u",
+    "Password": "u",
+    "PhoneNumber": "06666666",
+    "IsAdmin": false
   }
-
 ]
