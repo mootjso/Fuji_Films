@@ -4,7 +4,7 @@ namespace LoginHandlerTest
     public class TestLoginHandler
     {
         private static string _fileName = LoginHandler.FileName;
-        private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
+        private static List<User> _originalFile = JSONMethods.ReadJSON<User>(_fileName).ToList();
         [TestInitialize]
     public void TestInitialize()
     {
@@ -22,7 +22,7 @@ namespace LoginHandlerTest
         [ClassCleanup]
         public static void CleanupJSONFile()
         {
-            JSONMethods.WriteToJSON(_originalFileName, _fileName);
+            JSONMethods.WriteToJSON(_originalFile, _fileName);
         }
 
         [TestMethod]

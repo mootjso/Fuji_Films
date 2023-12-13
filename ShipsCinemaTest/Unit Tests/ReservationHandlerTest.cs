@@ -4,7 +4,7 @@ namespace ReservationTest;
 public class ReservationHandlerTests
 {
     private static string FileName = ReservationHandler.FileName;
-    private static List<Reservation> original_FileName2 = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
+    private static List<Reservation> original_File = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
 
     [ClassInitialize]
@@ -27,7 +27,7 @@ public class ReservationHandlerTests
     [ClassCleanup]
     public static void CleanupJSON()
     {
-       JSONMethods.WriteToJSON(original_FileName2, FileName); 
+       JSONMethods.WriteToJSON(original_File, FileName); 
     }
 
     [TestMethod]
