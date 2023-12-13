@@ -82,7 +82,6 @@ public static class ReservationHandler
         var overviewReservationCodes = new List<string>();
         var overviewCorrectReservation = new List<string>();
 
-        // Hier heb je reservations a sah :)
         if (reservationsUser.Count > 0)
         {
             // Hier check je ff per reservatie in de list waar alle reservaties van de user staat
@@ -96,16 +95,18 @@ public static class ReservationHandler
 
             string overviewMenuText = "Choose a movie from your reservations:\n";
             // Hier maak de menu :) met de films
-            int selectedMovie = Menu.Start(overviewMenuText, overviewMenuOptions);
-            // Dit is de gekozen film
-            string selectedMovieTitle = overviewMenuOptions[selectedMovie];
+            int movieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
+            if (movieIndex == overviewMenuOptions.Count) // User presses left arrow key
+                return;
+            string selectedMovie = overviewMenuOptions[movieIndex];
+
             Show showForReservation = null;
 
             // Hier check je per reservatie de film als de title hetzelfde is als de geselecteerde title
             foreach (var reservation in reservationsUser)
             {
                 Movie? movie = MovieHandler.GetMovieById(reservation.MovieId)!;
-                if (movie.Title == selectedMovieTitle)
+                if (movie.Title == selectedMovie)
                 {
                     // Nu check je per reservatie als de movie.id hetzelfde is als de geselecteerde film
                     // En vervolgens check je als die nog niet in de list staat en voegt het toe aan overviewReservationCodes met de datum voor visuele aspect
@@ -131,6 +132,8 @@ public static class ReservationHandler
             string overviewReservationCodesText = "Please choose the reservation you would like to use:\n";
             // Hier maak je de menu met de reservatie codes
             int selectedReservation = Menu.Start(overviewReservationCodesText, overviewReservationCodes);
+            if (selectedReservation == overviewReservationCodes.Count)
+                return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
             int ReservationInt = 1;
@@ -140,7 +143,7 @@ public static class ReservationHandler
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine($"{selectedMovieTitle}");
+            Console.WriteLine($"{selectedMovie}");
             Console.ResetColor();
             Console.WriteLine($"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}");
             Console.ResetColor();
@@ -154,7 +157,7 @@ public static class ReservationHandler
                 }
             }
         }
-        // Hier heb je geen reservations jij pannenkoek!!! >:(
+        // Hier heb je geen reservations
         else
         {
             Console.WriteLine("You currently have no reservations.");
