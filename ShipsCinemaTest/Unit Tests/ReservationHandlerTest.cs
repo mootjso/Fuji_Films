@@ -7,10 +7,15 @@ public class ReservationHandlerTests
     private static List<Reservation> original_File = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
 
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    [ClassCleanup]
+    public static void CleanupJSON()
     {
-        // Clear the  JSON file
+       JSONMethods.WriteToJSON(original_File, FileName); 
+    }
+
+    [TestMethod]
+    public void TestReservationID()
+    {
         File.WriteAllText(FileName, "[]");
 
         List<Reservation> testReservations = new List<Reservation>
@@ -22,17 +27,6 @@ public class ReservationHandlerTests
         };
         JSONMethods.WriteToJSON(testReservations, FileName);
 
-    }
-
-    [ClassCleanup]
-    public static void CleanupJSON()
-    {
-       JSONMethods.WriteToJSON(original_File, FileName); 
-    }
-
-    [TestMethod]
-    public void TestReservationID()
-    {
         string reservationId = ReservationHandler.GetReservationID();
 
         Assert.IsNotNull(reservationId);
