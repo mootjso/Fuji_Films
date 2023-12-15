@@ -53,7 +53,7 @@ public static class AdminHandler
     {
         DisplayAsciiArt.AdminHeader();
         string title, language, description, genre;
-        int runTime, genreCount, ageRating;
+        int highestId, runTime, genreCount, ageRating;
         List<string> genres = new();
         Console.CursorVisible = true;
         title = GetInputDataString("Title");
@@ -69,7 +69,8 @@ public static class AdminHandler
 
         runTime = GetInputDataInt("Runtime (minutes)");
         ageRating = GetInputDataInt("Age Rating");
-        Movie movieToAdd = new Movie(title, language, description, genres, runTime, ageRating);
+        highestId = GetHighestID();
+        Movie movieToAdd = new Movie(highestId, title, language, description, genres, runTime, ageRating);
         bool inMenu = true;
         string? choice;
         while (inMenu)
