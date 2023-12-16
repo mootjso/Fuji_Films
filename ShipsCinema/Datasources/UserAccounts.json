@@ -10,8 +10,8 @@
   },
   {
     "Id": 2,
-    "FirstName": "Admin",
-    "LastName": "Admin",
+    "FirstName": "user",
+    "LastName": "one",
     "Email": "u",
     "Password": "u",
     "PhoneNumber": "06666666",
