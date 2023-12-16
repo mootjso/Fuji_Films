@@ -376,6 +376,8 @@ public static class ShowHandler
         foreach (var day in showsFilteredGrouped)
         {
             date = day.First().DateAndTime;
+            if (date < DateTime.Now)
+                continue;
             Console.WriteLine($"{date.DayOfWeek} {date:D}");
             foreach (var show in day)
             {
@@ -402,7 +404,7 @@ public static class ShowHandler
     public static List<Movie> GetScheduledMovies()
     {
         var movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
-        var showings = JSONMethods.ReadJSON<Show>(FileName);
+        var showings = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var query =
             from movie in movies
             join showing in showings on movie.Id equals showing.MovieId
