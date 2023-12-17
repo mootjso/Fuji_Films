@@ -445,11 +445,17 @@ public static class ShowHandler
     // Creates list of formatted strings: Start time - end time Theater Title
     {
         List<string> movieMenuStrings = new();
-        foreach (var _show in shows)
+        List<Show> validShows = new();
+        foreach (var show in shows)
         {
-            Movie movie = MovieHandler.GetMovieById(_show.MovieId)!;
-            if (_show.TheaterNumber == theaterNumber || theaterNumber == -1)
-                movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString} | Theater {_show.TheaterNumber} | {movie.Title}  ");
+            validShows.Add(show);
+        }
+        validShows = validShows.OrderBy(s => s.DateAndTime).ToList(); // Intermediary list to order by theater number if that's wanted
+        foreach (var show in validShows)
+        {
+            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
+            if (show.TheaterNumber == theaterNumber || theaterNumber == -1)
+                movieMenuStrings.Add($"{show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
         }
         movieMenuStrings.Add("Back");
         return movieMenuStrings;
