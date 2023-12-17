@@ -361,7 +361,7 @@ public static class ShowHandler
     {
         Console.Clear();
 
-        var shows = JSONMethods.ReadJSON<Show>(FileName);
+        var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
         var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
         DateTime date;
@@ -376,8 +376,6 @@ public static class ShowHandler
         foreach (var day in showsFilteredGrouped)
         {
             date = day.First().DateAndTime;
-            if (date < DateTime.Now)
-                continue;
             Console.WriteLine($"{date.DayOfWeek} {date:D}");
             foreach (var show in day)
             {
