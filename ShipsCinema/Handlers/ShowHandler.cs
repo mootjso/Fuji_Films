@@ -479,7 +479,7 @@ public static class ShowHandler
     {
         Console.Clear();
 
-        var shows = JSONMethods.ReadJSON<Show>(FileName);
+        var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
         var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
         DateTime date;
@@ -520,7 +520,7 @@ public static class ShowHandler
     public static List<Movie> GetScheduledMovies()
     {
         var movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
-        var showings = JSONMethods.ReadJSON<Show>(FileName);
+        var showings = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var query =
             from movie in movies
             join showing in showings on movie.Id equals showing.MovieId
