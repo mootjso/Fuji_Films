@@ -45,7 +45,7 @@ public class Program
                 loggedInUser = null;
             } 
 
-            menuOptions = new() { "Current Movies", "Show Schedule", "My Reservations", "Log Out" };
+            menuOptions = new() { "Current Movies", "Showing Schedule", "My Reservations", "Log Out" };
             while (loggedInUser != null)
             {
                 menuText = $"Hello, {loggedInUser.FirstName} {loggedInUser.LastName}\n";

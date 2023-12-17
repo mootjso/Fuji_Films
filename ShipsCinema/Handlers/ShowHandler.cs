@@ -143,7 +143,8 @@ public static class ShowHandler
         }
     }
 
-    private static bool TimeIsValid(Show newShow, Movie newMovie) // Checks if a chosen start time is valid, if no other showings are planned during the runtime of that showing
+    // Returns the showing that is already planned at the time of the newShow, or returns null if time is available
+    private static Show? TimeIsValid(Show newShow, Movie newMovie) 
     {
         DateTime startTimeNewShow = newShow.DateAndTime;
         DateTime endTimeNewShow = newShow.DateAndTime.AddMinutes(15 + newMovie.Runtime);
@@ -154,91 +155,93 @@ public static class ShowHandler
             {
                 Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
                 DateTime startTimeOldShow = oldShow.DateAndTime;
-                DateTime laterPossibleStart = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+                DateTime endTimeOldShow = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
                 DateTime earliestPossibleStart = startTimeOldShow.AddMinutes(-newMovie.Runtime - 15);
 
-                if (endTimeNewShow > startTimeOldShow || startTimeNewShow > laterPossibleStart)
-                    return false;
+                if (startTimeNewShow < endTimeOldShow && endTimeNewShow > startTimeOldShow)
+                    return oldShow;
             }
         }
 
-        return true;
+        return null;
     }
 
-    private static DateTime GetEarliestPossibleStartTime()
+    private static DateTime GetPossibleStartTime(Show? oldShow, Show newShow, Movie newMovie, bool earlierTime = true)
     {
+        DateTime newStartTime;
+        do
+        {
+            Movie oldMovie = MovieHandler.GetMovieById(oldShow!.MovieId)!;
+            if (earlierTime)
+                newStartTime = oldShow!.DateAndTime.AddMinutes(-newMovie.Runtime - 15);
+            else  // Get later possible start time
+                newStartTime = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+            
+            newShow.DateAndTime = newStartTime;
+            oldShow = TimeIsValid(newShow, newMovie);
+        }
+        while (oldShow != null);
 
-    }
-
-    private static DateTime GetEarliestPossibleStartTime()
-    {
-
+        return newStartTime;
     }
 
     public static Show TheaterIsAvailable(Show newShow, string dateString)
     {
         Movie newMovie = MovieHandler.GetMovieById(newShow.MovieId)!;
-        DateTime startTimeNewShow = newShow.DateAndTime;
-        DateTime endTimeNewShow = newShow.DateAndTime.AddMinutes(15 + newMovie.Runtime);
-        
-        if (TimeIsValid(newShow, newMovie))
+
+        Show? oldShow = TimeIsValid(newShow, newMovie);
+        if (oldShow == null) // No other showing planned at the new showing time
             return newShow;
 
-        
 
+        DateTime earlierPossibleStart = GetPossibleStartTime(oldShow, newShow, newMovie);
+        DateTime laterPossibleStart = GetPossibleStartTime(oldShow, newShow, newMovie, false);
 
-        foreach (Show oldShow in Shows)
+        // Get a string of the planned movies for that theater for that day
+
+        List<Show> ShowsForDate = GetShowsByDate(newShow.DateAndTime);
+        List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate, newShow.TheaterNumber);
+        movieMenuStrings.RemoveAt(movieMenuStrings.Count - 1); // Removes the "Back" option that the CreaListMovieStrings method adds
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\nThe theater is already booked at this time, the following showings are planned for this day:");
+        Console.ForegroundColor= ConsoleColor.Blue;
+        movieMenuStrings.ForEach(s => Console.WriteLine(s));
+        Console.ResetColor();
+        Console.WriteLine($"\n\n[1] Change to earlier start time: {earlierPossibleStart:HH:mm}\n[2] Change to later start time: {laterPossibleStart:HH:mm}\n[3] Enter a custom time");
+        Console.ResetColor();
+        ConsoleKeyInfo keyInfo = Console.ReadKey();
+        if (keyInfo.Key == ConsoleKey.D1 ) // Admin chooses the earlier possible start time
         {
-            if (oldShow.TheaterNumber == newShow.TheaterNumber)
+            newShow.DateAndTime = earlierPossibleStart;
+            return newShow;
+        }
+        else if (keyInfo.Key == ConsoleKey.D2) // Admin chooses the later possible start time
+        {
+            newShow.DateAndTime = laterPossibleStart;
+            return newShow;
+        }
+        else // Admin wants to enter a custom time
+        {
+            DateTime customTime;
+            do
             {
-                Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
-                DateTime startTimeOldShow = oldShow.DateAndTime;
-                DateTime laterPossibleStart = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
-                DateTime earliestPossibleStart = startTimeOldShow.AddMinutes(-newMovie.Runtime - 15);
-
-
-                if (endTimeNewShow > startTimeOldShow || startTimeNewShow > laterPossibleStart)
+                customTime = TimeSelection(newMovie, dateString, newShow.TheaterNumber);
+                if (customTime > earlierPossibleStart && customTime < laterPossibleStart)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\nThe theater is already booked at this time by the following showing: ");
-                    Console.ForegroundColor= ConsoleColor.Blue;
-                    Console.Write($"{oldMovie.Title} {oldShow.StartTimeString} - {oldShow.EndTimeString}");
+                    Console.WriteLine($"\nEnter a time before '{earlierPossibleStart:HH:mm}' or after '{laterPossibleStart:HH:mm}'");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("\nPress any key to try again");
+                    Console.ReadKey();
                     Console.ResetColor();
-                    Console.WriteLine($"\n\n[1] Change to earlier start time: {earliestPossibleStart:HH:mm}\n[2] Change to later start time: {laterPossibleStart:HH:mm}\n[3] Enter a custom time");
-                    Console.ResetColor();
-                    ConsoleKeyInfo keyInfo = Console.ReadKey();
-                    if (keyInfo.Key == ConsoleKey.D1 ) // Admin chooses the earlier possible start time
-                    {
-                        newShow.DateAndTime = earliestPossibleStart;
-                        return newShow;
-                    }
-                    else if (keyInfo.Key == ConsoleKey.D2) // Admin chooses the later possible start time
-                    {
-                        newShow.DateAndTime = laterPossibleStart;
-                        return newShow;
-                    }
-                    else // Admin wants to enter a custom time
-                    {
-                        DateTime customTime;
-                        do
-                        {
-                            customTime = TimeSelection(newMovie, dateString, newShow.TheaterNumber);
-                            if (customTime > startTimeOldShow && customTime < laterPossibleStart)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"\nEnter a time before '{earliestPossibleStart:HH:mm}' or after '{laterPossibleStart:HH:mm}'");
-                                Console.ForegroundColor = ConsoleColor.DarkGray;
-                                Console.WriteLine("\nPress any key to try again");
-                                Console.ReadKey();
-                                Console.ResetColor();
-                            }
-                        }
-                        while (customTime > startTimeOldShow && customTime < laterPossibleStart);
-                        newShow.DateAndTime = customTime;
-                    }
-                }  
+                }
             }
+            while (customTime > earlierPossibleStart && customTime < laterPossibleStart);
+            newShow.DateAndTime = customTime;
         }
+
+        // POSSIBLE FEATURE: Check if the time is available at a different theater
         return newShow;
     }
 
@@ -438,14 +441,15 @@ public static class ShowHandler
         return sortedDateStrings;
     }
 
-    public static List<string> CreateListMovieStrings(List<Show> shows)
-    // Creates list of formatted strings: Start time - end time : Title
+    public static List<string> CreateListMovieStrings(List<Show> shows, int theaterNumber = -1)
+    // Creates list of formatted strings: Start time - end time Theater Title
     {
         List<string> movieMenuStrings = new();
         foreach (var _show in shows)
         {
             Movie movie = MovieHandler.GetMovieById(_show.MovieId)!;
-            movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString} {movie.Title}  ");
+            if (_show.TheaterNumber == theaterNumber || theaterNumber == -1)
+                movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString} | Theater {_show.TheaterNumber} | {movie.Title}  ");
         }
         movieMenuStrings.Add("Back");
         return movieMenuStrings;
