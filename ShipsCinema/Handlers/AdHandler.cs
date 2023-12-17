@@ -42,7 +42,6 @@
         }
         Console.ForegroundColor= ConsoleColor.DarkYellow;
         Console.WriteLine("---------------------------------------------------------------------");
-        Console.WriteLine();
         Console.ResetColor();
     }
 }

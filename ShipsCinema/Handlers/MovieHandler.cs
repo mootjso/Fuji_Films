@@ -88,13 +88,15 @@ public static class MovieHandler
         if (Movies.Count == 0)
         {
             List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are no movies currently available", menuOption, isAdmin);
+            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
             return;
         }
         string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
             $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
             $"  {new string('-', 93)}";
+        
         List<string> menuOptionsFull;
+        
         if (isAdmin)
             menuOptionsFull = GetMovieTitles(Movies);
         else
@@ -104,7 +106,14 @@ public static class MovieHandler
             menuOptions = menuOptionsFull.GetRange(0, 10);
         else
             menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
-        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]", "[Back]" });
+        
+        if (menuOptions.Count <= 0)  // No movies scheduled
+        {
+            List<string> menuOption = new() { "Back" };
+            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
+            return;
+        }
+        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
@@ -140,7 +149,7 @@ public static class MovieHandler
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]", "[Back]" });
+            menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         }
     }
 
