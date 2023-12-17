@@ -81,6 +81,7 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please enter your credit card number:\nEXAMPLE: 4321-2432-2432-3424");
             Console.ForegroundColor = ConsoleColor.Blue;
             string creditCardInput = Console.ReadLine();
@@ -89,9 +90,10 @@ public class CheckOutHandler
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Credit card does NOT exist!\nPlease try again\nEnter the following format including the '-': XXXX-XXXX-XXXX-XXXX");
+                Console.WriteLine("\nCredit card does NOT exist, please use the following format (including the '-'): XXXX-XXXX-XXXX-XXXX");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
                 Console.CursorVisible = true;
                 continue;
@@ -101,6 +103,7 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please input the expiration date:\nRequired format: MM/YY, Example: 02/25");
             Console.ForegroundColor = ConsoleColor.Blue;
             string experationCodeInput = Console.ReadLine();
@@ -108,9 +111,10 @@ public class CheckOutHandler
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Incorrect format, please try again.\nEnter the following format including the '/': XX/XX");
+                Console.WriteLine("\nIncorrect format, please use the following format (including the '/'): XX/XX");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
                 Console.CursorVisible = true;
                 continue;
@@ -120,6 +124,7 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nEXAMPLE: 454");
             Console.ForegroundColor = ConsoleColor.Blue;
             string cvc = Console.ReadLine();
@@ -128,10 +133,11 @@ public class CheckOutHandler
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Wrong Card Verification Code, please use the correct format (e.g.: 454)");
+                Console.WriteLine("\nWrong Card Verification Code, please use the correct format (e.g.: 454)");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
                 Console.CursorVisible = true;
                 continue;
@@ -144,6 +150,7 @@ public class CheckOutHandler
                 Console.Clear();
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
+                Console.WriteLine("Reservations\n");
                 Console.WriteLine($"Please confirm the following credit card details:\n\nCredit card number: {creditCardInput}\nExpiration date: {experationCodeInput}\nCVC: {cvc}\n\nIs this correct? (Y/N)\n");
                 ConsoleKey pressedKey = Console.ReadKey().Key;
                 if (pressedKey == ConsoleKey.Y)
@@ -152,10 +159,12 @@ public class CheckOutHandler
                     Console.ResetColor();
                     DisplayAsciiArt.Header();
                     AdHandler.DisplaySnacks();
+                    Console.WriteLine("Reservations\n");
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Tickets successfully booked!\n");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("Press any button to continue");
+                    Console.ResetColor();
                     Console.ReadKey();
                     Console.Clear();
                     return;

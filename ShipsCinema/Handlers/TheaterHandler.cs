@@ -1,3 +1,5 @@
+using System.Net.Sockets;
+
 public static class TheaterHandler
 {
     public const string FileName = "Datasources/theaters.json";
@@ -62,9 +64,10 @@ public static class TheaterHandler
 
             DrawSeatOverview(theater, selectedRow, selectedColumn, user, selectedSeats);
             DrawMovieScreen(theater);
+            Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
             if (!user.IsAdmin)
             {
-                DisplayPriceInfo();
+                DisplaySymbolsInfo(selectedSeat);
                 totalPrice = TicketHandler.GetTotalPrice(tickets);
                 Console.WriteLine($"Total price of reservation: {totalPrice} EUR\n");
             }
@@ -95,21 +98,16 @@ public static class TheaterHandler
 
                 // User selects a seat
                 case ConsoleKey.Enter:
-                    Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
+                    //Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
 
                     // Deselect seat
                     if (selectedSeats.Contains(selectedSeat))
                     {
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        Console.WriteLine($"Press 'Enter' to deselect this seat, press any other key to keep the seat selected.");
-                        Console.ResetColor();
-                        ConsoleKeyInfo pressedKey = Console.ReadKey();
-                        if (pressedKey.Key == ConsoleKey.Enter)
-                        {
-                            selectedSeat.IsAvailable = true;
-                            selectedSeat.UserId = -1;
-                            selectedSeats.Remove(selectedSeat);
-                        }  
+                        selectedSeat.IsAvailable = true;
+                        selectedSeat.UserId = -1;
+                        selectedSeats.Remove(selectedSeat);
+                        Ticket ticket = tickets.Find(t => t.UserId == user.Id && t.Row == selectedSeat.Row && t.Column == selectedSeat.Column && selectedShow.Id == t.ShowId)!;
+                        tickets.Remove(ticket);
                     }
                     // Valid seat selected
                     else if (selectedSeat.IsSeat && selectedSeat.UserId == -1 && selectedSeat.IsAvailable)
@@ -119,19 +117,12 @@ public static class TheaterHandler
 
                         Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
 
-                        if (!user.IsAdmin)
-                            Console.WriteLine($"Seat price: {seatPrice} EUR ({ticket.Color} Seat)");
+                        if (user.IsAdmin)
+                            selectedSeat.IsAvailable = false;
 
-                        // Ask user to confirm selected seat
-                        if (ConfirmSeatSelection(user))
-                        {
-                            if (user.IsAdmin)
-                                selectedSeat.IsAvailable = false;
-
-                            selectedSeat.UserId = user.Id;
-                            selectedSeats.Add(selectedSeat);
-                            tickets.Add(ticket);
-                        }
+                        selectedSeat.UserId = user.Id;
+                        selectedSeats.Add(selectedSeat);
+                        tickets.Add(ticket);
                     }
                     // Invalid seat selected
                     else
@@ -163,6 +154,7 @@ public static class TheaterHandler
                             }
                             return tickets;
                         }
+                        // User is Admin
                         JSONMethods.WriteToJSON(Theaters, FileName);
                         return new List<Ticket>();
                     }
@@ -300,7 +292,7 @@ public static class TheaterHandler
         Console.WriteLine("Movie screen\n");
     }
 
-    public static void DisplayPriceInfo()
+    public static void DisplaySymbolsInfo(Seat selectedSeat)
     {
         Console.ForegroundColor = ConsoleColor.DarkRed;
         Console.Write($"■: {Theater.RedSeatPrice} EUR\t");
@@ -321,10 +313,10 @@ public static class TheaterHandler
         Console.Write("X: Unavailable");
 
         Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("\nO: Your seat(s) from previous reservations");
-        Console.WriteLine("\n");
+        Console.Write("\nO: Your seat(s) from previous reservations\n");
 
         Console.ResetColor();
+        Console.WriteLine($"Current seat: {selectedSeat}\n");
     }
 
     public static bool ConfirmReservation(List<Ticket> tickets, bool isAdmin = false)
@@ -358,24 +350,6 @@ public static class TheaterHandler
             return true;
         }
 
-        return false;
-    }
-
-    public static bool ConfirmSeatSelection(User user)
-    {
-        Console.ForegroundColor = ConsoleColor.Magenta;
-        if (!user.IsAdmin)
-        {
-            Console.WriteLine("\nAre you sure you want to choose this seat? (Press 'Enter' to confirm, press any other key to cancel).");
-        }
-        else if (user.IsAdmin)
-            Console.WriteLine("\nAre you sure you want to take out this seat? (Press 'Enter' to confirm, press any other key to cancel).");
-        Console.ResetColor();
-        ConsoleKeyInfo keyInfo = Console.ReadKey();
-        if (keyInfo.Key == ConsoleKey.Enter)
-        {
-            return true;
-        }
         return false;
     }
 }

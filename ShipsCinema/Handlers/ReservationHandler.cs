@@ -136,7 +136,7 @@ public static class ReservationHandler
                 return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
-            int ReservationInt = 1;
+            int ticketNum = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();
@@ -152,19 +152,19 @@ public static class ReservationHandler
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"Ticket {ReservationInt}:".PadRight(12) + $"Row {reservation.Row}\n" + "".PadLeft(12) + $"Seat: {reservation.Column}\n");
-                    ReservationInt++;
+                    Console.WriteLine($"Ticket {ticketNum}:".PadRight(12) + $"Row {reservation.Row + 1}\n" + "".PadLeft(12) + $"Seat: {reservation.Column + 1}\n");
+                    ticketNum++;
                 }
             }
         }
         // Hier heb je geen reservations
         else
         {
-            Console.WriteLine("You currently have no reservations.");
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n\nYou currently have no reservations.");
         }
-
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("Press any key to go back");
+        Console.WriteLine("\nPress any key to go back");
         Console.ReadKey();
         Console.ResetColor();
     }
