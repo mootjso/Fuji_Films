@@ -53,10 +53,9 @@ public static class AdminHandler
     {
         DisplayAsciiArt.AdminHeader();
         string title, language, description, genre;
-        int id, runTime, genreCount, ageRating;
+        int highestId, runTime, genreCount, ageRating;
         List<string> genres = new();
         Console.CursorVisible = true;
-        id = GetInputDataInt("ID");
         title = GetInputDataString("Title");
         language = GetInputDataString("Language");
         description = GetInputDataString("Description");
@@ -70,7 +69,8 @@ public static class AdminHandler
 
         runTime = GetInputDataInt("Runtime (minutes)");
         ageRating = GetInputDataInt("Age Rating");
-        Movie movieToAdd = new Movie(id, title, language, description, genres, runTime, ageRating);
+        highestId = GetHighestID();
+        Movie movieToAdd = new Movie(highestId, title, language, description, genres, runTime, ageRating);
         bool inMenu = true;
         string? choice;
         while (inMenu)
@@ -278,33 +278,16 @@ public static class AdminHandler
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
             Console.Write($"{information}");
-            if (information == "ID")
-            {
-                int highestId = GetHighestID();
-                if (highestId > 0)
-                    Console.Write($" (Highest ID is {highestId}): ");
-                else
-                {
-                    Console.Write($" (Highest Id: n/a): ");
-                }
-            }
-            else
-                Console.Write(": ");
+            Console.Write(": ");
             if (int.TryParse(Console.ReadLine(), out input))
             {
-                if (CheckIDAvailable(input) && information == "ID")
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"ID {input} is unvailable");
-                    Console.ResetColor();
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadLine();
-                    continue;
-                }
                 if (input > 0)
                     return input;
             }
-            Console.WriteLine("Invalid number\nPress any key to continue");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid number");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to continue");
             Console.ReadLine();
         }
     }
@@ -328,11 +311,5 @@ public static class AdminHandler
             return movies.Max(m => m.Id);
         }
         return 0;
-    }
-
-    public static bool CheckIDAvailable(int id)
-    {
-        IEnumerable<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
-        return movies.Any(m => m.Id == id);
     }
 }
