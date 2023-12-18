@@ -49,6 +49,7 @@
                     Console.WriteLine("\n\nPress any key to continue");
                     Console.ReadKey();
                     Console.ResetColor();
+                    return;
                 }
             }
         }
