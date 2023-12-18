@@ -26,7 +26,7 @@ public static class ChangeMovieDetails
         int startIndex = currentPage * pageSize;
         int endIndex = Math.Min(startIndex + pageSize, movies.Count);
         List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
-        List<string> movieTitles = ShowHandler.GetMovieTitles(pageMovies);
+        List<string> movieTitles = MovieHandler.GetMovieTitles(pageMovies);
         
         string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
         List<string> menuOptions = new List<string>(movieTitles);
@@ -43,13 +43,15 @@ public static class ChangeMovieDetails
         {
             currentPage++;
         }
-        else if (index == menuOptions.Count || index == menuOptions.Count - 1)
+
+        else if (index == menuOptions.Count || index == menuOptions.Count - 1 )
+
         {
             break;
         }
         else if (index >= 0 && index < movieTitles.Count)
         {
-            string selectedTitle = movieTitles[index];
+            string selectedTitle = movieTitles[index].Split(",")[0].Split("|")[0].Trim();
             Movie selectedMovieToEdit = null;
 
             foreach (Movie movie in movies)

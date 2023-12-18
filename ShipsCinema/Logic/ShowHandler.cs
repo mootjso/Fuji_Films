@@ -245,13 +245,6 @@ public static class ShowHandler
         return newShow;
     }
 
-    public static List<string> GetMovieTitles(List<Movie> movies)
-    {
-        List<string> movieTitles = new();
-        foreach (Movie movie in movies)
-        movieTitles.Add(movie.Title);
-        return movieTitles;
-    }
     public static void RemoveShow()
     {
         List<string> dates = GetAllDates();
