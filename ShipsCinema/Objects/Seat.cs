@@ -17,5 +17,5 @@ public class Seat
         IsAvailable = isAvailable;
     }
 
-    public override string ToString() => $"Row {Row}, Seat {Column}";
+    public override string ToString() => $"Row {Row + 1}, Seat {Column + 1}";
 }
