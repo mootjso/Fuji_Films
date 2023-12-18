@@ -4,7 +4,7 @@ namespace TicketPurchase
 public class TicketHandlerTests
 {
     private static string FileName = TicketHandler.FileName;
-    private static List<Ticket> original_FileName = JSONMethods.ReadJSON<Ticket>(FileName).ToList();
+    private static List<Ticket> original_File = JSONMethods.ReadJSON<Ticket>(FileName).ToList();
 
     [TestInitialize]
     public void TestInitialize()
@@ -24,7 +24,7 @@ public class TicketHandlerTests
     [ClassCleanup]
     public static void CleanupJSONFile()
     {
-       JSONMethods.WriteToJSON(original_FileName, FileName); 
+       JSONMethods.WriteToJSON(original_File, FileName); 
     }
 
     [TestMethod]

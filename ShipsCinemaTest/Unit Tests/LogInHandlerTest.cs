@@ -4,30 +4,26 @@ namespace LoginHandlerTest
     public class TestLoginHandler
     {
         private static string _fileName = LoginHandler.FileName;
-        private static List<User> _originalFileName = JSONMethods.ReadJSON<User>(_fileName).ToList();
-        [TestInitialize]
-    public void TestInitialize()
-    {
-        // Clear the test JSON file
-        File.WriteAllText(_fileName, "[]");
-
-        List<User> testUsers = new List<User>
-        {
-            new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
-            new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
-        };
-        JSONMethods.WriteToJSON(testUsers, _fileName);
-    }
-
+        private static List<User> _originalFile = JSONMethods.ReadJSON<User>(_fileName).ToList();
+        
         [ClassCleanup]
         public static void CleanupJSONFile()
         {
-            JSONMethods.WriteToJSON(_originalFileName, _fileName);
+            JSONMethods.WriteToJSON(_originalFile, _fileName);
         }
 
         [TestMethod]
-        public void TestReadFromJSON()
+        public void TestWriteToJSON()
         {
+            File.WriteAllText(_fileName, "[]");
+
+            List<User> testUsers = new List<User>
+            {
+                new User(1, "John", "Doe", "john.doe@outlook.com", "password123", "0612345678"),
+                new User(2, "Barld", "Boot", "barld.boot@gmail.com", "securepass", "0612345679", true)
+            };
+            JSONMethods.WriteToJSON(testUsers, _fileName);
+            
             User user = LoginHandler.Users[0];
             User user_admin = LoginHandler.Users[1];
 
