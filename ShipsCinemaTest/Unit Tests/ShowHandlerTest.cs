@@ -6,6 +6,8 @@ namespace ShowHandlerTest
 [TestClass]
 public class ShowHandlerTest
 {
+    private List<Show> _showsCopy = new();
+    private string _fileName = ShowHandler.FileName;
     static Movie movieObject = new Movie(3, "Movie", "en", "A Movie", new List<string> { "Adventure", "Horror" }, 105, 18);
     List<Show> testshows = new() 
     {
@@ -15,13 +17,22 @@ public class ShowHandlerTest
     };
 
     [TestInitialize]
-    public void ClassInitialize()
-    {        
+    public void TestInitialize()
+    {   
+        _showsCopy = JSONMethods.ReadJSON<Show>(_fileName).ToList();
+        JSONMethods.WriteToJSON(new List<Show>(), _fileName);
+        File.WriteAllText(ShowHandler.FileName, "[]");
         ShowHandler.Shows.Clear();
         foreach (Show show in testshows)
         {
             ShowHandler.Shows.Add(show);
         }
+    }
+    [TestCleanup]
+    public void TestCleanUp()
+    {
+        JSONMethods.WriteToJSON(_showsCopy, _fileName);
+
     }
 
     [DataTestMethod]
