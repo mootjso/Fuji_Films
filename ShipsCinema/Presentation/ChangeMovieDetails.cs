@@ -43,7 +43,7 @@ public static class ChangeMovieDetails
         {
             currentPage++;
         }
-        else if (index == menuOptions.Count)
+        else if (index == menuOptions.Count || index == menuOptions.Count - 1)
         {
             break;
         }
