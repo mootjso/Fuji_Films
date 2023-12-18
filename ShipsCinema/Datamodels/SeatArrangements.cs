@@ -1,4 +1,4 @@
-﻿public static class SeatDatabase
+﻿public static class SeatArrangements
 {
     // Seatdatabase is used to instantiate all the Seat objects in the List<Seat> of a Theater object
     // 0 : not a chair
