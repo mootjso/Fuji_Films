@@ -225,7 +225,10 @@ public static class AdminHandler
         while (inMenu)
         {
             int index = Menu.Start("Movie Listings\n\nSelect an option:", menuOptions, true);
-
+            if (index == menuOptions.Count || index == menuOptions.Count-1)
+            {
+                break;
+            }
             switch (index)
             {
                 case 0:
