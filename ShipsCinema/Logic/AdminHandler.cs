@@ -3,7 +3,7 @@ public static class AdminHandler
     public static void StartMenu(User adminAccount)
     {   
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() {"Financial report", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take out seat(s)", "Log out"};
+        List<string> MenuOptions = new() {"Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Log Out"};
         
         while (true)
         {   
@@ -19,9 +19,7 @@ public static class AdminHandler
             {
                 case FinancialReportOption:
                     Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("\nFINANCIAL REPORT NOT IMPLEMENTED\n\nPRESS ANY KEY TO CONTINUE TO THE MAIN MENU");
-                    Console.ReadKey();
+                    FinancialMenu.Start();
                     break;
                 case AddRemoveMovieOption:
                     Console.Clear();
