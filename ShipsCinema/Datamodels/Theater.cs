@@ -17,7 +17,7 @@ public class Theater
 
     public void CreateSeats(int theaterNumber)
     {
-        int[,] seatArrangement = theaterNumber == 1 ? SeatDatabase.SeatArrangementSmall : theaterNumber == 2 ? SeatDatabase.SeatArrangementMedium : SeatDatabase.SeatArrangementLarge;
+        int[,] seatArrangement = theaterNumber == 1 ? SeatArrangements.SeatArrangementSmall : theaterNumber == 2 ? SeatArrangements.SeatArrangementMedium : SeatArrangements.SeatArrangementLarge;
         
         int rows = seatArrangement.GetLength(0);
         int columns = seatArrangement.GetLength(1);
