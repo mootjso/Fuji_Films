@@ -1,6 +1,3 @@
-using System.Data.Common;
-using System.Security.Cryptography.X509Certificates;
-
 namespace ShowHandlerTest
 {
 [TestClass]
@@ -21,12 +18,8 @@ public class ShowHandlerTest
     {   
         _showsCopy = JSONMethods.ReadJSON<Show>(_fileName).ToList();
         JSONMethods.WriteToJSON(new List<Show>(), _fileName);
-        File.WriteAllText(ShowHandler.FileName, "[]");
-        ShowHandler.Shows.Clear();
-        foreach (Show show in testshows)
-        {
-            ShowHandler.Shows.Add(show);
-        }
+
+        JSONMethods.WriteToJSON(testshows, _fileName);
     }
     [TestCleanup]
     public void TestCleanUp()
@@ -82,7 +75,7 @@ public class ShowHandlerTest
     [DataTestMethod]
     [DataRow(0, 1, 1, 1, "2023-12-14T12:20:40")]
     [DataRow(1, 9, 5, 2, "2023-11-26T17:02:12")]
-    [DataRow(2, 0, 3, 1, "2020-06-16T14:48:05")]
+    [DataRow(2, 0, 4, 1, "2020-06-16T14:48:05")]
     public void TestConstructorCorrectProperties(int indexshow, int expectedId, int expectedMovieId, int expectedTheaterNumber, string expectedDateAndTime)
     {
         Show show = testshows[indexshow];
@@ -112,7 +105,7 @@ public class ShowHandlerTest
     [DataTestMethod]
     [DataRow(9, 5, 2, "2023-11-26T17:02:12")]
     [DataRow(1, 1, 1, "2023-12-14T12:20:40")]
-    [DataRow(0, 3, 1, "2020-06-16T14:48:05")]
+    [DataRow(0, 4, 1, "2020-06-16T14:48:05")]
     public void TestGetShowById(int getById, int movieid, int theaternumber, string dateAndTimeString)
     {   
         Show? showResult = ShowHandler.GetShowById(getById);
@@ -122,8 +115,8 @@ public class ShowHandlerTest
         Assert.AreEqual(showExpected.Id, showResult.Id);
         Assert.AreEqual(showExpected.TheaterNumber, showResult.TheaterNumber);
         Assert.AreEqual(showExpected.DateAndTime, showResult.DateAndTime);
-
     }
+
     [DataTestMethod]
     [DataRow(2)]
     [DataRow(3)]
@@ -166,7 +159,6 @@ public class ShowHandlerTest
         List<string> expectedTitles = movies.Select(movie => movie.Title).ToList();
         CollectionAssert.AreEqual(expectedTitles, result);
     }
-
     }
 
 }
