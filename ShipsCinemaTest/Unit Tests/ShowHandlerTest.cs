@@ -80,7 +80,7 @@ public class ShowHandlerTest
             new Movie(3, "Movie3", "ru", "Description3", new List<string> { "Fantasy" }, 130, 12),
         };
 
-        List<string> result = ShowHandler.GetMovieTitles(movies);
+        List<string> result = MovieHandler.GetMovieTitles(movies).Select(movie => movie.Split("|")[0].Trim()).ToList();
 
         List<string> expectedTitles = movies.Select(movie => movie.Title).ToList();
         CollectionAssert.AreEqual(expectedTitles, result);
