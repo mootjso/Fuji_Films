@@ -6,7 +6,6 @@ public static class ReservationHandler
     static ReservationHandler()
     {
         Reservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
-
     }
 
     public static string GetReservationID()
@@ -15,7 +14,8 @@ public static class ReservationHandler
         // Dit zorgt er voor dat de GUID geen "-" heeft zodat ik dit hieronder zelf kan toevoegen.
         string ReservationID = ReservationGUID.ToString("N");
         // Voorbeeld van reservation code: FD8J-FJN8-A4FX
-        string ReservationIDString = $"{ReservationID.Substring(0, 4)}-{ReservationID.Substring(4, 4)}-{ReservationID.Substring(8, 4)}";
+        string ReservationIDString =
+            $"{ReservationID.Substring(0, 4)}-{ReservationID.Substring(4, 4)}-{ReservationID.Substring(8, 4)}";
 
         return ReservationIDString;
     }
@@ -24,7 +24,9 @@ public static class ReservationHandler
     {
         // Hier leest hij de json files voor hieronder
         List<Ticket> tickets = JSONMethods.ReadJSON<Ticket>(TicketHandler.FileName).ToList();
-        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>(ReservationHandler.FileName).ToList();
+        List<Reservation> reservations = JSONMethods
+            .ReadJSON<Reservation>(ReservationHandler.FileName)
+            .ToList();
         // Elke ticket in de tickets.json wordt hier per ticket gechecked
         foreach (var ticket in tickets)
         {
@@ -56,12 +58,18 @@ public static class ReservationHandler
                     // Hier wordt de reservation gemaakt en geadd met de juiste gegevens in reservations.json
                     Show? show = ShowHandler.GetShowById(ticket.ShowId)!;
                     Movie? movie = MovieHandler.GetMovieById(show.MovieId)!;
-                    Reservation? reservation = new Reservation(ticket.ReservationId!, ticket.UserId, ticket.ShowId, movie.Id, ticket.Row, ticket.Column);
+                    Reservation? reservation = new Reservation(
+                        ticket.ReservationId!,
+                        ticket.UserId,
+                        ticket.ShowId,
+                        movie.Id,
+                        ticket.Row,
+                        ticket.Column
+                    );
 
                     reservations.Add(reservation);
                     JSONMethods.WriteToJSON(reservations, FileName);
                 }
-
             }
         }
     }
@@ -117,26 +125,35 @@ public static class ReservationHandler
                         {
                             Show show = ShowHandler.GetShowById(reservationCode.ShowId)!;
                             showForReservation = show;
-                            if (!overviewReservationCodes.Contains($"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}"))
+                            if (
+                                !overviewReservationCodes.Contains(
+                                    $"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}"
+                                )
+                            )
                             {
-                                overviewReservationCodes.Add($"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}");
+                                overviewReservationCodes.Add(
+                                    $"{reservationCode.ReservationId}, on {show.DateString} from {show.StartTimeString} - {show.EndTimeString}"
+                                );
                                 overviewCorrectReservation.Add(reservationCode.ReservationId);
-                            }   
+                            }
                         }
                     }
-
                 }
             }
 
             // Hier maak je vervolgens een menu van de verschillende reservatie codes die bij de film horen die je had geselecteerd
-            string overviewReservationCodesText = "Please choose the reservation you would like to use:\n";
+            string overviewReservationCodesText =
+                "Please choose the reservation you would like to use:\n";
             // Hier maak je de menu met de reservatie codes
-            int selectedReservation = Menu.Start(overviewReservationCodesText, overviewReservationCodes);
+            int selectedReservation = Menu.Start(
+                overviewReservationCodesText,
+                overviewReservationCodes
+            );
             if (selectedReservation == overviewReservationCodes.Count)
                 return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
-            int ticketNum = 1;
+            int ReservationInt = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();
@@ -145,26 +162,38 @@ public static class ReservationHandler
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine($"{selectedMovie}");
             Console.ResetColor();
-            Console.WriteLine($"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}");
+            Console.WriteLine(
+                $"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}"
+            );
             Console.ResetColor();
-            Console.WriteLine($"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n");
+            Console.WriteLine(
+                $"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n"
+            );
+            int reservationInt = 1;
+            Console.WriteLine("Ticket No. | Row | Seat");
+            Console.WriteLine(new string('-', 28));
+
             foreach (var reservation in reservationsUser)
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    Console.WriteLine($"Ticket {ticketNum}:".PadRight(12) + $"Row {reservation.Row + 1}\n" + "".PadLeft(12) + $"Seat: {reservation.Column + 1}\n");
-                    ticketNum++;
+                    string ticketInfo = $"Ticket {reservationInt}".PadRight(10);
+                    string rowInfo = $"Row {reservation.Row}".PadRight(6);
+                    string seatInfo = $"Seat: {reservation.Column}";
+
+                    Console.WriteLine($"{ticketInfo} | {rowInfo} | {seatInfo}");
+                    reservationInt++;
                 }
             }
         }
         // Hier heb je geen reservations
         else
         {
-            AdHandler.DisplaySnacks();
-            Console.WriteLine("Reservations\n\nYou currently have no reservations.");
+            Console.WriteLine("You currently have no reservations.");
         }
+
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("\nPress any key to go back");
+        Console.WriteLine("Press any key to go back");
         Console.ReadKey();
         Console.ResetColor();
     }
