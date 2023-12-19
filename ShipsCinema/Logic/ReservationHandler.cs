@@ -136,7 +136,7 @@ public static class ReservationHandler
                 return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
-            int ReservationInt = 1;
+            int ticketNum = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();
@@ -148,31 +148,23 @@ public static class ReservationHandler
             Console.WriteLine($"Date: {showForReservation.DateString}\nTime: {showForReservation.StartTimeString} - {showForReservation.EndTimeString}");
             Console.ResetColor();
             Console.WriteLine($"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n");
-            int reservationInt = 1;
-            Console.WriteLine("Ticket No. | Row | Seat");
-            Console.WriteLine(new string('-', 28));
-
             foreach (var reservation in reservationsUser)
             {
                 if (reservation.ReservationId == selectedReservationCode)
                 {
-                    string ticketInfo = $"Ticket {reservationInt}".PadRight(10);
-                    string rowInfo = $"Row {reservation.Row}".PadRight(6);
-                    string seatInfo = $"Seat: {reservation.Column}";
-
-                    Console.WriteLine($"{ticketInfo} | {rowInfo} | {seatInfo}");
-                    reservationInt++;
+                    Console.WriteLine($"Ticket {ticketNum}:".PadRight(12) + $"Row {reservation.Row + 1}\n" + "".PadLeft(12) + $"Seat: {reservation.Column + 1}\n");
+                    ticketNum++;
                 }
             }
         }
         // Hier heb je geen reservations
         else
         {
-            Console.WriteLine("You currently have no reservations.");
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n\nYou currently have no reservations.");
         }
-
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("Press any key to go back");
+        Console.WriteLine("\nPress any key to go back");
         Console.ReadKey();
         Console.ResetColor();
     }

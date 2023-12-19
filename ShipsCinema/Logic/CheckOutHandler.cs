@@ -1,11 +1,8 @@
 ﻿using System.Net.Sockets;
-using System.Numerics;
-using System.Runtime.InteropServices;
 
 public class CheckOutHandler
 {
     public const string FileName = "Datasources/revenuePerShow.json";
-    public const string FileQuarterYearName = "Datasources/revenuePerQuarterYear.json";
     public static List<Revenue> Revenues;
 
     static CheckOutHandler()
@@ -34,71 +31,14 @@ public class CheckOutHandler
             {
                 double totalRevenueUpToNow = GetTotalRevenueUpToNow(show.Id);
                 int month = show.DateAndTime.Month;
-                int year = show.DateAndTime.Year;
 
                 Movie? movie = MovieHandler.GetMovieById(show.MovieId)!;
-                Revenue? revenue = new Revenue(show.Id, movie.Title, totalRevenueUpToNow, month, year);
+                Revenue? revenue = new Revenue(show.Id, movie.Title, totalRevenueUpToNow, month);
 
                 revenues.Add(revenue);
                 JSONMethods.WriteToJSON(revenues, FileName);
             }
         }
-    }
-
-    public static void RevenueQuarterYearIfStatement(Ticket ticket, double moneyAdded)
-    {
-        List<Revenue> revenuesPerShow = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
-        List<RevenueQuartly> quarterYearRevenues = JSONMethods.ReadJSON<RevenueQuartly>(FileQuarterYearName).ToList();
-
-        foreach (var revenue in revenuesPerShow)
-        {
-            int quarter = DetermineQuarter(revenue.MonthDate);
-            var existingQuarterRevenue = quarterYearRevenues.FirstOrDefault(qr =>
-                qr.MovieTitle == revenue.MovieTitle &&
-                qr.YearDate == revenue.YearDate &&
-                qr.QuarterYear == quarter);
-
-            if (existingQuarterRevenue == null)
-            {
-                Show? show = ShowHandler.GetShowById(revenue.ShowId);
-                Movie? movie = MovieHandler.GetMovieById(show.MovieId);
-
-                RevenueQuartly newRevenueQuarter = new RevenueQuartly(movie.Id, movie.Title, revenue.TotalRevenue, quarter, revenue.YearDate);
-                quarterYearRevenues.Add(newRevenueQuarter);
-            }
-            else
-            {
-                if (ticket.ShowId == revenue.ShowId)
-                {
-                    existingQuarterRevenue.TotalRevenue += moneyAdded;
-
-                }
-            }
-        }
-        JSONMethods.WriteToJSON(quarterYearRevenues, FileQuarterYearName);
-    }
-
-
-    public static int DetermineQuarter(int month)
-    {
-        if (month <= 3)
-        {
-            return 1;
-        }
-        else if (month <= 6)
-        {
-            return 2;
-        }
-        else if (month <= 9)
-        {
-            return 3;
-        }
-        else if (month <= 12)
-        {
-            return 4;
-        }
-        else
-        { return 0; }
     }
 
     public static double GetTotalRevenueUpToNow(int showId)
@@ -141,20 +81,19 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please enter your credit card number:\nEXAMPLE: 4321-2432-2432-3424");
             Console.ForegroundColor = ConsoleColor.Blue;
             string creditCardInput = Console.ReadLine();
             Console.ResetColor();
-
-            bool correctCardFormat = creditCardInput.All(num => Char.IsDigit(num) || num == '-');
-
-            if (creditCardInput.Length != 19 || !correctCardFormat)
+            if (creditCardInput.Length != 19)
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Credit card does NOT exist!\nPlease try again\nEnter the following format including the '-': XXXX-XXXX-XXXX-XXXX");
+                Console.WriteLine("\nCredit card does NOT exist, please use the following format (including the '-'): XXXX-XXXX-XXXX-XXXX");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
                 Console.CursorVisible = true;
                 continue;
@@ -164,19 +103,18 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please input the expiration date:\nRequired format: MM/YY, Example: 02/25");
             Console.ForegroundColor = ConsoleColor.Blue;
             string experationCodeInput = Console.ReadLine();
-
-            bool correctExperationFormat = experationCodeInput.All(num => Char.IsDigit(num) || num == '/');
-
-            if (experationCodeInput.Length != 5 || !correctExperationFormat)
+            if (experationCodeInput.Length != 5)
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Incorrect format, please try again.\nEnter the following format including the '/': XX/XX");
+                Console.WriteLine("\nIncorrect format, please use the following format (including the '/'): XX/XX");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
                 Console.ReadLine();
                 Console.CursorVisible = true;
                 continue;
@@ -186,21 +124,20 @@ public class CheckOutHandler
             Console.ResetColor();
             DisplayAsciiArt.Header();
             AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n");
             Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nEXAMPLE: 454");
             Console.ForegroundColor = ConsoleColor.Blue;
             string cvc = Console.ReadLine();
             Console.ResetColor();
-
-            bool correctCVCFormat = cvc.All(num => Char.IsDigit(num));
-
-            if (cvc.Length != 3 || !correctCVCFormat)
+            if (cvc.Length != 3)
             {
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Wrong Card Verification Code, please use the correct format (e.g.: 454)");
+                Console.WriteLine("\nWrong Card Verification Code, please use the correct format (e.g.: 454)");
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("\nPress any button to try again");
                 Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
                 Console.CursorVisible = true;
                 continue;
@@ -213,6 +150,7 @@ public class CheckOutHandler
                 Console.Clear();
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
+                Console.WriteLine("Reservations\n");
                 Console.WriteLine($"Please confirm the following credit card details:\n\nCredit card number: {creditCardInput}\nExpiration date: {experationCodeInput}\nCVC: {cvc}\n\nIs this correct? (Y/N)\n");
                 ConsoleKey pressedKey = Console.ReadKey().Key;
                 if (pressedKey == ConsoleKey.Y)
@@ -221,10 +159,12 @@ public class CheckOutHandler
                     Console.ResetColor();
                     DisplayAsciiArt.Header();
                     AdHandler.DisplaySnacks();
+                    Console.WriteLine("Reservations\n");
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Tickets successfully booked!\n");
-                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("Press any button to continue");
+                    Console.ResetColor();
                     Console.ReadKey();
                     Console.Clear();
                     return;
