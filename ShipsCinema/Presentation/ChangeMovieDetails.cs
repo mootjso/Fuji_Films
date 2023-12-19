@@ -30,16 +30,16 @@ public static class ChangeMovieDetails
         
         string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
         List<string> menuOptions = new List<string>(movieTitles);
-        menuOptions.AddRange(new List<string> { "[Previous Page]", "[Next Page]" });
+        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
 
         int index = Menu.Start(menuText, menuOptions, true);
 
  
-        if (index == menuOptions.Count - 2 && currentPage > 0) // next page
+        if (index == menuOptions.Count - 3 && currentPage > 0) // next page
         {
             currentPage--;
         }
-        if (index == menuOptions.Count - 1 && endIndex < movies.Count)  // previous page
+        if (index == menuOptions.Count - 2 && endIndex < movies.Count)  // previous page
         {
             currentPage++;
         }
