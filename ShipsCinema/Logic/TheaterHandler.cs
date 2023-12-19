@@ -150,6 +150,7 @@ public static class TheaterHandler
                                 if (ticket.ShowId == selectedShow.Id)
                                 {
                                     CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
+                                    CheckOutHandler.RevenueQuarterYearIfStatement(ticket, ticket.Price);
                                 }
                             }
                             return tickets;
