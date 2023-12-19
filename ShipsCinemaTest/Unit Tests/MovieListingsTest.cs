@@ -24,10 +24,12 @@ namespace MovieListingsTest
         {
             List<Movie> movieToWrite = new()
         {
-            new Movie(1, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18)
+            new Movie(0, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18)
         };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
             List<Movie> readMovie = JSONMethods.ReadJSON<Movie>(_fileName).ToList();
+            foreach (var _movie in readMovie)
+                Console.WriteLine(_movie.Id);
             Movie movie = readMovie[0];
             Assert.AreEqual(1, movie.Id);
             Assert.AreEqual("Movie1", movie.Title);
@@ -43,8 +45,8 @@ namespace MovieListingsTest
         {
             List<Movie> movieToWrite = new()
         {
-            new Movie(1, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18),
-            new Movie (2, "Movie2", "nl", "Second Movie", new List<string> { "Thriller", "Comedy" }, 120, 16)
+            new Movie(0, "Movie1", "en", "First Movie", new List<string> { "Adventure", "Horror" }, 105, 18),
+            new Movie (1, "Movie2", "nl", "Second Movie", new List<string> { "Thriller", "Comedy" }, 120, 16)
         };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
 
@@ -65,13 +67,13 @@ namespace MovieListingsTest
         [TestMethod]
         public void TestGetMovieTitles()
         {
-            Movie movie1 = new(1, "Movie1", "en", "First Movie", new List<string> { "Adventure" }, 105, 18);
+            Movie movie1 = new(0, "Movie1", "en", "First Movie", new List<string> { "Adventure" }, 105, 18);
             string movieString1 = $"{"Movie1",-30} | {"English",-10} | {"Adventure" ,-30} | {"105" + " min",-8} | 18+";
 
             List<Movie> movieToWrite = new()
             {
                 movie1,
-                new Movie(2, "Movie 2", "en", "kaas", new List<string> { "Family" }, 120, 12)
+                new Movie(1, "Movie 2", "en", "kaas", new List<string> { "Family" }, 120, 12)
             };
             JSONMethods.WriteToJSON(movieToWrite, _fileName);
             List<Movie> MoviesFromJSON = JSONMethods.ReadJSON<Movie>(_fileName).ToList();

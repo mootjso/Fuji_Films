@@ -1,3 +1,5 @@
+using Microsoft.VisualBasic;
+
 public static class ShowHandler
 {
     public const string FileName = "Datasources/shows.json";
@@ -106,13 +108,18 @@ public static class ShowHandler
 
             // Time selection
             string dateString = dates[index];
-            DateTime selectedTime = TimeSelection(movie, dateString);
+            DateTime selectedTime = TimeSelection(movie, dateString, selectedTheaterNum);
 
-            Show show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
+            Show? show = new(movie, selectedTime, selectedTheaterNum) { Id = LatestShowID += 1 };
+
+            // Check if Theater is available at the chosen time
+            show = TheaterIsAvailable(show, dateString);
+            if (show == null)
+                return;
 
             // Confirm or cancel selection
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader, true);
+            int selection = ConfirmSelection(menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -135,13 +142,109 @@ public static class ShowHandler
             break;
         }
     }
-    public static List<string> GetMovieTitles(List<Movie> movies)
+
+    // Returns the showing that is already planned at the time of the newShow, or returns null if time is available
+    private static Show? TimeIsValid(Show newShow, Movie newMovie) 
     {
-        List<string> movieTitles = new();
-        foreach (Movie movie in movies)
-        movieTitles.Add(movie.Title);
-        return movieTitles;
+        DateTime startTimeNewShow = newShow.DateAndTime;
+        DateTime endTimeNewShow = newShow.DateAndTime.AddMinutes(15 + newMovie.Runtime);
+
+        foreach (Show oldShow in Shows)
+        {
+            if (oldShow.TheaterNumber == newShow.TheaterNumber)
+            {
+                Movie oldMovie = MovieHandler.GetMovieById(oldShow.MovieId)!;
+                DateTime startTimeOldShow = oldShow.DateAndTime;
+                DateTime endTimeOldShow = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+                DateTime earliestPossibleStart = startTimeOldShow.AddMinutes(-newMovie.Runtime - 15);
+
+                if (startTimeNewShow < endTimeOldShow && endTimeNewShow > startTimeOldShow)
+                    return oldShow;
+            }
+        }
+
+        return null;
     }
+
+    private static DateTime GetPossibleStartTime(Show? oldShow, Show newShow, Movie newMovie, bool earlierTime = true)
+    {
+        DateTime newStartTime;
+        do
+        {
+            Movie oldMovie = MovieHandler.GetMovieById(oldShow!.MovieId)!;
+            if (earlierTime)
+                newStartTime = oldShow!.DateAndTime.AddMinutes(-newMovie.Runtime - 15);
+            else  // Get later possible start time
+                newStartTime = oldShow.DateAndTime.AddMinutes(15 + oldMovie.Runtime);
+            
+            newShow.DateAndTime = newStartTime;
+            oldShow = TimeIsValid(newShow, newMovie);
+        }
+        while (oldShow != null);
+
+        return newStartTime;
+    }
+
+    public static Show TheaterIsAvailable(Show newShow, string dateString)
+    {
+        Movie newMovie = MovieHandler.GetMovieById(newShow.MovieId)!;
+
+        Show? oldShow = TimeIsValid(newShow, newMovie);
+        if (oldShow == null) // No other showing planned at the new showing time
+            return newShow;
+
+
+        DateTime earlierPossibleStart = GetPossibleStartTime(oldShow, newShow, newMovie);
+        DateTime laterPossibleStart = GetPossibleStartTime(oldShow, newShow, newMovie, false);
+
+        // Get a string of the planned movies for that theater for that day
+
+        List<Show> ShowsForDate = GetShowsByDate(newShow.DateAndTime);
+        List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate, newShow.TheaterNumber);
+        movieMenuStrings.RemoveAt(movieMenuStrings.Count - 1); // Removes the "Back" option that the CreaListMovieStrings method adds
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"\nThe theater is already booked at this time, the following showings are planned for this day:");
+        Console.ForegroundColor= ConsoleColor.Blue;
+        movieMenuStrings.ForEach(s => Console.WriteLine(s));
+        Console.ResetColor();
+        Console.WriteLine($"\n\n[1] Change to earlier start time: {earlierPossibleStart:HH:mm}\n[2] Change to later start time: {laterPossibleStart:HH:mm}\n[3] Enter a custom time");
+        Console.ResetColor();
+        ConsoleKeyInfo keyInfo = Console.ReadKey();
+        if (keyInfo.Key == ConsoleKey.D1 ) // Admin chooses the earlier possible start time
+        {
+            newShow.DateAndTime = earlierPossibleStart;
+            return newShow;
+        }
+        else if (keyInfo.Key == ConsoleKey.D2) // Admin chooses the later possible start time
+        {
+            newShow.DateAndTime = laterPossibleStart;
+            return newShow;
+        }
+        else // Admin wants to enter a custom time
+        {
+            DateTime customTime;
+            do
+            {
+                customTime = TimeSelection(newMovie, dateString, newShow.TheaterNumber);
+                if (customTime > earlierPossibleStart && customTime < laterPossibleStart)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nEnter a time before '{earlierPossibleStart:HH:mm}' or after '{laterPossibleStart:HH:mm}'");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("\nPress any key to try again");
+                    Console.ReadKey();
+                    Console.ResetColor();
+                }
+            }
+            while (customTime > earlierPossibleStart && customTime < laterPossibleStart);
+            newShow.DateAndTime = customTime;
+        }
+
+        // POSSIBLE FEATURE: Check if the time is available at a different theater
+        return newShow;
+    }
+
     public static void RemoveShow()
     {
         List<string> dates = GetAllDates();
@@ -186,7 +289,7 @@ public static class ShowHandler
             // Confirm or cancel selection
             string theaterSize = show.TheaterNumber == 1 ? "Small (150 seats)" : show.TheaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
             string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {theaterSize}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
-            int selection = ConfirmSelection(show, movie, menuHeader, true);
+            int selection = ConfirmSelection(menuHeader, true);
             if (!(selection == 0))
             {
                 break;
@@ -224,14 +327,15 @@ public static class ShowHandler
         return dates;
     }
 
-    private static int ConfirmSelection(Show show, Movie movie, string menuHeader, bool isAdmin = false)
+    private static int ConfirmSelection(string menuHeader, bool isAdmin = false)
     {
         List<string> menuOptions = new() { "Confirm Selection", "Cancel" };
         return Menu.Start(menuHeader, menuOptions, isAdmin);
     }
 
-    private static DateTime TimeSelection(Movie movieToAdd, string dateString)
+    private static DateTime TimeSelection(Movie movieToAdd, string dateString, int theaterNumber = 0)
     {
+        string selectedTheater = theaterNumber == 1 ? "Small (150 seats)" : theaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
         DateTime resultDateTime = DateTime.Now;
         bool correctInput = false;
         while (!(correctInput))
@@ -239,7 +343,7 @@ public static class ShowHandler
             Console.Clear();
             Console.CursorVisible = true;
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nDate: {dateString}");
+            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nTheater: {selectedTheater}\nDate: {dateString}");
             Console.Write("\nStart time of the movie (HH:mm): ");
             string? timeString = Console.ReadLine();
             Console.CursorVisible = false;
@@ -330,14 +434,21 @@ public static class ShowHandler
         return sortedDateStrings;
     }
 
-    public static List<string> CreateListMovieStrings(List<Show> shows)
-    // Creates list of formatted strings: Start time - end time : Title
+    public static List<string> CreateListMovieStrings(List<Show> shows, int theaterNumber = -1)
+    // Creates list of formatted strings: Start time - end time Theater Title
     {
         List<string> movieMenuStrings = new();
-        foreach (var _show in shows)
+        List<Show> validShows = new();
+        foreach (var show in shows)
         {
-            Movie movie = MovieHandler.GetMovieById(_show.MovieId)!;
-            movieMenuStrings.Add($"{_show.StartTimeString} - {_show.EndTimeString} {movie.Title}  ");
+            validShows.Add(show);
+        }
+        validShows = validShows.OrderBy(s => s.DateAndTime).ToList(); // Intermediary list to order by theater number if that's wanted
+        foreach (var show in validShows)
+        {
+            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
+            if (show.TheaterNumber == theaterNumber || theaterNumber == -1)
+                movieMenuStrings.Add($"{show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
         }
         movieMenuStrings.Add("Back");
         return movieMenuStrings;
@@ -361,7 +472,7 @@ public static class ShowHandler
     {
         Console.Clear();
 
-        var shows = JSONMethods.ReadJSON<Show>(FileName);
+        var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
         var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
         DateTime date;
@@ -402,7 +513,7 @@ public static class ShowHandler
     public static List<Movie> GetScheduledMovies()
     {
         var movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName);
-        var showings = JSONMethods.ReadJSON<Show>(FileName);
+        var showings = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
         var query =
             from movie in movies
             join showing in showings on movie.Id equals showing.MovieId

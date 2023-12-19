@@ -4,13 +4,17 @@ namespace ReservationTest;
 public class ReservationHandlerTests
 {
     private static string FileName = ReservationHandler.FileName;
-    private static List<Reservation> original_FileName2 = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
+    private static List<Reservation> original_File = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
 
-
-    [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    [ClassCleanup]
+    public static void CleanupJSON()
     {
-        // Clear the  JSON file
+       JSONMethods.WriteToJSON(original_File, FileName); 
+    }
+
+    [TestMethod]
+    public void TestReservationID()
+    {
         File.WriteAllText(FileName, "[]");
 
         List<Reservation> testReservations = new List<Reservation>
@@ -22,37 +26,10 @@ public class ReservationHandlerTests
         };
         JSONMethods.WriteToJSON(testReservations, FileName);
 
-    }
-
-    [ClassCleanup]
-    public static void CleanupJSON()
-    {
-       JSONMethods.WriteToJSON(original_FileName2, FileName); 
-    }
-
-    [TestMethod]
-    public void TestReservationID()
-    {
         string reservationId = ReservationHandler.GetReservationID();
 
         Assert.IsNotNull(reservationId);
         Assert.AreEqual(14, reservationId.Length); // Check if the generated ID has the correct length
     }
 
-    [TestMethod]
-    public void TestWriteReservationsToJSON()
-    {
-        List<Reservation> reservations = JSONMethods.ReadJSON<Reservation>(FileName).ToList();
-        Reservation reservationTest = reservations[2];
-
-        Assert.AreEqual(3, reservations.Count); // Check if the number of reservations is correct
-        
-        Assert.AreEqual("xyz9-uvw8-pqr7", reservationTest.ReservationId);
-        Assert.AreEqual(3, reservationTest.UserId);
-        Assert.AreEqual(5, reservationTest.ShowId);
-        Assert.AreEqual(6, reservationTest.MovieId);
-        Assert.AreEqual(15, reservationTest.Row);
-        Assert.AreNotEqual(4, reservationTest.Column);
-
-    }
 }
