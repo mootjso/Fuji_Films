@@ -13,9 +13,9 @@ public static class ChangeMovieDetails
             DisplayAsciiArt.AdminHeader();
             Console.WriteLine("Change movie details");
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n\nCan't change movie details as there are no movies available");
+            Console.WriteLine("\nCan't change movie details as there are no movies available");
             Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\n\nPress any key to go back");
+            Console.WriteLine("\nPress any key to go back");
             Console.ResetColor();
             Console.ReadKey();
             return;
@@ -140,11 +140,11 @@ public static class ChangeMovieDetails
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
                 Console.WriteLine($"Confirm Changes for '{selectedMovieToEdit.Title}':\n");
-                Console.WriteLine($"Old {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
-                Console.WriteLine($"\nNew {selectedOption}: {newValue}");
-                Console.CursorVisible = true;
+                Console.WriteLine($"Old {selectedOption}: \n{GetMovieDetail(selectedMovieToEdit, selectedOption)}");
+                Console.WriteLine($"\nNew {selectedOption}: \n{newValue}");
+                Console.CursorVisible = false;
 
-                Console.Write("\nConfirm changes (Y/N): ");
+                Console.Write("\n[Y] Confirm Changes\n[N] Cancel Changes");
                 char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
                 Console.CursorVisible = false;
 
@@ -169,10 +169,11 @@ public static class ChangeMovieDetails
                 {
                     Console.Clear();
                     DisplayAsciiArt.AdminHeader();
+                    Console.WriteLine($"Editing the {selectedOption} for '{selectedMovieToEdit.Title}'\n");
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nChanges discarded");
+                    Console.WriteLine("Changes discarded");
                     Console.ResetColor();
-                    Console.WriteLine("Press any key to continue");
+                    Console.WriteLine("\nPress any key to continue");
                     Console.ReadKey();
                 }
             }
@@ -246,7 +247,7 @@ public static class ChangeMovieDetails
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"\nEdit description:");
+            Console.WriteLine($"Edit description:\n");
             for (int i = 0; i < description.Length; i += maxCharactersPerLine)
             {
                 int remainingChars = Math.Min(maxCharactersPerLine, description.Length - i);
