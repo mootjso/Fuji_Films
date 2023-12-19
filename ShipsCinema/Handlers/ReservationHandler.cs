@@ -94,7 +94,7 @@ public static class ReservationHandler
             }
 
             string overviewMenuText = "Choose a movie from your reservations:\n";
-            // Hier maak de menu :) met de films
+            // Hier maak de menu met de films
             int movieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
             if (movieIndex == overviewMenuOptions.Count) // User presses left arrow key
                 return;
