@@ -1,3 +1,5 @@
+using System.Net.Quic;
+
 public class Program
 {
     public const ConsoleColor InputColor = ConsoleColor.Cyan;
