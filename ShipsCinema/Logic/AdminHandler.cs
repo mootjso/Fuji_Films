@@ -118,29 +118,34 @@ public static class AdminHandler
         bool inMenu = true;
         while (inMenu)
         {
+            Console.CursorVisible = false;
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Are you sure you want to remove \"{movieToRemove.Title}\"? (Y/N)");
-            string? choice = Console.ReadLine();
-            if (choice != null)
-                choice = choice.ToUpper();
+            Console.WriteLine($"Movie Listings\n\nAre you sure you want to remove \"{movieToRemove.Title}\"?\n[Y] Confirm\n[N] Cancel");
+            ConsoleKey choice = Console.ReadKey(true).Key;
             switch (choice)
             {
-                case "Y":
+                case ConsoleKey.Y:
                     movies = movies.Where(m => m.Id != movieToRemove.Id).ToList();
                     JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
-                    Console.WriteLine($"Movie \"{movieToRemove.Title}\" has been removed");
-                    Console.WriteLine("Press any key to continue");
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\nMovie \"{movieToRemove.Title}\" has been removed");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("\nPress any key to continue");
                     inMenu = false;
                     break;
-                case "N":
-                    Console.WriteLine($"Deletion of \"{movieToRemove.Title}\" aborted");
-                    Console.WriteLine("Press any key to continue");
+                case ConsoleKey.N:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\nDeletion of \"{movieToRemove.Title}\" aborted");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("\nPress any key to continue");
                     inMenu = false;
                     break;
                 default:
-                    Console.WriteLine("Invalid option, please pick \"Y\" or \"N\"");
-                    Console.WriteLine("Press any key to continue");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\nInvalid option, please pick \"Y\" or \"N\"");
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("\nPress any key to continue");
                     break;
             }
         }
@@ -153,13 +158,17 @@ public static class AdminHandler
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine("Enter the ID of the movie you want to remove");
+            Console.WriteLine("Movie Listings\n\nEnter the ID of the movie you want to remove");
             Console.CursorVisible = true;
             if (int.TryParse(Console.ReadLine(), out id))
                 break;
-            Console.WriteLine("Please enter a valid integer");
-            Console.WriteLine("Press any key to continue");
-            Console.ReadLine();
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nPlease enter a valid integer");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nPress any key to continue");
+            Console.ResetColor();
+            Console.ReadKey();
         }
 
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
@@ -173,12 +182,20 @@ public static class AdminHandler
             }
         }
         if (movieToRemove is null)
-            Console.WriteLine($"No movie with ID {id} found");
+        {
+            Console.CursorVisible = false;
+            Console.ForegroundColor= ConsoleColor.Red;
+            Console.WriteLine($"No movie with ID '{id}' found");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("\nPress any key to continue");
+            Console.ResetColor();
+
+        }
         else
         {
             RemoveMovieFromJson(movieToRemove, movies);
         }
-        Console.ReadLine();
+        Console.ReadKey();
     }
 
     private static void RemoveMovieBySelection()
