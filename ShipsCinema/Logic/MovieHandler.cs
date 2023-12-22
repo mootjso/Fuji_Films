@@ -23,7 +23,7 @@ public static class MovieHandler
     {
         Console.WriteLine($"{movie.Title}");
         Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("Genres: ");
+        Console.Write("\nGenres: ");
         Console.Write(string.Join(", ", movie.Genres));
         Console.WriteLine($"\nLanguage: {movie.Language}");
         Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
