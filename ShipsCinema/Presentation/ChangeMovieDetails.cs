@@ -80,7 +80,7 @@ public static class ChangeMovieDetails
             string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:";
             List<string> menuOptions = new List<string>
         {
-            "Id", "Title", "Description", "Language", "Genres", "Runtime", "AgeRating", " Back"
+            "Title", "Description", "Language", "Genres", "Runtime", "AgeRating", " Back"
         };
 
             int selectedIndex = Menu.Start(menuText, menuOptions, true);
@@ -101,7 +101,7 @@ public static class ChangeMovieDetails
                     DisplayAsciiArt.AdminHeader();
                     Console.WriteLine($"Editing the {selectedOption} for '{selectedMovieToEdit.Title}'\n");
                     Console.WriteLine($"Current {selectedOption}: {GetMovieDetail(selectedMovieToEdit, selectedOption)}");
-                    if (selectedIndex == 2) // Change description
+                    if (selectedIndex == 1) // Change description
                         newValue = EditMovieDescription(selectedMovieToEdit.Description);
                     else
                     {
@@ -111,17 +111,7 @@ public static class ChangeMovieDetails
                     } 
                     Console.CursorVisible = false;
 
-                    if (selectedOption == "Id" && MovieIdExists(newValue, movies))
-                    {
-                        Console.Clear();
-                        DisplayAsciiArt.AdminHeader();
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Movie with ID {newValue} already exists. Please enter a different ID.");
-                        Console.ResetColor();
-                        Console.WriteLine("\n\nPress any key to continue");
-                        Console.ReadKey();
-                    }
-                    else if (ValidateInput(selectedOption, newValue))
+                    if (ValidateInput(selectedOption, newValue))
                     {
                         rightInput = true;
                     }
@@ -184,7 +174,6 @@ public static class ChangeMovieDetails
     {
         switch (selectedOption)
         {
-            case "Id": return movie.Id.ToString();
             case "Title": return movie.Title;
             case "Description": return movie.Description;
             case "Language": return movie.Language;
@@ -199,7 +188,6 @@ public static class ChangeMovieDetails
     {
         switch (selectedOption)
         {
-            case "Id": movie.Id = int.Parse(newValue); break;
             case "Title": movie.Title = newValue; break;
             case "Description": movie.Description = newValue; break;
             case "Language": movie.Language = newValue; break;
@@ -214,7 +202,6 @@ public static class ChangeMovieDetails
     {
         switch (selectedOption)
         {
-            case "Id":
             case "Runtime":
             case "AgeRating":
                 return int.TryParse(newValue, out _);
@@ -223,17 +210,6 @@ public static class ChangeMovieDetails
             default:
                 return true; // No specific validation for other options
         }
-    }
-    private static bool MovieIdExists(string newId, List<Movie> movies)
-    {
-        foreach (Movie movie in movies)
-        {
-            if (movie.Id.ToString() == newId)
-            {
-                return true; // Found a movie with the same ID
-            }
-        }
-        return false; // No movie with the specified ID found
     }
 
     public static string EditMovieDescription(string description)
