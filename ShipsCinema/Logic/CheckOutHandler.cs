@@ -145,7 +145,7 @@ public class CheckOutHandler
         JSONMethods.WriteToJSON(revenues, FileName);
     }
 
-    public static void CheckOut()
+    public static bool CheckOut()
     {
         bool checkOut = true;
         bool confirm = false;
@@ -259,7 +259,7 @@ public class CheckOutHandler
                     Console.WriteLine("Press any button to continue");
                     Console.ReadKey();
                     Console.Clear();
-                    return;
+                    return true;
                 }
                 else if (pressedKey == ConsoleKey.N)
                 {
@@ -268,5 +268,7 @@ public class CheckOutHandler
                 }
             }
         }
+
+        return false;
     }
 }

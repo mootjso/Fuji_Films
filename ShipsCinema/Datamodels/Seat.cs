@@ -6,6 +6,7 @@ public class Seat
     public int UserId;
     public bool IsSeat;
     public bool IsAvailable;
+    public bool IsReserved;
 
     public Seat(int row, int column, double price, int userId, bool isSeat, bool isAvailable)
     {
