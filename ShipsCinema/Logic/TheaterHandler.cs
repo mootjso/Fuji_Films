@@ -11,7 +11,7 @@ public static class TheaterHandler
         Theaters = JSONMethods.ReadJSON<Theater>(FileName).ToList();
     }
 
-    public static Theater CreateTheater(Show show)
+    public static Theater CreateOrGetTheater(Show show)
     {
         var theater = GetTheaterByShowId(show.Id);
 
@@ -26,8 +26,14 @@ public static class TheaterHandler
         return theater;
     }
 
-    public static List<Ticket>? SelectSeats(User user, Theater theater, string? ReservationId)
+    public static void SelectSeats(User user, Theater theater)
     {
+        foreach (var seat in theater.Seats)
+            if (!seat.IsReserved)
+                seat.UserId = -1;
+
+        string reservationId = ReservationHandler.GetReservationID();
+        bool paymentConfirmed = false;
         Console.CursorVisible = false;
 
         List<Ticket> tickets = new();
@@ -115,12 +121,12 @@ public static class TheaterHandler
                         double seatPrice = selectedSeat.Price;
                         string seatColor = seatPrice == Theater.RedSeatPrice ? "Red" : seatPrice == Theater.YellowSeatPrice ? "Yellow" : "Blue";
 
-                        Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, ReservationId);
+                        Ticket ticket = new(selectedShow.Id, user.Id, selectedRow, selectedColumn, seatPrice, seatColor, reservationId);
 
                         if (user.IsAdmin)
                             selectedSeat.IsAvailable = false;
 
-                        selectedSeat.UserId = user.Id;
+                        selectedSeat.UserId = user.IsAdmin ? -1 : user.Id;
                         selectedSeats.Add(selectedSeat);
                         tickets.Add(ticket);
                     }
@@ -142,22 +148,27 @@ public static class TheaterHandler
                     {
                         if (!user.IsAdmin)
                         {
-                            TicketHandler.Tickets.AddRange(tickets);
-                            JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
-                            JSONMethods.WriteToJSON(Theaters, FileName);
-                            foreach (var ticket in tickets)
+                            paymentConfirmed = CheckOutHandler.CheckOut();
+                            if (paymentConfirmed)
                             {
-                                if (ticket.ShowId == selectedShow.Id)
+                                foreach (var seat in selectedSeats)
+                                    seat.IsReserved = true;
+
+                                TicketHandler.Tickets.AddRange(tickets);
+                                JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
+                                JSONMethods.WriteToJSON(Theaters, FileName);
+                                foreach (var ticket in tickets)
                                 {
-                                    CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
-                                    CheckOutHandler.RevenueQuarterYearIfStatement(ticket, ticket.Price);
+                                    if (ticket.ShowId == selectedShow.Id)
+                                    {
+                                        CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
+                                        CheckOutHandler.RevenueQuarterYearIfStatement(ticket, ticket.Price);
+                                    }
                                 }
                             }
-                            return tickets;
                         }
-                        // User is Admin
                         JSONMethods.WriteToJSON(Theaters, FileName);
-                        return new List<Ticket>();
+                        return;
                     }
                     else
                     {
@@ -173,7 +184,7 @@ public static class TheaterHandler
             seat.IsAvailable = true;
         }
             
-        return null;
+        return;
     }
 
     public static Theater? GetTheaterByShowId(int showId)

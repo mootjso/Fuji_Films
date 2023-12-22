@@ -65,15 +65,8 @@ public class Program
                         if (selectedShow is null)
                             continue;
 
-                        var theater = TheaterHandler.CreateTheater(selectedShow);
-
-                        string ReservationId = ReservationHandler.GetReservationID();
-
-                        List<Ticket>? tickets = TheaterHandler.SelectSeats(loggedInUser, theater, ReservationId);
-                        if (tickets is null)
-                            continue;
-
-                        CheckOutHandler.CheckOut();
+                        var theater = TheaterHandler.CreateOrGetTheater(selectedShow);
+                        TheaterHandler.SelectSeats(loggedInUser, theater);
                         break;
                     case 2:
                         Console.Clear();

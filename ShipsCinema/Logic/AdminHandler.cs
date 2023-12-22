@@ -316,9 +316,9 @@ public static class AdminHandler
         if (show == null)
             return;
 
-        Theater theater = TheaterHandler.CreateTheater(show);
+        Theater theater = TheaterHandler.CreateOrGetTheater(show);
 
-        TheaterHandler.SelectSeats(adminAccount, theater, null);
+        TheaterHandler.SelectSeats(adminAccount, theater);
     }
 
     public static int GetHighestID()

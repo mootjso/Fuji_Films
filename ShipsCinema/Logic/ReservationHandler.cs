@@ -170,7 +170,7 @@ public static class ReservationHandler
                 $"\nThese are your tickets for reservation {overviewCorrectReservation[selectedReservation]}:\n"
             );
             int reservationInt = 1;
-            Console.WriteLine("Ticket No. | Row | Seat");
+            Console.WriteLine("Ticket No. | Row    | Seat");
             Console.WriteLine(new string('-', 28));
 
             foreach (var reservation in reservationsUser)
@@ -189,11 +189,14 @@ public static class ReservationHandler
         // Hier heb je geen reservations
         else
         {
-            Console.WriteLine("You currently have no reservations.");
+            Console.Clear();
+            DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+            Console.WriteLine("Reservations\n\nYou currently have no reservations.");
         }
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("Press any key to go back");
+        Console.WriteLine("\nPress any key to go back");
         Console.ReadKey();
         Console.ResetColor();
     }
