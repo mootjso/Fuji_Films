@@ -489,7 +489,7 @@ public static class ShowHandler
         foreach (var day in showsFilteredGrouped)
         {
             date = day.First().DateAndTime;
-            Console.WriteLine($"{date.DayOfWeek}, {date.ToString("MMMM", englishCulture)} {date.Day}, {date:yyyy}");
+            Console.WriteLine($"{date.DayOfWeek} {date.Day} {date.ToString("MMMM", englishCulture)} {date:yyyy}");
 
             foreach (var show in day)
             {
