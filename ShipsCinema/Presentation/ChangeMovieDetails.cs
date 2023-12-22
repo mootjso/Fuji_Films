@@ -53,7 +53,7 @@ public static class ChangeMovieDetails
             }
             else if (index >= 0 && index < movieTitles.Count)
             {
-                string selectedTitle = movieTitles[index].Split(",")[0].Split("|")[0].Trim();
+                string selectedTitle = movieTitles[index].Split("|")[0].Trim();
                 Movie selectedMovieToEdit = null;
 
                 foreach (Movie movie in movies)
