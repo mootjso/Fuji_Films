@@ -107,7 +107,7 @@ public static class TheaterHandler
                     //Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
 
                     // Deselect seat
-                    if (selectedSeats.Contains(selectedSeat))
+                    if (selectedSeats.Contains(selectedSeat) || user.IsAdmin && !selectedSeat.IsReserved && !selectedSeat.IsAvailable)
                     {
                         selectedSeat.IsAvailable = true;
                         selectedSeat.UserId = -1;
