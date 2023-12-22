@@ -3,7 +3,7 @@ using System.Net.Quic;
 public class Program
 {
     public const ConsoleColor InputColor = ConsoleColor.Cyan;
-    
+    // TEST
     private static void Main()
     {
         User? loggedInUser = null;
