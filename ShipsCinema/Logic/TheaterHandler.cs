@@ -104,7 +104,6 @@ public static class TheaterHandler
 
                 // User selects a seat
                 case ConsoleKey.Enter:
-                    //Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
 
                     // Deselect seat
                     if (selectedSeats.Contains(selectedSeat) || user.IsAdmin && !selectedSeat.IsReserved && !selectedSeat.IsAvailable)
