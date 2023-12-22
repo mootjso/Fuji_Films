@@ -78,9 +78,18 @@ public static class ChangeMovieDetails
         while (true)
         {
             string menuText = $"Select a movie detail to edit in {selectedMovieToEdit.Title}:";
+            string movieDescription = selectedMovieToEdit.Description;
+            string formattedMovieDescription = movieDescription.Length >= 13 ? movieDescription.Substring(0, 10) + "..." : movieDescription;
+
             List<string> menuOptions = new List<string>
         {
-            "Title", "Description", "Language", "Genres", "Runtime", "AgeRating", " Back"
+            $"Title: {selectedMovieToEdit.Title}",
+            $"Description: {formattedMovieDescription}",
+            $"Language: {selectedMovieToEdit.Language}",
+            $"Genres: {string.Join(", ", selectedMovieToEdit.Genres)}",
+            $"Runtime: {selectedMovieToEdit.Runtime} minutes",
+            $"AgeRating: {selectedMovieToEdit.AgeRating}+",
+            " Back"
         };
 
             int selectedIndex = Menu.Start(menuText, menuOptions, true);
@@ -93,7 +102,7 @@ public static class ChangeMovieDetails
             {
                 bool rightInput = false;
                 string newValue;
-                string selectedOption = menuOptions[selectedIndex];
+                string selectedOption = menuOptions[selectedIndex].Substring(0, menuOptions[selectedIndex].IndexOf(':'));
 
                 do
                 {
