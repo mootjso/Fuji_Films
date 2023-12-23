@@ -78,7 +78,7 @@ public static class MovieHandler
         return titles;
     }
 
-    public static void ViewCurrentMovies(Func<Movie, bool> func, bool isAdmin = false)
+    public static void ViewCurrentMovies(Action<Movie> action, bool removeMovie = false, bool isAdmin = false)
     {
         // parameter func -> lambda to perform certain action on movie object
         // 1. View Movie Details -> m => DisplayMovieDetails(m)
@@ -101,11 +101,15 @@ public static class MovieHandler
             menuOptionsFullObjects = ShowHandler.GetScheduledMovies();
             menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
-
+        Func<Movie, bool> func = m =>
+        {
+            action(m);
+            return removeMovie;
+        };
         Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
-    public static bool MovieSelectionMenu(Movie movie, bool isAdmin = false)
+    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
     {
         List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
         string menuText = $"{movie.Title}\n\nSelect an option:";
@@ -119,10 +123,9 @@ public static class MovieHandler
                 ShowHandler.PrintMovieDates(movie, isAdmin);
                 break;
             case 2:
-                return false;
+                return;
             default:
                 break;
         }
-        return false;
     }
 }

@@ -113,8 +113,9 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
-    private static bool RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies)
+    private static bool RemoveMovieFromJson(Movie movieToRemove)
     {
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
         bool inMenu = true;
         while (inMenu)
         {
@@ -132,14 +133,14 @@ public static class AdminHandler
                     Console.WriteLine($"\nMovie \"{movieToRemove.Title}\" has been removed");
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("\nPress any key to continue");
-                    inMenu = false;
+                    Console.ReadKey(true);
                     return true;
                 case ConsoleKey.N:
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nDeletion of \"{movieToRemove.Title}\" aborted");
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("\nPress any key to continue");
-                    inMenu = false;
+                    Console.ReadKey(true);
                     return false;
                 default:
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -194,7 +195,7 @@ public static class AdminHandler
         }
         else
         {
-            RemoveMovieFromJson(movieToRemove, movies);
+            RemoveMovieFromJson(movieToRemove);
         }
         Console.ReadKey();
     }
@@ -202,7 +203,7 @@ public static class AdminHandler
     private static void RemoveMovieBySelection()
     {
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).ToList();
-        MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m, movies), true);
+        MovieHandler.ViewCurrentMovies(m => RemoveMovieFromJson(m), true, true);
     }
 
     private static void RemoveMovieMenu()
@@ -261,7 +262,7 @@ public static class AdminHandler
                     break;
                 case 3:
                     Console.Clear();
-                    MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m), true);
+                    MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m, true), isAdmin: true);
                     break;
                 case 4:
                     inMenu = false;

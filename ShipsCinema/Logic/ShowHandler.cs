@@ -253,13 +253,11 @@ public static class ShowHandler
         return newShow;
     }
 
-    private static bool ChooseShowingToRemove(string date)
+    private static void ChooseShowingToRemove(string date)
     {
-        Func<Show, bool> func = s => RemoveShowingFromJson(s);
         List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
         Func<Show, string> formatter = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
-        Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", "", func, showings, true);
-        return true;
+        Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", "", RemoveShowingFromJson, showings, true);
     }
 
     private static bool RemoveShowingFromJson(Show showing)
@@ -270,7 +268,7 @@ public static class ShowHandler
         while (true)
         {
             Console.WriteLine($"Are you sure you want to delete this showing? (Y/N)");
-            choice = Console.ReadKey().Key;
+            choice = Console.ReadKey(true).Key;
             switch (choice)
             {
                 case ConsoleKey.Y:
@@ -283,11 +281,6 @@ public static class ShowHandler
                     Console.ReadKey();
                     return true;
                 case ConsoleKey.N:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Removing of showing aborted");
-                    Console.ResetColor();
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
                     return false;
             }
         }
@@ -300,7 +293,11 @@ public static class ShowHandler
 
         List<string> menuOptionsFull;
         menuOptionsFull = GetAllDates();
-        Func<string, bool> func = ChooseShowingToRemove;
+        Func<string, bool> func = s =>
+        {
+            ChooseShowingToRemove(s);
+            return true;
+        };
         Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, isAdmin: true);
        
 
