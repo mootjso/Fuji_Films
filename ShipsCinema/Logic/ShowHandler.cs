@@ -454,7 +454,7 @@ public static class ShowHandler
             if (!dates.Contains(date))
                 dates.Add(date);
         }
-        List<DateTime> sortedDates = dates.OrderBy(d => d).ToList();
+        List<DateTime> sortedDates = dates.OrderByDescending(d => d).ToList();
         List<string> sortedDateStrings = sortedDates.Select(d => d.ToString("dd-MM-yyyy")).ToList();
         return sortedDateStrings;
     }
