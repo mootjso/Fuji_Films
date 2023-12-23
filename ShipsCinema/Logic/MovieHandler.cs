@@ -82,43 +82,50 @@ public static class MovieHandler
     {
         // parameter func -> lambda to perform certain action on movie object
         // 1. View Movie Details -> m => DisplayMovieDetails(m)
-        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie list
-        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
-        int oldMovieCount = Movies.Count;
-        if (Movies.Count == 0)
-        {
-            List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
-            return;
-        }
+        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie 
+        string messageWhenEmpty = "Current Movies\n\nThere are currently no movies available";
         string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
             $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
             $"  {new string('-', 93)}";
-        
+
+        List<Movie> menuOptionsFullObjects;
         List<string> menuOptionsFull;
         
         if (isAdmin)
+        {
+            menuOptionsFullObjects = JSONMethods.ReadJSON<Movie>(FileName).ToList();
             menuOptionsFull = GetMovieTitles(Movies);
+        }
         else
-            menuOptionsFull = GetMovieTitles(ShowHandler.GetScheduledMovies());
+        {
+            menuOptionsFullObjects = ShowHandler.GetScheduledMovies();
+            menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
+        }
+
+        MenuPagination(menuOptionsFull, menuOptionsFullObjects, menuText, messageWhenEmpty, func, isAdmin);
+    }
+
+    public static void MenuPagination<T>(List<string> menuOptionsFull, List<T> menuOptionsFullObjects, string menuText, string messageWhenEmpty, Action<T> func, bool isAdmin = false)
+    {
         List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)
             menuOptions = menuOptionsFull.GetRange(0, 10);
         else
             menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
-        
-        if (menuOptions.Count <= 0)  // No movies scheduled
+
+        if (menuOptions.Count <= 0)
         {
             List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
+            Menu.Start(messageWhenEmpty, menuOption, isAdmin);
             return;
         }
         menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
-        int firstTitleIndex;
+        int firstOptionIndex;
         int endIndex;
+        int oldMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
 
         while (true)
         {
@@ -134,21 +141,21 @@ public static class MovieHandler
             else if (selection >= 0 && selection < menuOptions.Count - 3)
             {
                 selection += (pageNumber * 10);
-                Movie movie = Movies[selection];
-                func(movie);
+                T obj = menuOptionsFullObjects[selection];
+                func(obj);
                 int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
                 // Check if movie has been deleted, return if yes
                 // That way you don't go back to the movie menu, deleted movie would still be visible there
                 if (newMovieCount != oldMovieCount)
                     return;
             }
-            firstTitleIndex = pageSize * pageNumber;
+            firstOptionIndex = pageSize * pageNumber;
             // Prevent Error when page has less than 10 entries
             endIndex = menuOptionsFull.Count % 10;
             if (endIndex != 0 && pageNumber == maxPages - 1)
-                menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, endIndex);
             else
-                menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, pageSize);
             menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         }
     }
