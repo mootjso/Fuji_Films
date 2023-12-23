@@ -102,7 +102,7 @@ public static class MovieHandler
             menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
 
-        Menu.MenuPagination(menuOptionsFull, menuOptionsFullObjects, menuText, messageWhenEmpty, func, isAdmin);
+        Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
     public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)

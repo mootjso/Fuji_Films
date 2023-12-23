@@ -80,8 +80,10 @@ public static class Menu
         Console.ResetColor();
     }
 
-    public static void MenuPagination<T>(List<string> menuOptionsFull, List<T> menuOptionsFullObjects, string menuText, string messageWhenEmpty, Action<T> func, bool isAdmin = false)
+    public static void MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Action<T> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
     {
+        if (menuOptionsFullObjects is null)
+            menuOptionsFullObjects = menuOptionsFull.Select(s => (T)Convert.ChangeType(s, typeof(T))).ToList();
         List<string> menuOptions;
         if (menuOptionsFull.Count >= 10)
             menuOptions = menuOptionsFull.GetRange(0, 10);
