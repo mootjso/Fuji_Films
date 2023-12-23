@@ -253,15 +253,16 @@ public static class ShowHandler
         return newShow;
     }
 
-    private static void ChooseShowingToRemove(string date)
+    private static bool ChooseShowingToRemove(string date)
     {
-        Action<Show> action = (s => RemoveShowingFromJson(s));
+        Func<Show, bool> func = s => RemoveShowingFromJson(s);
         List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
-        Func<Show, string> func = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
-        Menu.MenuPagination(showings.Select(s => func(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", "", action, showings, true);
+        Func<Show, string> formatter = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
+        Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", "", func, showings, true);
+        return true;
     }
 
-    private static void RemoveShowingFromJson(Show showing)
+    private static bool RemoveShowingFromJson(Show showing)
     {
         List<Show> showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
         ConsoleKey choice;
@@ -280,14 +281,14 @@ public static class ShowHandler
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
-                    return;
+                    return true;
                 case ConsoleKey.N:
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Removing of showing aborted");
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
-                    return;
+                    return false;
             }
         }
     }
@@ -299,8 +300,8 @@ public static class ShowHandler
 
         List<string> menuOptionsFull;
         menuOptionsFull = GetAllDates();
-        Action<string> action = (d => ChooseShowingToRemove(d));
-        Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, action, isAdmin: true);
+        Func<string, bool> func = ChooseShowingToRemove;
+        Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, isAdmin: true);
        
 
     }

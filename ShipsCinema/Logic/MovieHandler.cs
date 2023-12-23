@@ -78,7 +78,7 @@ public static class MovieHandler
         return titles;
     }
 
-    public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
+    public static void ViewCurrentMovies(Func<Movie, bool> func, bool isAdmin = false)
     {
         // parameter func -> lambda to perform certain action on movie object
         // 1. View Movie Details -> m => DisplayMovieDetails(m)
@@ -94,7 +94,7 @@ public static class MovieHandler
         if (isAdmin)
         {
             menuOptionsFullObjects = JSONMethods.ReadJSON<Movie>(FileName).ToList();
-            menuOptionsFull = GetMovieTitles(Movies);
+            menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
         else
         {
@@ -105,7 +105,7 @@ public static class MovieHandler
         Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
-    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
+    public static bool MovieSelectionMenu(Movie movie, bool isAdmin = false)
     {
         List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
         string menuText = $"{movie.Title}\n\nSelect an option:";
@@ -119,9 +119,10 @@ public static class MovieHandler
                 ShowHandler.PrintMovieDates(movie, isAdmin);
                 break;
             case 2:
-                return;
+                return false;
             default:
                 break;
         }
+        return false;
     }
 }

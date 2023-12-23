@@ -113,7 +113,7 @@ public static class AdminHandler
         Console.ReadLine();
     }
 
-    private static void RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies)
+    private static bool RemoveMovieFromJson(Movie movieToRemove, List<Movie> movies)
     {
         bool inMenu = true;
         while (inMenu)
@@ -133,14 +133,14 @@ public static class AdminHandler
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("\nPress any key to continue");
                     inMenu = false;
-                    break;
+                    return true;
                 case ConsoleKey.N:
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nDeletion of \"{movieToRemove.Title}\" aborted");
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("\nPress any key to continue");
                     inMenu = false;
-                    break;
+                    return false;
                 default:
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\nInvalid option, please pick \"Y\" or \"N\"");
@@ -149,6 +149,7 @@ public static class AdminHandler
                     break;
             }
         }
+        return false;
     }
 
     private static void RemoveMovieByID()
@@ -260,7 +261,7 @@ public static class AdminHandler
                     break;
                 case 3:
                     Console.Clear();
-                    MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m, true), true);
+                    MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m), true);
                     break;
                 case 4:
                     inMenu = false;

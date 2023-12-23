@@ -153,7 +153,6 @@ public static class ReservationHandler
                 return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
-            int ReservationInt = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();

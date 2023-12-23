@@ -80,7 +80,7 @@ public static class Menu
         Console.ResetColor();
     }
 
-    public static void MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Action<T> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
+    public static void MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Func<T, bool> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
     {
         if (menuOptionsFullObjects is null)
             menuOptionsFullObjects = menuOptionsFull.Select(s => (T)Convert.ChangeType(s, typeof(T))).ToList();
@@ -93,7 +93,7 @@ public static class Menu
         if (menuOptions.Count <= 0)
         {
             List<string> menuOption = new() { "Back" };
-            Menu.Start(messageWhenEmpty, menuOption, isAdmin);
+            Start(messageWhenEmpty, menuOption, isAdmin);
             return;
         }
         menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
@@ -102,12 +102,10 @@ public static class Menu
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
         int firstOptionIndex;
         int endIndex;
-        int oldMovieCount = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName ).Count();
-        int oldShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
 
         while (true)
         {
-            int selection = Menu.Start(menuText, menuOptions, isAdmin);
+            int selection = Start(menuText, menuOptions, isAdmin);
             if (selection == menuOptions.Count)
                 break; // Go back to main menu
             else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
@@ -120,13 +118,10 @@ public static class Menu
             {
                 selection += (pageNumber * 10);
                 T obj = menuOptionsFullObjects[selection];
-                func(obj);
-                int newMovieCount = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).Count();
-                int newShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
-
-                // Check if movie has been deleted, return if yes
-                // That way you don't go back to the movie menu, deleted movie would still be visible there
-                if (newMovieCount != oldMovieCount || newShowingCount != oldShowingCount)
+                bool removed = func(obj);
+                // Check if object has been deleted, return if yes
+                // That way you don't go back to the  menu, deleted object would still be visible there
+                if (removed)
                     return;
             }
             firstOptionIndex = pageSize * pageNumber;
