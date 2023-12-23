@@ -1,4 +1,5 @@
 using Microsoft.VisualBasic;
+using System;
 using System.Globalization;
 
 public static class ShowHandler
@@ -18,12 +19,12 @@ public static class ShowHandler
 
     public static void EditShowSchedule()
     {
-        List<string> menuOptions = new() { "Add show", "View/Remove shows  ", "Back" };
+        List<string> menuOptions = new() { "Add Showing", "View/Remove Showing", "Back" };
 
         bool inMenu = true;
         while (inMenu)
         {
-            int index = Menu.Start("Show Schedule\n\nSelect an option:", menuOptions, true);
+            int index = Menu.Start("Showing Schedule\n\nSelect an option:", menuOptions, true);
 
             switch (index)
             {
@@ -62,6 +63,12 @@ public static class ShowHandler
         shows.Sort((s1, s2) => s1.DateAndTime.CompareTo(s2.DateAndTime));
 
         return shows;
+    }
+
+    private static List<Show> GetShowsByDate(string date)
+    {
+        List<Show> showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
+        return showings.Where(s => s.DateString == date).ToList();
     }
 
     public static void AddShow()
@@ -246,73 +253,55 @@ public static class ShowHandler
         return newShow;
     }
 
+    private static void ChooseShowingToRemove(string date)
+    {
+        Action<Show> action = (s => RemoveShowingFromJson(s));
+        List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
+        Func<Show, string> func = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
+        MovieHandler.MenuPagination(showings.Select(s => func(s)).ToList(), showings, $"Showing Schedule\n\nShowings on {date}", "", action, true);
+    }
+
+    private static void RemoveShowingFromJson(Show showing)
+    {
+        List<Show> showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
+        ConsoleKey choice;
+
+        while (true)
+        {
+            Console.WriteLine($"Are you sure you want to delete this showing? (Y/N)");
+            choice = Console.ReadKey().Key;
+            switch (choice)
+            {
+                case ConsoleKey.Y:
+                    showings = showings.Where(s => s.DateAndTime != showing.DateAndTime).ToList();
+                    JSONMethods.WriteToJSON(showings, FileName);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Showing has been removed");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    return;
+                case ConsoleKey.N:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Removing of showing aborted");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey();
+                    return;
+            }
+        }
+    }
+
     public static void RemoveShow()
     {
-        List<string> dates = GetAllDates();
-        dates.Add("Back");
-        if (dates.Count <= 1)
-        {
-            Console.Clear();
-            DisplayAsciiArt.AdminHeader();
-            Console.WriteLine("Show Schedule");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\n\nThere are currently no shows scheduled");
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\n\nPress any key to go back");
-            Console.ResetColor();
-            Console.ReadKey();
-            return;
-        }
+        string messageWhenEmpty = "Showing Schedule\n\nThere are currently no shows scheduled";
+        string menuText = $"Showing Schedule\n\nSelect a date to see showings for that day:";
 
-        bool inMenu = true;
-        while (inMenu)
-        {
-            int index = Menu.Start("Show Schedule\n\nSelect a date to see the shows for that day:", dates, true);
-            if (index == dates.Count || index == dates.Count - 1)
-            {
-                return;
-            }
-
-            string dateString = dates[index];
-            DateTime selectedDate = DateTime.Parse(dateString);
-            List<Show> ShowsForDate = GetShowsByDate(selectedDate);
-            List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate);
-
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuStrings, true);
-            if (index == movieMenuStrings.Count || index == movieMenuStrings.Count - 1)
-            {
-                continue;
-            }
-
-            Show show = ShowsForDate[index];
-            Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
-
-            // Confirm or cancel selection
-            string theaterSize = show.TheaterNumber == 1 ? "Small (150 seats)" : show.TheaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
-            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {theaterSize}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nRemove this show from the schedule:";
-            int selection = ConfirmSelection(menuHeader, true);
-            if (!(selection == 0))
-            {
-                break;
-            }
-
-            Shows.Remove(show);
-            JSONMethods.WriteToJSON(Shows, FileName);
-
-            // Confirmation message
-            Console.Clear();
-            DisplayAsciiArt.AdminHeader();
-            Console.WriteLine("Show Schedule");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nThe show has been removed");
-            Console.ResetColor();
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine("\nPress any key to continue");
-            Console.ResetColor();
-            Console.ReadKey();
-
-            return;
-        }
+        List<string> menuOptionsFull;
+        menuOptionsFull = GetAllDates();
+        Action<string> action = (d => ChooseShowingToRemove(d));
+        MovieHandler.MenuPagination(menuOptionsFull, menuOptionsFull, menuText, messageWhenEmpty, action, true);
+       
 
     }
 
@@ -457,6 +446,7 @@ public static class ShowHandler
 
     public static List<string> GetAllDates()
     {
+        Shows = JSONMethods.ReadJSON<Show>(FileName).ToList();
         List<DateTime> dates = new();
         foreach (var _show in Shows)
         {

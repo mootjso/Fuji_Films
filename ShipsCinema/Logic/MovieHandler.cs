@@ -126,6 +126,7 @@ public static class MovieHandler
         int firstOptionIndex;
         int endIndex;
         int oldMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
+        int oldShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
 
         while (true)
         {
@@ -144,9 +145,11 @@ public static class MovieHandler
                 T obj = menuOptionsFullObjects[selection];
                 func(obj);
                 int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
+                int newShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
+
                 // Check if movie has been deleted, return if yes
                 // That way you don't go back to the movie menu, deleted movie would still be visible there
-                if (newMovieCount != oldMovieCount)
+                if (newMovieCount != oldMovieCount || newShowingCount != oldShowingCount)
                     return;
             }
             firstOptionIndex = pageSize * pageNumber;
