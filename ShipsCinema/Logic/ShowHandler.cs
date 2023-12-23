@@ -258,7 +258,7 @@ public static class ShowHandler
         Action<Show> action = (s => RemoveShowingFromJson(s));
         List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
         Func<Show, string> func = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
-        MovieHandler.MenuPagination(showings.Select(s => func(s)).ToList(), showings, $"Showing Schedule\n\nShowings on {date}", "", action, true);
+        Menu.MenuPagination(showings.Select(s => func(s)).ToList(), showings, $"Showing Schedule\n\nShowings on {date}", "", action, true);
     }
 
     private static void RemoveShowingFromJson(Show showing)
@@ -300,7 +300,7 @@ public static class ShowHandler
         List<string> menuOptionsFull;
         menuOptionsFull = GetAllDates();
         Action<string> action = (d => ChooseShowingToRemove(d));
-        MovieHandler.MenuPagination(menuOptionsFull, menuOptionsFull, menuText, messageWhenEmpty, action, true);
+        Menu.MenuPagination(menuOptionsFull, menuOptionsFull, menuText, messageWhenEmpty, action, true);
        
 
     }

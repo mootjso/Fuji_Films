@@ -79,4 +79,62 @@ public static class Menu
         Console.WriteLine("\nControls:\n[Up/down arrow keys] Navigation\n[Enter] Select an option\n[Esc] Go back");
         Console.ResetColor();
     }
+
+    public static void MenuPagination<T>(List<string> menuOptionsFull, List<T> menuOptionsFullObjects, string menuText, string messageWhenEmpty, Action<T> func, bool isAdmin = false)
+    {
+        List<string> menuOptions;
+        if (menuOptionsFull.Count >= 10)
+            menuOptions = menuOptionsFull.GetRange(0, 10);
+        else
+            menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
+
+        if (menuOptions.Count <= 0)
+        {
+            List<string> menuOption = new() { "Back" };
+            Menu.Start(messageWhenEmpty, menuOption, isAdmin);
+            return;
+        }
+        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+        int pageNumber = 0;
+        int pageSize = 10;
+        int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
+        int firstOptionIndex;
+        int endIndex;
+        int oldMovieCount = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName ).Count();
+        int oldShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
+
+        while (true)
+        {
+            int selection = Menu.Start(menuText, menuOptions, isAdmin);
+            if (selection == menuOptions.Count)
+                break; // Go back to main menu
+            else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
+                pageNumber++;
+            else if (selection == menuOptions.Count - 3 && pageNumber != 0) // Previous page
+                pageNumber--;
+            else if (selection == menuOptions.Count - 1)
+                return;
+            else if (selection >= 0 && selection < menuOptions.Count - 3)
+            {
+                selection += (pageNumber * 10);
+                T obj = menuOptionsFullObjects[selection];
+                func(obj);
+                int newMovieCount = JSONMethods.ReadJSON<Movie>(MovieHandler.FileName).Count();
+                int newShowingCount = JSONMethods.ReadJSON<Show>(ShowHandler.FileName).Count();
+
+                // Check if movie has been deleted, return if yes
+                // That way you don't go back to the movie menu, deleted movie would still be visible there
+                if (newMovieCount != oldMovieCount || newShowingCount != oldShowingCount)
+                    return;
+            }
+            firstOptionIndex = pageSize * pageNumber;
+            // Prevent Error when page has less than 10 entries
+            endIndex = menuOptionsFull.Count % 10;
+            if (endIndex != 0 && pageNumber == maxPages - 1)
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, endIndex);
+            else
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, pageSize);
+            menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+        }
+    }
 }
