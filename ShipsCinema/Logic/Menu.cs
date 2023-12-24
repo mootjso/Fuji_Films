@@ -122,7 +122,9 @@ public static class Menu
                 // Check if object has been deleted, return if yes
                 // That way you don't go back to the  menu, deleted object would still be visible there
                 if (removed)
+                {
                     return;
+                }
             }
             firstOptionIndex = pageSize * pageNumber;
             // Prevent Error when page has less than 10 entries
