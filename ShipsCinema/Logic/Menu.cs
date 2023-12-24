@@ -80,7 +80,7 @@ public static class Menu
         Console.ResetColor();
     }
 
-    public static void MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Func<T, bool> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
+    public static bool MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Func<T, bool> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
     {
         if (menuOptionsFullObjects is null)
             menuOptionsFullObjects = menuOptionsFull.Select(s => (T)Convert.ChangeType(s, typeof(T))).ToList();
@@ -94,7 +94,7 @@ public static class Menu
         {
             List<string> menuOption = new() { "Back" };
             Start(messageWhenEmpty, menuOption, isAdmin);
-            return;
+            return true;
         }
         menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         int pageNumber = 0;
@@ -113,17 +113,17 @@ public static class Menu
             else if (selection == menuOptions.Count - 3 && pageNumber != 0) // Previous page
                 pageNumber--;
             else if (selection == menuOptions.Count - 1)
-                return;
+                return true;
             else if (selection >= 0 && selection < menuOptions.Count - 3)
             {
                 selection += (pageNumber * 10);
                 T obj = menuOptionsFullObjects[selection];
-                bool removed = func(obj);
+                bool isRemoved = func(obj);
                 // Check if object has been deleted, return if yes
                 // That way you don't go back to the  menu, deleted object would still be visible there
-                if (removed)
+                if (isRemoved)
                 {
-                    return;
+                    return false;
                 }
             }
             firstOptionIndex = pageSize * pageNumber;
@@ -135,5 +135,6 @@ public static class Menu
                 menuOptions = menuOptionsFull.GetRange(firstOptionIndex, pageSize);
             menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
         }
+        return false;
     }
 }

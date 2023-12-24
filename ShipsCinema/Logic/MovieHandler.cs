@@ -78,7 +78,7 @@ public static class MovieHandler
         return titles;
     }
 
-    public static void ViewCurrentMovies(Action<Movie> action, bool removeMovie = false, bool isAdmin = false)
+    public static bool ViewCurrentMovies(Action<Movie> action, bool removeMovie = false, bool isAdmin = false)
     {
         // parameter func -> lambda to perform certain action on movie object
         // 1. View Movie Details -> m => DisplayMovieDetails(m)
@@ -106,7 +106,7 @@ public static class MovieHandler
             action(m);
             return removeMovie;
         };
-        Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
+        return Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
     public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
