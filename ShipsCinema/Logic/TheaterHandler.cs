@@ -26,6 +26,21 @@ public static class TheaterHandler
         return theater;
     }
 
+    private static void WriteControlsInfo(User user)
+    {
+        // Controls
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        if (!user.IsAdmin)
+        {
+            Console.WriteLine("Controls:\n[Arrow keys] Navigation\n[Enter]      Select a seat\n[C]          Checkout\n[Esc]        Quit");
+        }
+        else if (user.IsAdmin)
+        {
+            Console.WriteLine("Controls:\n[Arrow keys] Navigation\n[Enter]      Select a seat\n[C]          Confirm selection\n[Esc]        Quit");
+        }
+        Console.ResetColor();
+    }
+
     public static void SelectSeats(User user, Theater theater)
     {
         foreach (var seat in theater.Seats)
@@ -34,10 +49,12 @@ public static class TheaterHandler
 
         string reservationId = ReservationHandler.GetReservationID();
         bool paymentConfirmed = false;
+        bool bookingCorrect = false;
         Console.CursorVisible = false;
 
         List<Ticket> tickets = new();
         Show selectedShow = ShowHandler.GetShowById(theater.ShowId)!;
+        Movie selectedMovie = MovieHandler.GetMovieById(selectedShow.MovieId)!;
         List<Seat> selectedSeats = new();
 
         int selectedRow = 0;
@@ -57,26 +74,33 @@ public static class TheaterHandler
             if (!user.IsAdmin)
             {
                 DisplayAsciiArt.Header();
-                Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to Checkout.");
-                Console.WriteLine("\nChoose your Seat:\n");
+                Console.Write("Choose your Seat(s) for ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine(selectedMovie.Title + "\n");
+                Console.ResetColor();
             }
             else if (user.IsAdmin)
             {
                 DisplayAsciiArt.AdminHeader();
-                Console.WriteLine("Use arrow keys to move. Press 'Enter' to select a seat. Press 'Q' to quit. Press 'C' to apply your selection.");
-                Console.WriteLine("\nSelect a seat to make it unavailable:\n");
+                Console.Write("Select a seat for ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write(selectedMovie.Title);
+                Console.ResetColor();
+                Console.Write(" to make it unavailable\n\n");
             }
             
 
             DrawSeatOverview(theater, selectedRow, selectedColumn, user, selectedSeats);
             DrawMovieScreen(theater);
             Seat selectedSeat = GetSeatByRowAndColumn(theater, selectedRow, selectedColumn)!;
+            DisplaySymbolsInfo(selectedSeat, user);
             if (!user.IsAdmin)
             {
-                DisplaySymbolsInfo(selectedSeat);
                 totalPrice = TicketHandler.GetTotalPrice(tickets);
                 Console.WriteLine($"Total price of reservation: {totalPrice} EUR\n");
             }
+
+            WriteControlsInfo(user);
 
             keyInfo = Console.ReadKey(true);
             switch (keyInfo.Key)
@@ -132,10 +156,10 @@ public static class TheaterHandler
                     // Invalid seat selected
                     else
                     {
-                        Console.ForegroundColor= ConsoleColor.Magenta;
-                        Console.WriteLine($"This seat is already taken or cannot be chosen.");
-                        Console.WriteLine("Press any key to choose another seat.");
+                        Console.ForegroundColor= ConsoleColor.Red;
+                        Console.WriteLine($"\nThis seat is already taken or cannot be chosen.");
                         Console.ResetColor();
+                        Console.WriteLine("Press any key to choose another seat");
                         Console.ReadKey();
                     }
                     break;
@@ -147,7 +171,9 @@ public static class TheaterHandler
                     {
                         if (!user.IsAdmin)
                         {
-                            paymentConfirmed = CheckOutHandler.CheckOut();
+                            (bookingCorrect, paymentConfirmed) = CheckOutHandler.CheckOut(selectedShow, selectedSeats);
+                            if (!bookingCorrect)
+                                continue;
                             if (paymentConfirmed)
                             {
                                 foreach (var seat in selectedSeats)
@@ -175,7 +201,7 @@ public static class TheaterHandler
                     }
             }
         }
-        while (keyInfo.Key != ConsoleKey.Q);
+        while (keyInfo.Key != ConsoleKey.Escape);
 
         foreach (Seat seat in selectedSeats)
         {
@@ -263,7 +289,7 @@ public static class TheaterHandler
         }
     }
 
-    public static Seat? GetSeatByRowAndColumn(Theater theater, int row, int column)
+    private static Seat? GetSeatByRowAndColumn(Theater theater, int row, int column)
     {
         foreach (var seat in theater.Seats)
             if (seat.Row == row && seat.Column == column)
@@ -271,7 +297,7 @@ public static class TheaterHandler
         return null;
     }
 
-    public static void DrawMovieScreen(Theater theater)
+    private static void DrawMovieScreen(Theater theater)
     {
         int screenLength = 27;
         int movieEmptySpace = 7;
@@ -303,64 +329,68 @@ public static class TheaterHandler
         Console.WriteLine("Movie screen\n");
     }
 
-    public static void DisplaySymbolsInfo(Seat selectedSeat)
+    private static void DisplaySymbolsInfo(Seat selectedSeat, User user)
     {
-        Console.ForegroundColor = ConsoleColor.DarkRed;
-        Console.Write($"■: {Theater.RedSeatPrice} EUR\t");
+        if (!user.IsAdmin)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.Write($"■: {Theater.RedSeatPrice} EUR\t");
 
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.Write($"■: {Theater.YellowSeatPrice} EUR\t");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write($"■: {Theater.YellowSeatPrice} EUR\t");
 
-        Console.ForegroundColor = ConsoleColor.Blue;
-        Console.Write($"■: {Theater.BlueSeatPrice} EUR");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"■: {Theater.BlueSeatPrice} EUR");
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.Write("\nO: Your seat(s)\t");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("\nO: Your seat(s)\t");
 
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Write("O: Others\t");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write("O: Others\t");
 
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Write("X: Unavailable");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write("X: Unavailable");
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.Write("\nO: Your seat(s) from previous reservations\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\nO: Your seat(s) from previous reservations\n");
 
-        Console.ResetColor();
-        Console.WriteLine($"Current seat: {selectedSeat}\n");
+            Console.ResetColor();
+            Console.WriteLine($"Current seat: {selectedSeat}\n");
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.Write($"X: Unavailable seat\t");
+
+            Console.Write($"O: Reserved seat\n\n");
+        }
     }
 
     public static bool ConfirmReservation(List<Ticket> tickets, bool isAdmin = false)
     {
-        Console.ForegroundColor = ConsoleColor.Magenta;
         // No seats selected
         if (tickets.Count <= 0)
         {
             if (!isAdmin)
-                Console.WriteLine("Cannot checkout, you have not selected any seats.");
-            else
-                Console.WriteLine("You have not selected any seats to take out.");
-
-            Console.WriteLine("Press any key to continue.");
-
-            Console.ReadKey();
-            return false;
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nCannot checkout, you have not selected any seats.");
+                Console.ResetColor();
+                Console.WriteLine("Press any key to continue");
+                Console.ReadKey();
+                return false;
+            }
         }
         
-        if (!isAdmin)
-            Console.WriteLine("Press 'Enter' to continue to checkout, press any other key to go back to seat selection.");
-        else
-            Console.WriteLine("Press 'Enter' to confirm and take out the selected seats, press any other key to go back to seat selection.");
-        
-        Console.ResetColor();
-        ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
-        // User confirms their selection and continues to checkout
-        if (keyInfo.Key == ConsoleKey.Enter)
+        if (isAdmin)
         {
-            return true;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\nYour selection has been confirmed.");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to go back to the main menu");
+            Console.ReadKey();
         }
 
-        return false;
+        return true;
     }
 }

@@ -2,7 +2,7 @@
 
 public static class ValidateNameInput
 {
-    public static bool IsValid(string input)
+    public static bool IsValid(string? input)
     {
         if (input == null)
             return false;

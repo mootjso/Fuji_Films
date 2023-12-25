@@ -38,7 +38,7 @@ public class LoginHandler
             if (emailInput != string.Empty && User != null)
             {
                 Console.ForegroundColor = Program.InputColor;
-                Console.Write(emailInput);
+                Console.Write(emailInput?.ToLower());
                 Console.ResetColor();
                 Console.WriteLine();
             }
@@ -46,7 +46,7 @@ public class LoginHandler
             {
                 Console.CursorVisible = true;
                 Console.ForegroundColor = Program.InputColor;
-                emailInput = Console.ReadLine();
+                emailInput = Console.ReadLine()?.ToLower();
                 Console.ResetColor();
                 Console.CursorVisible = false;
             }
@@ -208,7 +208,7 @@ public class LoginHandler
             {
                 Console.CursorVisible = true;
                 Console.ForegroundColor = Program.InputColor;
-                email = Console.ReadLine();
+                email = Console.ReadLine()?.ToLower();
                 Console.ResetColor();
                 Console.CursorVisible = false;
                 if (email == "q")
@@ -246,7 +246,7 @@ public class LoginHandler
                 if (!ValidatePassword.IsValid(password))
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\nThe password is invalid, press any key to continue");
+                    Console.WriteLine($"\nThe password is invalid, press any key to try again");
                     Console.ResetColor();
                     Console.ReadKey();
                     password = string.Empty;
