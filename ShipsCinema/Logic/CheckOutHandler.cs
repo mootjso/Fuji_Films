@@ -1,8 +1,3 @@
-using System.Net.Sockets;
-using System.Numerics;
-using System.Runtime.InteropServices;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
 public class CheckOutHandler
 {
     public const string FileName = "Datasources/revenuePerShow.json";
