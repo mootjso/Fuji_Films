@@ -131,10 +131,15 @@ public static class AdminHandler
                     Console.WriteLine($"{movieToRemove.Title} has been removed");
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
-                    Console.ReadKey();
+                    Console.ReadKey(true);
                     return;
                 case ConsoleKey.N:
                     return;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid key, please choose either [Y] or [N]");
+                    Console.ResetColor();
+                    break;
             }
         }
     }

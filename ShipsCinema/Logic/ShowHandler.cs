@@ -255,15 +255,11 @@ public static class ShowHandler
 
     private static void ChooseShowingToRemove(string date)
     {
-        int oldShowingCount, newShowingCount;
-        oldShowingCount = JSONMethods.ReadJSON<Show>(FileName).Count();
-
         List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
         Func<Show, string> formatter = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
-        Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", "", RemoveShowingFromJson, showings, true);
-
-        newShowingCount = JSONMethods.ReadJSON<Show>(FileName).Count();
-        if (oldShowingCount == newShowingCount || showings.Count == 0)
+        string messageWhenEmpty = $"Showing Schedule\n\nThere are no movies scheduled for {date}";
+        bool backSelected = Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", messageWhenEmpty, RemoveShowingFromJson, showings, true);
+        if (backSelected)
             return;
         ChooseShowingToRemove(date);
     }
