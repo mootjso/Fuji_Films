@@ -256,9 +256,8 @@ public static class ShowHandler
     private static void ChooseShowingToRemove(string date)
     {
         List<Show> showings = GetShowsByDate(date).OrderBy(s => s.DateAndTime).ToList();
-        Func<Show, string> formatter = s => $"{s.StartTimeString} - {s.EndTimeString} | Theater {s.TheaterNumber} | {MovieHandler.GetMovieById(s.MovieId)}";
         string messageWhenEmpty = $"Showing Schedule\n\nThere are no movies scheduled for {date}";
-        bool backSelected = Menu.MenuPagination(showings.Select(s => formatter(s)).ToList(), $"Showing Schedule\n\nShowings on {date}", messageWhenEmpty, RemoveShowingFromJson, showings, true);
+        bool backSelected = Menu.MenuPagination(CreateListMovieStrings(showings), $"Showing Schedule\n\nShowings on {date}", messageWhenEmpty, RemoveShowingFromJson, showings, true);
         if (backSelected)
             return;
         ChooseShowingToRemove(date);
@@ -266,7 +265,7 @@ public static class ShowHandler
 
     private static bool RemoveShowingFromJson(Show showing)
     {
-        List<Show> showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
+        var showings = JSONMethods.ReadJSON<Show>(FileName);
         ConsoleKey choice;
 
         while (true)
@@ -489,7 +488,7 @@ public static class ShowHandler
             Console.WriteLine();
         }
 
-        if (showsFiltered.Count() == 0)
+        if (!showsFiltered.Any())
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"{movie.Title} has not been scheduled yet");
