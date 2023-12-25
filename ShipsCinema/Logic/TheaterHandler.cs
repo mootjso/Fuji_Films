@@ -82,11 +82,11 @@ public static class TheaterHandler
             else if (user.IsAdmin)
             {
                 DisplayAsciiArt.AdminHeader();
-                Console.Write("Select a seat for ");
+                Console.Write("Select seat(s) for ");
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write(selectedMovie.Title);
                 Console.ResetColor();
-                Console.Write(" to make it unavailable\n\n");
+                Console.Write(" to make them unavailable\n\n");
             }
             
 

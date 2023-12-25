@@ -276,7 +276,7 @@ public class CheckOutHandler
             if (creditCardInput == string.Empty)
             {
                 WriteHeaders();
-                Console.WriteLine("Please enter your credit card number:\nExample: '4321-2432-2432-3424'");
+                Console.WriteLine("Please enter your credit card number:\nExample: 4321-2432-2432-3424");
                 Console.ForegroundColor = Program.InputColor;
                 Console.CursorVisible = true;
                 creditCardInput = Console.ReadLine();
@@ -298,7 +298,7 @@ public class CheckOutHandler
                 creditCardInput = string.Empty;
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nCredit card does NOT exist!\nPlease enter the following format including the '-': 'XXXX-XXXX-XXXX-XXXX'");
+                Console.WriteLine("\nCredit card does NOT exist!\nPlease enter the following format including the '-': XXXX-XXXX-XXXX-XXXX");
                 Console.ResetColor();
                 Console.WriteLine("Press any button to try again");
                 Console.ReadKey();
@@ -309,7 +309,7 @@ public class CheckOutHandler
             if (expirationDate == string.Empty)
             {
                 WriteHeaders();
-                Console.WriteLine("Please input the expiration date:\nRequired format: 'MM/YY'");
+                Console.WriteLine("Please input the expiration date:\nRequired format: MM/YY");
                 Console.ForegroundColor = Program.InputColor;
                 Console.CursorVisible = true;
                 expirationDate = Console.ReadLine();
@@ -332,7 +332,7 @@ public class CheckOutHandler
                 expirationDate = string.Empty;
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nIncorrect input.\nPlease enter the following format: 'MM/YY'");
+                Console.WriteLine("\nIncorrect input.\nPlease enter the following format: MM/YY");
                 Console.ResetColor();
                 Console.WriteLine("Press any button to try again");
                 Console.ReadKey();
@@ -355,7 +355,7 @@ public class CheckOutHandler
             if (cvcCode == string.Empty)
             {
                 WriteHeaders();
-                Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nExample: '454'");
+                Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nExample: 454");
                 Console.ForegroundColor = Program.InputColor;
                 Console.CursorVisible = true;
                 cvcCode = Console.ReadLine()?.ToLower();
@@ -380,7 +380,7 @@ public class CheckOutHandler
             {
                 cvcCode = string.Empty;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nWrong Card Verification Code, please enter only the three numbers of your CVC code (e.g.: '454')");
+                Console.WriteLine("\nWrong Card Verification Code, please enter only the three numbers of your CVC code (e.g.: 454)");
                 Console.ResetColor();
                 Console.WriteLine("Press any button to try again");
                 Console.ReadKey();
