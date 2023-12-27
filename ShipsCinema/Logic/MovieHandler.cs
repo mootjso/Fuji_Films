@@ -1,3 +1,5 @@
+using System.Linq;
+
 public static class MovieHandler
 {
     public const string FileName = "Datasources/movies.json";
@@ -110,12 +112,12 @@ public static class MovieHandler
         
         if (isAdmin)
         {
-            menuOptionsFullObjects = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+            menuOptionsFullObjects = JSONMethods.ReadJSON<Movie>(FileName).Where(m => !m.Removed).ToList();
             menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
         else
         {
-            menuOptionsFullObjects = ShowHandler.GetScheduledMovies();
+            menuOptionsFullObjects = ShowHandler.GetScheduledMovies().Where(m => !m.Removed).ToList();
             menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
         Func<Movie, bool> func = m =>
@@ -234,7 +236,12 @@ public static class MovieHandler
             switch (choice)
             {
                 case ConsoleKey.Y:
-                    movies = movies.Where(m => m.Id != movieToRemove.Id).ToList();
+                    movies.ForEach(m =>
+                    {
+                        if (m.Id == movieToRemove.Id)
+                            m.Removed = true;
+                    }
+                    );
                     JSONMethods.WriteToJSON(movies, FileName);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine($"{movieToRemove.Title} has been removed");
