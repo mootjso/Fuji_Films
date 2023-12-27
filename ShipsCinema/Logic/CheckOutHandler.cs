@@ -1,7 +1,3 @@
-using System.Net.Sockets;
-using System.Numerics;
-using System.Runtime.InteropServices;
-
 public class CheckOutHandler
 {
     public const string FileName = "Datasources/revenuePerShow.json";
@@ -145,107 +141,256 @@ public class CheckOutHandler
         JSONMethods.WriteToJSON(revenues, FileName);
     }
 
-    public static void CheckOut()
+    public static void WriteHeaders()
     {
+        // Headers
+        Console.Clear();
+        Console.ResetColor();
+        DisplayAsciiArt.Header();
+        AdHandler.DisplaySnacks();
+        Console.WriteLine("Checkout");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("\nEnter 'q' at any of the prompts to cancel this reservation.");
+        Console.WriteLine("Enter 'r' to start over.");
+        Console.ResetColor();
+    }
+
+    public static void WriteBookingInfo(Movie movie, Show show, string seatsInfo)
+    {
+        // Headers
+        Console.Clear();
+        Console.ResetColor();
+        DisplayAsciiArt.Header();
+        AdHandler.DisplaySnacks();
+        Console.WriteLine("Please confirm your booking information\n");
+        
+        // Movie title
+        Console.Write("Movie: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(movie.Title);
+        Console.ResetColor();
+        
+        // Theater
+        Console.Write("Theater: ");
+        string theaterString = show.TheaterNumber == 1 ? "Small (150 seats)" : show.TheaterNumber == 2 ? "Medium (300 seats)" : "Large (500 seats)";
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(theaterString);
+        Console.ResetColor();
+        
+        // Date
+        Console.Write("Date: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(show.DateAndTime.ToString("dd-MM-yyyy"));
+        Console.ResetColor();
+        
+        // Time
+        Console.Write("\nTime: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{show.StartTimeString} - {show.EndTimeString}");
+        Console.ResetColor();
+
+        // Seat info
+        Console.Write("\nSelected seats: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(seatsInfo);
+        Console.ResetColor();
+    }
+
+    public static void WritePaymentInformation(string ccNumber, string expDate, string cvcCode)
+    {
+        Console.Clear();
+        Console.Clear();
+        Console.ResetColor();
+        DisplayAsciiArt.Header();
+        AdHandler.DisplaySnacks();
+        Console.WriteLine("Please confirm your payment details\n");
+        // Credit card number
+        Console.Write("Credit card number: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(ccNumber);
+        Console.ResetColor();
+
+        // Expiration Date
+        Console.Write("\nExpiration date: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(expDate);
+        Console.ResetColor();
+
+        // CVC Code
+        Console.Write("\nCVC code: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(cvcCode);
+        Console.ResetColor();
+    }
+
+    public static bool ConfirmBookingInformation(Movie movie, Show show, string seatsInfo)
+    {
+        WriteHeaders();
+        WriteBookingInfo(movie, show, seatsInfo);
+        Console.WriteLine($"\n\nIs this information correct?\n[Y] Yes, continue to checkout\n[N] No, go back to seat selection\n");
+        ConsoleKey pressedKey = Console.ReadKey().Key;
+        if (pressedKey == ConsoleKey.Y)
+            return true;
+        
+        return false;
+    }
+    
+    public static (bool bookingCorrect, bool paymentConfirmed) CheckOut(Show selectedShow, List<Seat> seats)
+    {
+        // Error checking
+        Movie? selectedMovie = null;
+        if (selectedShow != null)
+            selectedMovie = MovieHandler.GetMovieById(selectedShow.MovieId);
+        if (selectedMovie == null || selectedShow == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Something went wrong, please contact the Movie Theater staff.");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to go back");
+            Console.ReadKey();
+            return (false, false);
+        }
+
+        string seatsString = string.Empty;
+        seats.ForEach(s => seatsString += s + "; ");
+        // Confirm Booking information
+        bool bookingCorrect = ConfirmBookingInformation(selectedMovie, selectedShow, seatsString);
+        if (!bookingCorrect)
+        {
+            return (false, false);
+        }
+
         bool checkOut = true;
         bool confirm = false;
+        string? creditCardInput = string.Empty, expirationDate = string.Empty, cvcCode = string.Empty;
 
         Console.CursorVisible = true;
         while (checkOut)
         {
-            Console.Clear();
-            Console.ResetColor();
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
-            Console.WriteLine(
-                "Please enter your credit card number:\nEXAMPLE: 4321-2432-2432-3424"
-            );
-            Console.ForegroundColor = ConsoleColor.Blue;
-            string creditCardInput = Console.ReadLine();
-            Console.ResetColor();
-
-            bool correctCardFormat = creditCardInput.All(num => Char.IsDigit(num) || num == '-');
-
-            if (creditCardInput.Length != 19 || !correctCardFormat)
+            // Credit card number
+            if (creditCardInput == string.Empty)
             {
+                WriteHeaders();
+                Console.WriteLine("Please enter your credit card number:\nExample: 4321-2432-2432-3424");
+                Console.ForegroundColor = Program.InputColor;
+                Console.CursorVisible = true;
+                creditCardInput = Console.ReadLine();
+                Console.CursorVisible = false;
+                creditCardInput ??= string.Empty;
+                Console.ResetColor();
+            }
+            if (creditCardInput == "q")
+                return (true, false);
+            if (creditCardInput == "r")
+            {
+                creditCardInput = string.Empty;
+                continue;
+            }
+
+            bool correctCardFormat = ValidateCreditCardNumber.IsValid(creditCardInput);
+            if (!correctCardFormat)
+            {
+                creditCardInput = string.Empty;
                 Console.CursorVisible = false;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(
-                    "Credit card does NOT exist!\nPlease try again\nEnter the following format including the '-': XXXX-XXXX-XXXX-XXXX"
-                );
+                Console.WriteLine("\nCredit card does NOT exist!\nPlease enter the following format including the '-': XXXX-XXXX-XXXX-XXXX");
                 Console.ResetColor();
                 Console.WriteLine("Press any button to try again");
-                Console.ReadLine();
+                Console.ReadKey();
+                continue;
+            }
+
+            // Expiration date
+            if (expirationDate == string.Empty)
+            {
+                WriteHeaders();
+                Console.WriteLine("Please input the expiration date:\nRequired format: MM/YY");
+                Console.ForegroundColor = Program.InputColor;
+                Console.CursorVisible = true;
+                expirationDate = Console.ReadLine();
+                Console.CursorVisible = false;
+                expirationDate ??= string.Empty;
+            }
+            if (expirationDate == "q")
+                return (true, false);
+            if (expirationDate == "r")
+            {
+                creditCardInput = string.Empty;
+                expirationDate = string.Empty;
+                continue;
+            }
+
+            (bool validFormat, bool isExpired) = ValidateExpirationDate.IsExpirationDateValid(expirationDate);
+
+            if (!validFormat)
+            {
+                expirationDate = string.Empty;
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nIncorrect input.\nPlease enter the following format: MM/YY");
+                Console.ResetColor();
+                Console.WriteLine("Press any button to try again");
+                Console.ReadKey();
+                continue;
+            }
+            else if (isExpired)
+            {
+                expirationDate = string.Empty;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nThis card is expired, please use a different credit card.");
+                Console.ResetColor();
+                Console.WriteLine("Press any button to enter a new credit card number");
+                creditCardInput = string.Empty;
+                Console.ReadKey();
                 Console.CursorVisible = true;
                 continue;
             }
 
-            Console.Clear();
-            Console.ResetColor();
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
-            Console.WriteLine(
-                "Please input the expiration date:\nRequired format: MM/YY, Example: 02/25"
-            );
-            Console.ForegroundColor = ConsoleColor.Blue;
-            string experationCodeInput = Console.ReadLine();
-
-            bool correctExperationFormat = experationCodeInput.All(
-                num => Char.IsDigit(num) || num == '/'
-            );
-
-            if (experationCodeInput.Length != 5 || !correctExperationFormat)
+            // CVC code
+            if (cvcCode == string.Empty)
             {
-                Console.CursorVisible = false;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(
-                    "Incorrect format, please try again.\nEnter the following format including the '/': XX/XX"
-                );
-                Console.ResetColor();
-                Console.WriteLine("Press any button to try again");
-                Console.ReadLine();
+                WriteHeaders();
+                Console.WriteLine("Please input the CVC code (3 numbers on the back of the card):\nExample: 454");
+                Console.ForegroundColor = Program.InputColor;
                 Console.CursorVisible = true;
+                cvcCode = Console.ReadLine()?.ToLower();
+                Console.ResetColor();
+                Console.CursorVisible = false;
+                cvcCode ??= string.Empty;
+            }
+            if (cvcCode == "q")
+            {
+                return (true, false);
+            }
+            if (cvcCode == "r")
+            {
+                creditCardInput = string.Empty;
+                expirationDate = string.Empty;
+                cvcCode = string.Empty;
                 continue;
             }
 
-            Console.Clear();
-            Console.ResetColor();
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
-            Console.WriteLine(
-                "Please input the CVC code (3 numbers on the back of the card):\nEXAMPLE: 454"
-            );
-            Console.ForegroundColor = ConsoleColor.Blue;
-            string cvc = Console.ReadLine();
-            Console.ResetColor();
-
-            bool correctCVCFormat = cvc.All(num => Char.IsDigit(num));
-
-            if (cvc.Length != 3 || !correctCVCFormat)
+            bool CvcIsAllNums = cvcCode.All(num => Char.IsDigit(num));
+            if (cvcCode.Length != 3 || !CvcIsAllNums)
             {
-                Console.CursorVisible = false;
+                cvcCode = string.Empty;
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(
-                    "Wrong Card Verification Code, please use the correct format (e.g.: 454)"
-                );
+                Console.WriteLine("\nWrong Card Verification Code, please enter only the three numbers of your CVC code (e.g.: 454)");
                 Console.ResetColor();
                 Console.WriteLine("Press any button to try again");
-                Console.ReadLine();
+                Console.ReadKey();
                 Console.Clear();
                 Console.CursorVisible = true;
                 continue;
             }
 
+            // Confirm payment information
             Console.CursorVisible = false;
             confirm = true;
             while (confirm == true)
             {
-                Console.Clear();
-                DisplayAsciiArt.Header();
-                AdHandler.DisplaySnacks();
-                Console.WriteLine(
-                    $"Please confirm the following credit card details:\n\nCredit card number: {creditCardInput}\nExpiration date: {experationCodeInput}\nCVC: {cvc}\n\nIs this correct? (Y/N)\n"
-                );
+                WritePaymentInformation(creditCardInput, expirationDate, cvcCode);
+                Console.WriteLine($"\n\nIs this information correct?\n[Y] Yes, this is correct\n[N] No, re-enter my info\n");
                 ConsoleKey pressedKey = Console.ReadKey().Key;
                 if (pressedKey == ConsoleKey.Y)
                 {
@@ -253,20 +398,27 @@ public class CheckOutHandler
                     Console.ResetColor();
                     DisplayAsciiArt.Header();
                     AdHandler.DisplaySnacks();
+                    Console.WriteLine("Checkout Confirmed\n");
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Tickets successfully booked!\n");
+                    Console.WriteLine("Tickets successfully booked!");
                     Console.ResetColor();
+                    Console.WriteLine("\nYou can find your tickets and booking information under 'My Reservations'.");
                     Console.WriteLine("Press any button to continue");
                     Console.ReadKey();
                     Console.Clear();
-                    return;
+                    return (true, true);
                 }
                 else if (pressedKey == ConsoleKey.N)
                 {
+                    creditCardInput = string.Empty;
+                    expirationDate = string.Empty;
+                    cvcCode = string.Empty;
                     confirm = false;
                     break;
                 }
             }
         }
+
+        return (false, false);
     }
 }

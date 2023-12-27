@@ -1,4 +1,5 @@
 using Microsoft.VisualBasic;
+using System.Globalization;
 
 public static class ShowHandler
 {
@@ -463,13 +464,14 @@ public static class ShowHandler
             if (!dates.Contains(date))
                 dates.Add(date);
         }
-        List<DateTime> sortedDates = dates.OrderBy(d => d).ToList();
+        List<DateTime> sortedDates = dates.OrderByDescending(d => d).ToList();
         List<string> sortedDateStrings = sortedDates.Select(d => d.ToString("dd-MM-yyyy")).ToList();
         return sortedDateStrings;
     }
 
     public static void PrintMovieDates(Movie movie, bool isAdmin = false)
     {
+        CultureInfo englishCulture = new CultureInfo("en-US");
         Console.Clear();
 
         var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
@@ -487,7 +489,8 @@ public static class ShowHandler
         foreach (var day in showsFilteredGrouped)
         {
             date = day.First().DateAndTime;
-            Console.WriteLine($"{date.DayOfWeek} {date:D}");
+            Console.WriteLine($"{date.DayOfWeek} {date.Day} {date.ToString("MMMM", englishCulture)} {date:yyyy}");
+
             foreach (var show in day)
             {
                 Console.WriteLine($"  {show.StartTimeString} - Auditorium {show.TheaterNumber}");
