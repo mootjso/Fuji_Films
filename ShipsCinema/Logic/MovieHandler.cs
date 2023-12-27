@@ -21,13 +21,30 @@ public static class MovieHandler
 
     public static void PrintInfo(Movie movie)
     {
-        Console.WriteLine($"{movie.Title}");
-        Console.WriteLine($"\nDescription:\n{movie.Description}");
-        Console.Write("\nGenres: ");
+        Console.Write("Title: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(movie.Title + "\n");
+        Console.ResetColor();
+        Console.WriteLine($"Description:");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(movie.Description);
+        Console.ResetColor();
+        Console.Write("Genres: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write(string.Join(", ", movie.Genres));
-        Console.WriteLine($"\nLanguage: {movie.Language}");
-        Console.WriteLine($"Runtime: {movie.Runtime} Minutes");
-        Console.WriteLine($"Age Rating: {movie.AgeRating}");
+        Console.ResetColor();
+        Console.Write($"\nLanguage: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine(movie.Language);
+        Console.ResetColor();
+        Console.Write("Runtime: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{movie.Runtime} Minutes\n");
+        Console.ResetColor();
+        Console.Write($"Age Rating: ");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"{movie.AgeRating}+");
+        Console.ResetColor();
     }
 
     public static void DisplayMovieDetails(Movie movie, bool isAdmin = false)
@@ -41,7 +58,7 @@ public static class MovieHandler
         PrintInfo(movie);
 
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("\nPress any key to go back");
+        Console.WriteLine("\n\nPress any key to go back");
         Console.ResetColor();
         
         Console.ReadKey();
@@ -60,7 +77,7 @@ public static class MovieHandler
                 "EN" => "English",
                 "FR" => "French",
                 "NL" => "Dutch",
-                "FI" => "Finish",
+                "FI" => "Finnish",
                 "DU" => "German",
                 _ => movie.Language.ToUpper()
             };

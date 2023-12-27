@@ -55,50 +55,60 @@ public static class AdminHandler
         List<string> genres = new();
         Console.CursorVisible = true;
         title = GetInputDataString("Title");
+        if (title == "q")
+            return;
         language = GetInputDataString("Language");
+        if (language == "q")
+            return;
         description = GetInputDataString("Description");
+        if (description == "q")
+            return;
 
         genreCount = GetInputDataInt("How many genres?");
+        if (genreCount == -1)
+            return;
         for (int i = 0; i < genreCount; i++)
         {
             genre = GetInputDataString($"Genre {i + 1}");
+            if (title == "q")
+                return;
             genres.Add(genre);
         }
 
         runTime = GetInputDataInt("Runtime (minutes)");
+        if (runTime == -1)
+            return;
         ageRating = GetInputDataInt("Age Rating");
+        if (ageRating == -1)
+            return;
         highestId = GetHighestID();
         Movie movieToAdd = new Movie(highestId, title, language, description, genres, runTime, ageRating);
         bool inMenu = true;
-        string? choice;
+        ConsoleKey choice;
         while (inMenu)
         {
+            Console.CursorVisible = false;
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Please confirm the movie details\n");
             MovieHandler.PrintInfo(movieToAdd);
-            Console.WriteLine("\nAre you sure the movie details are correct? (Y/N)");
-            choice = Console.ReadLine();
-            if (choice != null)
-                choice = choice.ToUpper();
+            Console.WriteLine("\n\nAre you sure the movie details are correct?\n[Y] Yes, add the new movie\n[N] No, this information is incorrect");
+            choice = Console.ReadKey().Key;
             switch (choice)
             {
-                case "Y":
+                case ConsoleKey.Y:
                     inMenu = false;
                     break;
-                case "N":
+                case ConsoleKey.N:
                     inMenu = false;
-                    Console.CursorVisible = false;
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Addition of movie \"{movieToAdd.Title}\" aborted");
+                    Console.WriteLine($"\n\nAddition of movie \"{movieToAdd.Title}\" aborted");
                     Console.ResetColor();
-                    Console.WriteLine("Press any key to continue");
+                    Console.WriteLine("\nPress any key to continue");
                     Console.ReadLine();
                     return;
                 default:
-                    Console.WriteLine("Invalid input, please write \"Y\" or \"N\"");
-                    Console.WriteLine("Press any key to continue");
-                    Console.ReadLine();
-                    break;
+                    continue;
             }
         }
         Console.Clear();
@@ -106,6 +116,7 @@ public static class AdminHandler
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
         movies.Add(movieToAdd);
         JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
+        Console.WriteLine("Adding a new movie\n");
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"Movie \"{movieToAdd.Title}\" has been added");
         Console.ResetColor();
@@ -198,12 +209,23 @@ public static class AdminHandler
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Adding new movie\n");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Enter 'q' at any of the prompts to go back.");
+            Console.ResetColor();
             Console.Write($"{information}: ");
+            Console.ForegroundColor = Program.InputColor;
             input += Console.ReadLine();
+            Console.ResetColor();
             if (input.Length > 0) 
                 break;
-            Console.WriteLine("Invalid input\nPress any key to continue");
-            Console.ReadLine();
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid input");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to try again");
+            Console.ReadKey();
+            Console.CursorVisible = true;
         }
         return input;
     }
@@ -215,18 +237,29 @@ public static class AdminHandler
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.Write($"{information}");
-            Console.Write(": ");
-            if (int.TryParse(Console.ReadLine(), out input))
+            Console.WriteLine("Adding new movie\n");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Enter 'q' at any of the prompts to go back.");
+            Console.ResetColor();
+            Console.Write($"{information}: ");
+            Console.ForegroundColor = Program.InputColor;
+            string userInput = Console.ReadLine();
+            Console.ResetColor();
+            if (userInput == "q")
+                return -1;
+            
+            if (int.TryParse(userInput, out input))
             {
                 if (input > 0)
                     return input;
             }
+            Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Invalid number");
             Console.ResetColor();
-            Console.WriteLine("Press any key to continue");
-            Console.ReadLine();
+            Console.WriteLine("Press any key to try again");
+            Console.ReadKey();
+            Console.CursorVisible = true;
         }
     }
 
