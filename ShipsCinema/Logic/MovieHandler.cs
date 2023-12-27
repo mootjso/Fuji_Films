@@ -128,7 +128,7 @@ public static class MovieHandler
 
     public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
     {
-        List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
+        List<string> menuOptions = new() { "View Details Dit is om te testen", "View Showings", "Back" };
         string menuText = $"{movie.Title}\n\nSelect an option:";
         int selection = Menu.Start(menuText, menuOptions, isAdmin);
         switch (selection)
