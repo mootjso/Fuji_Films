@@ -153,7 +153,6 @@ public static class ReservationHandler
                 return;
             // Dit is de gekozen reservatie code
             string selectedReservationCode = overviewCorrectReservation[selectedReservation];
-            int ReservationInt = 1;
 
             // Hier print je de stoelen positie die onder die reservatie code staat
             Console.Clear();
@@ -178,8 +177,8 @@ public static class ReservationHandler
                 if (reservation.ReservationId == selectedReservationCode)
                 {
                     string ticketInfo = $"Ticket {reservationInt}".PadRight(10);
-                    string rowInfo = $"Row {reservation.Row}".PadRight(6);
-                    string seatInfo = $"Seat: {reservation.Column}";
+                    string rowInfo = $"Row {reservation.Row + 1}".PadRight(6);
+                    string seatInfo = $"Seat: {reservation.Column + 1}";
 
                     Console.WriteLine($"{ticketInfo} | {rowInfo} | {seatInfo}");
                     reservationInt++;

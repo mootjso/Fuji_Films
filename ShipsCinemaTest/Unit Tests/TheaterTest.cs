@@ -33,7 +33,7 @@ public class TheaterTests
         DateTime dateTime = DateTime.Parse(datetimesstring);
 
         Show show = new Show(id, movieid, theaternumber, dateTime);
-        Theater CreatedTheater = TheaterHandler.CreateTheater(show);
+        Theater CreatedTheater = TheaterHandler.CreateOrGetTheater(show);
 
         Assert.IsNotNull(CreatedTheater);
     }

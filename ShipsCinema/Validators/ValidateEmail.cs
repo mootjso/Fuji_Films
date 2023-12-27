@@ -2,7 +2,7 @@
 
 public static class ValidateEmail
 {
-    public static bool IsValid(string email)
+    public static bool IsValid(string? email)
     {
         if (email == null)
             return false;
