@@ -29,8 +29,8 @@ public static class Menu
             {
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
-            }            
-          
+            }
+
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
