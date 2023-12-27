@@ -209,7 +209,6 @@ public static class ShowHandler
 
         List<Show> ShowsForDate = GetShowsByDate(newShow.DateAndTime);
         List<string> movieMenuStrings = CreateListMovieStrings(ShowsForDate, newShow.TheaterNumber);
-        movieMenuStrings.RemoveAt(movieMenuStrings.Count - 1); // Removes the "Back" option that the CreaListMovieStrings method adds
 
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"\nThe theater is already booked at this time, the following showings are planned for this day:");
@@ -391,6 +390,7 @@ public static class ShowHandler
 
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(showsForDate);
+            movieMenuString.Add("Back");
 
             index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString, isAdmin);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
@@ -440,7 +440,6 @@ public static class ShowHandler
             if (show.TheaterNumber == theaterNumber || theaterNumber == -1)
                 movieMenuStrings.Add($"{show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
         }
-        movieMenuStrings.Add("Back");
         return movieMenuStrings;
     }
 
