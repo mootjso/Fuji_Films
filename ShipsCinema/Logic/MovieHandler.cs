@@ -95,79 +95,35 @@ public static class MovieHandler
         return titles;
     }
 
-    public static void ViewCurrentMovies(Action<Movie> func, bool isAdmin = false)
+    public static bool ViewCurrentMovies(Action<Movie> action, bool removeMovie = false, bool isAdmin = false)
     {
         // parameter func -> lambda to perform certain action on movie object
         // 1. View Movie Details -> m => DisplayMovieDetails(m)
-        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie list
-        Movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
-        int oldMovieCount = Movies.Count;
-        if (Movies.Count == 0)
-        {
-            List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
-            return;
-        }
+        // 2. Remove Movie from Json -> m => RemoveMovieFromJson(m, movies) with movies being the movie 
+        string messageWhenEmpty = "Current Movies\n\nThere are currently no movies available";
         string menuText = $"Current Movies\n\nSelect a movie for more information:\n" +
             $"  {"Title", -30} | {"Language", -10} | {"Genres", -30} | {"Runtime", -8} | Age\n" +
             $"  {new string('-', 93)}";
-        
+
+        List<Movie> menuOptionsFullObjects;
         List<string> menuOptionsFull;
         
         if (isAdmin)
-            menuOptionsFull = GetMovieTitles(Movies);
-        else
-            menuOptionsFull = GetMovieTitles(ShowHandler.GetScheduledMovies());
-        List<string> menuOptions;
-        if (menuOptionsFull.Count >= 10)
-            menuOptions = menuOptionsFull.GetRange(0, 10);
-        else
-            menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
-        
-        if (menuOptions.Count <= 0)  // No movies scheduled
         {
-            List<string> menuOption = new() { "Back" };
-            Menu.Start("Current Movies\n\nThere are currently no movies available", menuOption, isAdmin);
-            return;
+            menuOptionsFullObjects = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+            menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
-        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
-        int pageNumber = 0;
-        int pageSize = 10;
-        int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
-        int firstTitleIndex;
-        int endIndex;
-
-        while (true)
+        else
         {
-            int selection = Menu.Start(menuText, menuOptions, isAdmin);
-            if (selection == menuOptions.Count)
-                break; // Go back to main menu
-            else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
-                pageNumber++;
-            else if (selection == menuOptions.Count - 3 && pageNumber != 0) // Previous page
-                pageNumber--;
-            else if (selection == menuOptions.Count - 1)
-                return;
-            else if (selection >= 0 && selection < menuOptions.Count - 3)
-            {
-                selection += (pageNumber * 10);
-                Movie movie = Movies[selection];
-                func(movie);
-                int newMovieCount = JSONMethods.ReadJSON<Movie>(FileName).Count();
-                // Check if movie has been deleted, return if yes
-                // That way you don't go back to the movie menu, deleted movie would still be visible there
-                if (newMovieCount != oldMovieCount)
-                    return;
-            }
-            firstTitleIndex = pageSize * pageNumber;
-            // Prevent Error when page has less than 10 entries
-            endIndex = menuOptionsFull.Count % 10;
-            if (endIndex != 0 && pageNumber == maxPages - 1)
-                menuOptions = menuOptionsFull.GetRange(firstTitleIndex, endIndex);
-            else
-                menuOptions = menuOptionsFull.GetRange(firstTitleIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+            menuOptionsFullObjects = ShowHandler.GetScheduledMovies();
+            menuOptionsFull = GetMovieTitles(menuOptionsFullObjects);
         }
+        Func<Movie, bool> func = m =>
+        {
+            action(m);
+            return removeMovie;
+        };
+        return Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
     public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
@@ -188,5 +144,192 @@ public static class MovieHandler
             default:
                 break;
         }
+    }
+    public static void AddMovie()
+    {
+        DisplayAsciiArt.AdminHeader();
+        string title, language, description, genre;
+        int highestId, runTime, genreCount, ageRating;
+        List<string> genres = new();
+        Console.CursorVisible = true;
+        title = GetInputDataString("Title");
+        if (title == "q")
+            return;
+        language = GetInputDataString("Language");
+        if (language == "q")
+            return;
+        description = GetInputDataString("Description");
+        if (description == "q")
+            return;
+
+        genreCount = GetInputDataInt("How many genres?");
+        if (genreCount == -1)
+            return;
+        for (int i = 0; i < genreCount; i++)
+        {
+            genre = GetInputDataString($"Genre {i + 1}");
+            if (title == "q")
+                return;
+            genres.Add(genre);
+        }
+
+        runTime = GetInputDataInt("Runtime (minutes)");
+        if (runTime == -1)
+            return;
+        ageRating = GetInputDataInt("Age Rating");
+        if (ageRating == -1)
+            return;
+        highestId = GetHighestID();
+        Movie movieToAdd = new Movie(highestId, title, language, description, genres, runTime, ageRating);
+        bool inMenu = true;
+        ConsoleKey choice;
+        while (inMenu)
+        {
+            Console.CursorVisible = false;
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Please confirm the movie details\n");
+            PrintInfo(movieToAdd);
+            Console.WriteLine("\n\nAre you sure the movie details are correct?\n[Y] Yes, add the new movie\n[N] No, this information is incorrect");
+            choice = Console.ReadKey().Key;
+            switch (choice)
+            {
+                case ConsoleKey.Y:
+                    inMenu = false;
+                    break;
+                case ConsoleKey.N:
+                    inMenu = false;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\n\nAddition of movie \"{movieToAdd.Title}\" aborted");
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadLine();
+                    return;
+                default:
+                    continue;
+            }
+        }
+        Console.Clear();
+        DisplayAsciiArt.AdminHeader();
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
+        movies.Add(movieToAdd);
+        JSONMethods.WriteToJSON(movies, JSONMethods.MovieFileName);
+        Console.WriteLine("Adding a new movie\n");
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"Movie \"{movieToAdd.Title}\" has been added");
+        Console.ResetColor();
+        Console.WriteLine("Press any key to continue");
+        Console.ReadLine();
+    }
+
+    private static void RemoveMovieFromJson(Movie movieToRemove)
+    {
+        List<Movie> movies = JSONMethods.ReadJSON<Movie>(FileName).ToList();
+        ConsoleKey choice;
+
+        while (true)
+        {
+            Console.WriteLine($"Are you sure you want to delete {movieToRemove.Title}? (Y/N)");
+            choice = Console.ReadKey(true).Key;
+            switch (choice)
+            {
+                case ConsoleKey.Y:
+                    movies = movies.Where(m => m.Id != movieToRemove.Id).ToList();
+                    JSONMethods.WriteToJSON(movies, FileName);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"{movieToRemove.Title} has been removed");
+                    Console.ResetColor();
+                    Console.WriteLine("Press any key to continue");
+                    Console.ReadKey(true);
+                    return;
+                case ConsoleKey.N:
+                    return;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid key, please choose either [Y] or [N]");
+                    Console.ResetColor();
+                    break;
+            }
+        }
+    }
+
+    public static void RemoveMovie()
+    {
+        bool backSelected = ViewCurrentMovies(RemoveMovieFromJson, true, true);
+        if (backSelected)
+            return;
+        RemoveMovie();
+    }
+
+
+    private static string GetInputDataString(string information)
+    {
+        string input = "";
+        while (true)
+        {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Adding new movie\n");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Enter 'q' at any of the prompts to go back.");
+            Console.ResetColor();
+            Console.Write($"{information}: ");
+            Console.ForegroundColor = Program.InputColor;
+            input += Console.ReadLine();
+            Console.ResetColor();
+            if (input.Length > 0)
+                break;
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid input");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to try again");
+            Console.ReadKey();
+            Console.CursorVisible = true;
+        }
+        return input;
+    }
+
+    private static int GetInputDataInt(string information)
+    {
+        int input;
+        while (true)
+        {
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Adding new movie\n");
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("Enter 'q' at any of the prompts to go back.");
+            Console.ResetColor();
+            Console.Write($"{information}: ");
+            Console.ForegroundColor = Program.InputColor;
+            string userInput = Console.ReadLine();
+            Console.ResetColor();
+            if (userInput == "q")
+                return -1;
+
+            if (int.TryParse(userInput, out input))
+            {
+                if (input > 0)
+                    return input;
+            }
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Invalid number");
+            Console.ResetColor();
+            Console.WriteLine("Press any key to try again");
+            Console.ReadKey();
+            Console.CursorVisible = true;
+        }
+    }
+
+    public static int GetHighestID()
+    {
+        IEnumerable<Movie> movies = JSONMethods.ReadJSON<Movie>(FileName);
+        if (movies.Count() > 0)
+        {
+            return movies.Max(m => m.Id);
+        }
+        return 0;
     }
 }
