@@ -22,6 +22,6 @@
     public override string ToString()
     {
         string admin = IsAdmin ? "Admin" : "User";
-        return $"{admin.PadRight(6)} | {FirstName.PadRight(15).Substring(0, 15)} | {LastName.PadRight(15).Substring(0, 15)} | {Email.PadRight(22).Substring(0, 22)} | {PhoneNumber}";
+        return $"{admin.PadRight(6)} | {FirstName.PadRight(15).Substring(0, 15)} | {LastName.PadRight(15).Substring(0, 15)} | {Email.PadRight(22).Substring(0, 22)} | {PhoneNumber}  ";
     }
 }

@@ -106,45 +106,53 @@ public static class AdminHandler
 
     private static void SetAdminRights()
     {
+        string header = "  Type".PadRight(8) + " | " + "First Name".PadRight(15) + " | " + "Last Name".PadRight(15) + " | " + "Email".PadRight(22) + " | " + "Phonenumber"
+               + "\n--------------------------------------------------------------------------------------";
+        List<User> userObjects = LoginHandler.Users // Skip the Main Admin, that account's admin rights cannot be changed
+            .Where(u => u.Id != MainAdminId)
+            .ToList();
+        List<string> userStrings = new();
+
         while (true)
         {
-            string header = "  Type".PadRight(8) + " | " + "First Name".PadRight(15) + " | " + "Last Name".PadRight(15) + " | " + "Email".PadRight(22) + " | " + "Phonenumber"
-                + "\n----------------------------------------------------------------------------------------";
+            userObjects = userObjects
+                .OrderByDescending(u => u.IsAdmin)
+                .ThenBy(u => u.Id)
+                .ToList();
+            userStrings = userObjects.Select(u => u.ToString()).ToList();
+            userStrings.Add("Back");
+
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            List<string> users = new();
-            LoginHandler.Users.Where(u => u.Id != MainAdminId).ToList().ForEach(u => users.Add(u.ToString())); // Skip the MainAdmin account
-            users.Add("Back");
-            int index = Menu.Start($"Set Admin Rights\n\nSelect a user to change the Admin rights:\n\n{header}", users, true);
-            if (index == users.Count || index == users.Count - 1) // Back selected or Escape pressed
+            int index = Menu.Start($"Set Admin Rights\n\nSelect a user to change the Admin rights:\n\n{header}", userStrings, true);
+            if (index == userStrings.Count || index == userStrings.Count - 1) // Back selected or Escape pressed
                 return;
 
-            User selectedUser = LoginHandler.Users[index + 1]; // Plus one to skip over the Main Admin Account
-            if (selectedUser.Id == MainAdminId)
+            User selectedUser = userObjects[index];
+            
+            Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
+            ConsoleKey pressedKey = Console.ReadKey(true).Key;
+            if (pressedKey == ConsoleKey.Y)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nYou cannot change the Admin rights for this account");
+                selectedUser.IsAdmin = !selectedUser.IsAdmin;
+                if (selectedUser.IsAdmin)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} no longer has Admin rights");
+                }
+                
                 Console.ResetColor();
                 Console.WriteLine("\nPress any key to continue");
                 Console.ReadKey();
             }
-            else
+            else if (pressedKey == ConsoleKey.N)
             {
-                Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
-                ConsoleKey pressedKey = Console.ReadKey(true).Key;
-                if (pressedKey == ConsoleKey.Y)
-                {
-                    selectedUser.IsAdmin = !selectedUser.IsAdmin;
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
-                    Console.ResetColor();
-                    Console.WriteLine("\nPress any key to continue");
-                    Console.ReadKey();
-                }
-                else if (pressedKey == ConsoleKey.N)
-                {
-                    continue;
-                }
+                continue;
             }
         }
     }
