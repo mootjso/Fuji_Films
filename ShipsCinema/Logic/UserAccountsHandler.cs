@@ -2,8 +2,8 @@
 {
     private const int MainAdminId = 1;
 
-    // Extra check added in this method to ensure main admin rights do not get changed ever
-    public static void ChangeUserAdminRights(User user) => user.IsAdmin = user.Id != MainAdminId ? !user.IsAdmin : user.IsAdmin;
+    // Extra check added in this method to ensure the rights of the main admin do not get revoked
+    public static void ChangeUserAdminRights(User user) => user.IsAdmin = user.Id == MainAdminId ? true : !user.IsAdmin;
 
     public static User? SelectUserFromList(bool alsoMainAdmin = false)
     {
