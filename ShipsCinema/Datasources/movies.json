@@ -196,14 +196,5 @@
     "Genres": [ "Familie", "Avontuur" ],
     "Runtime": 105,
     "AgeRating": 6
-  },
-  {
-    "Id": 25,
-    "Title": "Kaas",
-    "Language": "nl",
-    "Description": "Heel veel gele kaas",
-    "Genres": [ "Avontuur", "Thriller" ],
-    "Runtime": 135,
-    "AgeRating": 18
   }
 ]
