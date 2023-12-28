@@ -1,7 +1,5 @@
 public static class AdminHandler
-{
-    private const int MainAdminId = 1;
-    
+{   
     public static void StartMenu(User adminAccount)
     {
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
@@ -106,35 +104,17 @@ public static class AdminHandler
 
     private static void SetAdminRights()
     {
-        string header = "  Type".PadRight(8) + " | " + "First Name".PadRight(15) + " | " + "Last Name".PadRight(15) + " | " + "Email".PadRight(22) + " | " + "Phonenumber"
-               + "\n--------------------------------------------------------------------------------------";
-        List<User> userObjects = LoginHandler.Users // Skip the Main Admin, that account's admin rights cannot be changed
-            .Where(u => u.Id != MainAdminId)
-            .ToList();
-        List<string> userStrings = new();
-
         while (true)
         {
-            userObjects = userObjects
-                .OrderByDescending(u => u.IsAdmin)
-                .ThenBy(u => u.Id)
-                .ToList();
-            userStrings = userObjects.Select(u => u.ToString()).ToList();
-            userStrings.Add("Back");
-
-            Console.Clear();
-            DisplayAsciiArt.AdminHeader();
-            int index = Menu.Start($"Set Admin Rights\n\nSelect a user to change the Admin rights:\n\n{header}", userStrings, true);
-            if (index == userStrings.Count || index == userStrings.Count - 1) // Back selected or Escape pressed
+            User? selectedUser = UserAccountsHandler.SelectUserFromList();
+            if (selectedUser == null) // Back selected or Escape pressed
                 return;
 
-            User selectedUser = userObjects[index];
-            
             Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
             ConsoleKey pressedKey = Console.ReadKey(true).Key;
             if (pressedKey == ConsoleKey.Y)
             {
-                selectedUser.IsAdmin = !selectedUser.IsAdmin;
+                UserAccountsHandler.ChangeUserAdminRights(selectedUser);
                 if (selectedUser.IsAdmin)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -145,7 +125,7 @@ public static class AdminHandler
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} no longer has Admin rights");
                 }
-                
+
                 Console.ResetColor();
                 Console.WriteLine("\nPress any key to continue");
                 Console.ReadKey();
