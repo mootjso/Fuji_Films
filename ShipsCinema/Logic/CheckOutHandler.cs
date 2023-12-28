@@ -47,7 +47,7 @@ public class CheckOutHandler
         }
     }
 
-    public static void RevenueQuarterYearIfStatement(Ticket ticket, double moneyAdded)
+    public static void RevenueQuarterYearIfStatement(Ticket ticket, double moneyAdded, int newTickets)
     {
         List<Revenue> revenuesPerShow = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
         List<RevenueQuartly> quarterYearRevenues = JSONMethods
@@ -74,7 +74,8 @@ public class CheckOutHandler
                     movie.Title,
                     revenue.TotalRevenue,
                     quarter,
-                    revenue.YearDate
+                    revenue.YearDate,
+                    newTickets
                 );
                 quarterYearRevenues.Add(newRevenueQuarter);
             }
@@ -83,6 +84,7 @@ public class CheckOutHandler
                 if (ticket.ShowId == revenue.ShowId)
                 {
                     existingQuarterRevenue.TotalRevenue += moneyAdded;
+                    existingQuarterRevenue.TicketAmount += newTickets;
                 }
             }
         }
