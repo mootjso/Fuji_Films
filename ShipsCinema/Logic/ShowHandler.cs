@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-using System;
 using System.Globalization;
 
 public static class ShowHandler
@@ -268,7 +266,7 @@ public static class ShowHandler
 
         while (true)
         {
-            Console.WriteLine($"\nAre you sure you want to delete this showing? [Y] Yes, remove it\n[N] No, cancel");
+            Console.WriteLine($"\nAre you sure you want to delete this showing?\n[Y] Yes, remove it\n[N] No, cancel");
             choice = Console.ReadKey(true).Key;
             switch (choice)
             {
@@ -276,7 +274,7 @@ public static class ShowHandler
                     showings = showings.Where(s => s.Id != showing.Id).ToList();
                     JSONMethods.WriteToJSON(showings, FileName);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Showing has been removed");
+                    Console.WriteLine("\nShowing has been removed");
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
