@@ -108,7 +108,7 @@ public static class AdminHandler
         {
             User? selectedUser = UserAccountsHandler.SelectUserFromList();
             if (selectedUser == null) // Back selected or Escape pressed
-                return;
+                break;
 
             Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
             ConsoleKey pressedKey = Console.ReadKey(true).Key;
@@ -135,5 +135,6 @@ public static class AdminHandler
                 continue;
             }
         }
+        JSONMethods.WriteToJSON(LoginHandler.Users, LoginHandler.FileName);
     }
 }
