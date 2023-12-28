@@ -248,7 +248,6 @@ public static class ShowHandler
             newShow.DateAndTime = customTime;
         }
 
-        // POSSIBLE FEATURE: Check if the time is available at a different theater
         return newShow;
     }
 
@@ -269,7 +268,7 @@ public static class ShowHandler
 
         while (true)
         {
-            Console.WriteLine($"Are you sure you want to delete this showing? (Y/N)");
+            Console.WriteLine($"\nAre you sure you want to delete this showing? [Y] Yes, remove it\n[N] No, cancel");
             choice = Console.ReadKey(true).Key;
             switch (choice)
             {

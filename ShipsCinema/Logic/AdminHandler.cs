@@ -76,7 +76,7 @@ public static class AdminHandler
                     break;
                 case 2:
                     Console.Clear();
-                    ChangeMovieDetails.EditMovieDescription();
+                    ChangeMovieDetails.EditMovieInfo();
                     break;
                 case 3:
                     Console.Clear();
@@ -111,29 +111,34 @@ public static class AdminHandler
                 break;
 
             Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
-            ConsoleKey pressedKey = Console.ReadKey(true).Key;
-            if (pressedKey == ConsoleKey.Y)
+            while (true)
             {
-                UserAccountsHandler.ChangeUserAdminRights(selectedUser);
-                if (selectedUser.IsAdmin)
+                ConsoleKey pressedKey = Console.ReadKey(true).Key;
+                if (pressedKey == ConsoleKey.Y)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} no longer has Admin rights");
-                }
+                    UserAccountsHandler.ChangeUserAdminRights(selectedUser);
+                    if (selectedUser.IsAdmin)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} no longer has Admin rights");
+                    }
 
-                Console.ResetColor();
-                Console.WriteLine("\nPress any key to continue");
-                Console.ReadKey();
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else if (pressedKey == ConsoleKey.N)
+                {
+                    break;
+                }
             }
-            else if (pressedKey == ConsoleKey.N)
-            {
-                continue;
-            }
+            
         }
         JSONMethods.WriteToJSON(LoginHandler.Users, LoginHandler.FileName);
     }

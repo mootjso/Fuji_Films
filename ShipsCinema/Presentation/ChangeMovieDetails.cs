@@ -1,9 +1,8 @@
 using Newtonsoft.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Diagnostics;
+
 public static class ChangeMovieDetails
 {
-    public static void EditMovieDescription()
+    public static void EditMovieInfo()
     {
         List<Movie> movies = JSONMethods.ReadJSON<Movie>(JSONMethods.MovieFileName).ToList();
 
@@ -30,11 +29,13 @@ public static class ChangeMovieDetails
             List<Movie> pageMovies = movies.GetRange(startIndex, endIndex - startIndex);
             List<string> movieTitles = MovieHandler.GetMovieTitles(pageMovies);
 
-            string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n";
+            string menuText = $"Select a movie to edit (Page {currentPage + 1}):\n\n" +
+                $"  {"Title",-30} | {"Language",-10} | {"Genres",-30} | {"Runtime",-8} | Age\n" +
+                $"  {new string('-', 93)}";
             List<string> menuOptions = new List<string>(movieTitles);
             menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
 
-            int index = Menu.Start(menuText, menuOptions, true);
+            int index = Menu.Start(menuText, menuOptions, true, true);
 
 
             if (index == menuOptions.Count - 3 && currentPage > 0) // next page
@@ -47,7 +48,6 @@ public static class ChangeMovieDetails
             }
 
             else if (index == menuOptions.Count || index == menuOptions.Count - 1)
-
             {
                 break;
             }
