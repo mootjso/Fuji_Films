@@ -1,9 +1,11 @@
 public static class AdminHandler
 {
+    private const int MainAdminId = 1;
+    
     public static void StartMenu(User adminAccount)
     {
         string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Log Out" };
+        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out" };
 
         while (true)
         {
@@ -13,7 +15,8 @@ public static class AdminHandler
             const int AddRemoveMovieOption = 1;
             const int AddRemoveShowOption = 2;
             const int TakeOutSeatsOption = 3;
-            const int LogOutOption = 4;
+            const int SetAdminRightsOption = 4;
+            const int LogOutOption = 5;
 
             switch (selection)
             {
@@ -32,6 +35,10 @@ public static class AdminHandler
                 case TakeOutSeatsOption:
                     Console.Clear();
                     TakeOutSeats(adminAccount);
+                    break;
+                case SetAdminRightsOption:
+                    Console.Clear();
+                    SetAdminRights();
                     break;
                 case LogOutOption:
                     Console.Clear();
@@ -95,5 +102,50 @@ public static class AdminHandler
         Theater theater = TheaterHandler.CreateOrGetTheater(show);
 
         TheaterHandler.SelectSeats(adminAccount, theater);
+    }
+
+    private static void SetAdminRights()
+    {
+        while (true)
+        {
+            string header = "  Type".PadRight(8) + " | " + "First Name".PadRight(15) + " | " + "Last Name".PadRight(15) + " | " + "Email".PadRight(22) + " | " + "Phonenumber"
+                + "\n----------------------------------------------------------------------------------------";
+            Console.Clear();
+            DisplayAsciiArt.AdminHeader();
+            List<string> users = new();
+            LoginHandler.Users.Where(u => u.Id != MainAdminId).ToList().ForEach(u => users.Add(u.ToString())); // Skip the MainAdmin account
+            users.Add("Back");
+            int index = Menu.Start($"Set Admin Rights\n\nSelect a user to change the Admin rights:\n\n{header}", users, true);
+            if (index == users.Count || index == users.Count - 1) // Back selected or Escape pressed
+                return;
+
+            User selectedUser = LoginHandler.Users[index + 1]; // Plus one to skip over the Main Admin Account
+            if (selectedUser.Id == MainAdminId)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("\nYou cannot change the Admin rights for this account");
+                Console.ResetColor();
+                Console.WriteLine("\nPress any key to continue");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
+                ConsoleKey pressedKey = Console.ReadKey(true).Key;
+                if (pressedKey == ConsoleKey.Y)
+                {
+                    selectedUser.IsAdmin = !selectedUser.IsAdmin;
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                }
+                else if (pressedKey == ConsoleKey.N)
+                {
+                    continue;
+                }
+            }
+        }
     }
 }
