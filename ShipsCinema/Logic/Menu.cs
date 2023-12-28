@@ -13,7 +13,7 @@ public static class Menu
     static int selectedOption = 0;
     static ConsoleKeyInfo keyInfo;
 
-    public static int Start(string text, List<string> options, bool IsAdmin = false)
+    public static int Start(string text, List<string> options, bool IsAdmin = false, bool pagination = false)
     {
         selectedOption = 0;
         Console.CursorVisible = false;
@@ -31,10 +31,18 @@ public static class Menu
                 AdHandler.DisplaySnacks();
             }
 
-            DisplayOptions(text, options);
+            DisplayOptions(text, options, pagination);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
             {
+                case ConsoleKey.LeftArrow:
+                    if (pagination)
+                        return options.Count - 3;
+                    break;
+                case ConsoleKey.RightArrow:
+                    if (pagination)
+                        return options.Count - 2;
+                    break;
                 case ConsoleKey.UpArrow:
                     if (selectedOption > 0)
                         selectedOption--;
@@ -55,7 +63,7 @@ public static class Menu
         return -1;
     }
 
-    private static void DisplayOptions(string text, List<string> options)
+    private static void DisplayOptions(string text, List<string> options, bool pagination = false)
     {
         Console.WriteLine(text);
 
@@ -77,6 +85,8 @@ public static class Menu
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine("\nControls:\n[Up/down arrow keys] Navigation\n[Enter] Select an option\n[Esc] Go back");
+        if (pagination)
+            Console.WriteLine("[Left Arrow] Previous Page\n[Right Arrow] Next Page");
         Console.ResetColor();
     }
 
@@ -96,16 +106,17 @@ public static class Menu
             Start(messageWhenEmpty, menuOption, isAdmin);
             return true;
         }
-        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+        
         int pageNumber = 0;
         int pageSize = 10;
         int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
+        menuOptions.AddRange(new List<string> { $"  Previous Page ({pageNumber + 1}/{maxPages})", "  Next Page", "  Back" });
         int firstOptionIndex;
         int endIndex;
 
         while (true)
         {
-            int selection = Start(menuText, menuOptions, isAdmin);
+            int selection = Start(menuText, menuOptions, isAdmin, true);
             if (selection == menuOptions.Count)
                 break; // Go back to main menu
             else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
@@ -133,7 +144,7 @@ public static class Menu
                 menuOptions = menuOptionsFull.GetRange(firstOptionIndex, endIndex);
             else
                 menuOptions = menuOptionsFull.GetRange(firstOptionIndex, pageSize);
-            menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+            menuOptions.AddRange(new List<string> { $"  Previous Page ({pageNumber + 1}/{maxPages})", "  Next Page", "  Back" });
         }
         return false;
     }
