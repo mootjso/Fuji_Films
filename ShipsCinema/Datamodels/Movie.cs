@@ -19,4 +19,6 @@
         Runtime = runtime;
         AgeRating = ageRating;
     }
+
+    public override string ToString() => Title;
 }
