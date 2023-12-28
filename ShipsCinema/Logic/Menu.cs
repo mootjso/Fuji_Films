@@ -29,8 +29,8 @@ public static class Menu
             {
                 DisplayAsciiArt.Header();
                 AdHandler.DisplaySnacks();
-            }            
-          
+            }
+
             DisplayOptions(text, options);
             keyInfo = Console.ReadKey();
             switch (keyInfo.Key)
@@ -78,5 +78,63 @@ public static class Menu
         Console.BackgroundColor = ConsoleColor.Black;
         Console.WriteLine("\nControls:\n[Up/down arrow keys] Navigation\n[Enter] Select an option\n[Esc] Go back");
         Console.ResetColor();
+    }
+
+    public static bool MenuPagination<T>(List<string> menuOptionsFull, string menuText, string messageWhenEmpty, Func<T, bool> func, List<T>? menuOptionsFullObjects = null, bool isAdmin = false)
+    {
+        if (menuOptionsFullObjects is null)
+            menuOptionsFullObjects = menuOptionsFull.Select(s => (T)Convert.ChangeType(s, typeof(T))).ToList();
+        List<string> menuOptions;
+        if (menuOptionsFull.Count >= 10)
+            menuOptions = menuOptionsFull.GetRange(0, 10);
+        else
+            menuOptions = menuOptionsFull.GetRange(0, menuOptionsFull.Count);
+
+        if (menuOptions.Count <= 0)
+        {
+            List<string> menuOption = new() { "Back" };
+            Start(messageWhenEmpty, menuOption, isAdmin);
+            return true;
+        }
+        menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+        int pageNumber = 0;
+        int pageSize = 10;
+        int maxPages = Convert.ToInt32(Math.Ceiling((double)menuOptionsFull.Count / pageSize));
+        int firstOptionIndex;
+        int endIndex;
+
+        while (true)
+        {
+            int selection = Start(menuText, menuOptions, isAdmin);
+            if (selection == menuOptions.Count)
+                break; // Go back to main menu
+            else if (selection == menuOptions.Count - 2 && pageNumber < (maxPages - 1)) // Next page
+                pageNumber++;
+            else if (selection == menuOptions.Count - 3 && pageNumber != 0) // Previous page
+                pageNumber--;
+            else if (selection == menuOptions.Count - 1)
+                return true;
+            else if (selection >= 0 && selection < menuOptions.Count - 3)
+            {
+                selection += (pageNumber * 10);
+                T obj = menuOptionsFullObjects[selection];
+                bool isRemoved = func(obj);
+                // Check if object has been deleted, return if yes
+                // That way you don't go back to the  menu, deleted object would still be visible there
+                if (isRemoved)
+                {
+                    return false;
+                }
+            }
+            firstOptionIndex = pageSize * pageNumber;
+            // Prevent Error when page has less than 10 entries
+            endIndex = menuOptionsFull.Count % 10;
+            if (endIndex != 0 && pageNumber == maxPages - 1)
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, endIndex);
+            else
+                menuOptions = menuOptionsFull.GetRange(firstOptionIndex, pageSize);
+            menuOptions.AddRange(new List<string> { "  Previous Page", "  Next Page", "  Back" });
+        }
+        return false;
     }
 }
