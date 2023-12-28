@@ -2,7 +2,11 @@ public static class AdminHandler
 {   
     public static void StartMenu(User adminAccount)
     {
-        string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
+        string MenuText;
+        if (adminAccount.Id == UserAccountsHandler.MainAdminId)
+            MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
+        else
+            MenuText = $"Welcome Crew Member!\n\nWhat would you like to do?";
         List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out" };
 
         while (true)
@@ -36,7 +40,7 @@ public static class AdminHandler
                     break;
                 case SetAdminRightsOption:
                     Console.Clear();
-                    SetAdminRights();
+                    SetAdminRights(adminAccount);
                     break;
                 case LogOutOption:
                     Console.Clear();
@@ -102,8 +106,20 @@ public static class AdminHandler
         TheaterHandler.SelectSeats(adminAccount, theater);
     }
 
-    private static void SetAdminRights()
+    private static void SetAdminRights(User user) // Only the main admin is allowed to change rights
     {
+        if (user.Id != UserAccountsHandler.MainAdminId)
+        {
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Set Admin Rights\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Only the Main Admin is allowed to change user's rights.");
+            Console.ResetColor();
+            Console.WriteLine("\nPress any key to go back");
+            Console.ReadKey();
+            return;
+        }
+            
         while (true)
         {
             User? selectedUser = UserAccountsHandler.SelectUserFromList();

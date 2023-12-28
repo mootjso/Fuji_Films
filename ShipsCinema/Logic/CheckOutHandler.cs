@@ -151,7 +151,7 @@ public class CheckOutHandler
         Console.WriteLine("Checkout");
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine("\nEnter 'q' at any of the prompts to cancel this reservation.");
-        Console.WriteLine("Enter 'r' to start over.");
+        Console.WriteLine("Enter 'r' to start over with your payment information.");
         Console.ResetColor();
     }
 

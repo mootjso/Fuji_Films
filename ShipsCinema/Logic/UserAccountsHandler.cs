@@ -1,6 +1,6 @@
 ﻿public class UserAccountsHandler
 {
-    private const int MainAdminId = 1;
+    public const int MainAdminId = 1;
 
     // Extra check added in this method to ensure the rights of the main admin do not get revoked
     public static void ChangeUserAdminRights(User user) => user.IsAdmin = user.Id == MainAdminId ? true : !user.IsAdmin;
