@@ -392,7 +392,7 @@ public static class ShowHandler
             string dateString = dates[index];
             DateTime date = DateTime.Parse(dateString);
 
-            List<Show> showsForDate = GetShowsByDate(date);
+            List<Show> showsForDate = GetShowsByDate(date).Where(s => s.DateAndTime > DateTime.Now).ToList();
 
             // Create list of formatted strings to display to the user
             List<string> movieMenuString = CreateListMovieStrings(showsForDate);
@@ -418,8 +418,9 @@ public static class ShowHandler
 
     public static List<string> GetDatesOfFutureShows()
     {
+        Shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime > DateTime.Now).ToList();
         List<DateTime> dates = new();
-        foreach (var _show in ShowHandler.Shows)
+        foreach (var _show in Shows)
         {
             DateTime date = _show.DateAndTime.Date;
             if (date.Date >= DateTime.Today && !dates.Contains(date))
