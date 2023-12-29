@@ -54,10 +54,11 @@ public static class ShowHandler
 
     public static List<Show> GetShowsByDate(DateTime date)
     {
+        Shows = JSONMethods.ReadJSON<Show>(FileName).ToList();
         List<Show> shows = new();
         foreach (var show in Shows)
         {
-            if (show.DateAndTime.Date == date.Date)
+            if (show.DateAndTime.Date == date.Date && !show.Removed)
                 shows.Add(show);
         }
         shows.Sort((s1, s2) => s1.DateAndTime.CompareTo(s2.DateAndTime));
@@ -68,7 +69,7 @@ public static class ShowHandler
     private static List<Show> GetShowsByDate(string date)
     {
         List<Show> showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
-        return showings.Where(s => s.DateString == date).ToList();
+        return showings.Where(s => s.DateString == date && !s.Removed).ToList();
     }
 
     public static void AddShow()
@@ -264,7 +265,7 @@ public static class ShowHandler
 
     private static bool RemoveShowingFromJson(Show showing)
     {
-        var showings = JSONMethods.ReadJSON<Show>(FileName);
+        var showings = JSONMethods.ReadJSON<Show>(FileName).ToList();
         ConsoleKey choice;
 
         while (true)
@@ -274,7 +275,12 @@ public static class ShowHandler
             switch (choice)
             {
                 case ConsoleKey.Y:
-                    showings = showings.Where(s => s.Id != showing.Id).ToList();
+                    showings.ForEach(s =>
+                    {
+                        if (s.Id == showing.Id)
+                            s.Removed = true;
+                    }
+                    );
                     JSONMethods.WriteToJSON(showings, FileName);
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Showing has been removed");
@@ -445,7 +451,7 @@ public static class ShowHandler
 
     public static List<string> GetAllDates()
     {
-        Shows = JSONMethods.ReadJSON<Show>(FileName).ToList();
+        Shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => !s.Removed).ToList();
         List<DateTime> dates = new();
         foreach (var _show in Shows)
         {
