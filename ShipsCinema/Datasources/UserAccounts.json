@@ -10,9 +10,9 @@
   },
   {
     "Id": 2,
-    "FirstName": "Geert",
-    "LastName": "Wilders",
-    "Email": "geert@wilders.com",
+    "FirstName": "John",
+    "LastName": "Doe",
+    "Email": "johndoe@mail.com",
     "Password": "Password123",
     "PhoneNumber": "0625672338",
     "IsAdmin": false

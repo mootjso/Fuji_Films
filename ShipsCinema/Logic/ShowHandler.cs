@@ -1,5 +1,3 @@
-using Microsoft.VisualBasic;
-using System;
 using System.Globalization;
 
 public static class ShowHandler
@@ -83,7 +81,7 @@ public static class ShowHandler
             {
                 Console.Clear();
                 DisplayAsciiArt.AdminHeader();
-                Console.WriteLine("Show Schedule");
+                Console.WriteLine("Showing Schedule");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\nCan't add showing as there are no movies available");
                 Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -92,7 +90,7 @@ public static class ShowHandler
                 Console.ReadKey();
                 return;
             }
-            string menuText = $"Show Schedule\n\nSelect a movie:\n" +
+            string menuText = $"Showing Schedule\n\nSelect a movie:\n" +
             $"  {"Title",-30} | {"Language",-10} | {"Genres",-30} | {"Runtime",-8} | Age\n" +
             $"  {new string('-', 93)}";
             int index = Menu.Start(menuText, movieTitles, true);
@@ -101,7 +99,7 @@ public static class ShowHandler
             Movie movie = MovieHandler.Movies[index];
 
             // Theater selection
-            string menuString = "Show Schedule\n\nSelect a theater:";
+            string menuString = "Showing Schedule\n\nSelect a theater:";
             List<string> menuOptions = new() { "Small (150 seats)", "Medium (300 seats)", "Large (500 seats)" };
             index = Menu.Start(menuString, menuOptions, true);
             if (index == menuOptions.Count)
@@ -111,7 +109,7 @@ public static class ShowHandler
             
             // Date selection
             List<string> dates = CreateDatesList(14);
-            index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
+            index = Menu.Start("Showing Schedule\n\nSelect a date:", dates, true);
             if (index == dates.Count)  // If user presses left arrow key leave current while loop
                 break;
 
@@ -127,7 +125,7 @@ public static class ShowHandler
                 return;
 
             // Confirm or cancel selection
-            string menuHeader = $"Show Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
+            string menuHeader = $"Showing Schedule\n\nMovie: {movie.Title}\nTheater: {selectedTheater}\nDate: {show.DateString}\nTime: {show.StartTimeString} - {show.EndTimeString}\n\nAdd this show to the schedule:";
             int selection = ConfirmSelection(menuHeader, true);
             if (!(selection == 0))
             {
@@ -139,9 +137,9 @@ public static class ShowHandler
             
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine("Show Schedule");
+            Console.WriteLine("Showing Schedule");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nThe show has been added");
+            Console.WriteLine("\nThe showing has been added");
 
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("\nPress any key to continue");
@@ -249,7 +247,6 @@ public static class ShowHandler
             newShow.DateAndTime = customTime;
         }
 
-        // POSSIBLE FEATURE: Check if the time is available at a different theater
         return newShow;
     }
 
@@ -270,7 +267,7 @@ public static class ShowHandler
 
         while (true)
         {
-            Console.WriteLine($"Are you sure you want to delete this showing? (Y/N)");
+            Console.WriteLine($"\nAre you sure you want to delete this showing?\n[Y] Yes, remove it\n[N] No, cancel");
             choice = Console.ReadKey(true).Key;
             switch (choice)
             {
@@ -283,7 +280,7 @@ public static class ShowHandler
                     );
                     JSONMethods.WriteToJSON(showings, FileName);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Showing has been removed");
+                    Console.WriteLine("\nShowing has been removed");
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey();
@@ -338,7 +335,7 @@ public static class ShowHandler
             Console.Clear();
             Console.CursorVisible = true;
             DisplayAsciiArt.AdminHeader();
-            Console.WriteLine($"Show Schedule\n\nMovie: {movieToAdd.Title}\nTheater: {selectedTheater}\nDate: {dateString}");
+            Console.WriteLine($"Showing Schedule\n\nMovie: {movieToAdd.Title}\nTheater: {selectedTheater}\nDate: {dateString}");
             Console.Write("\nStart time of the movie (HH:mm): ");
             string? timeString = Console.ReadLine();
             Console.CursorVisible = false;
@@ -371,7 +368,7 @@ public static class ShowHandler
             if (dates.Count == 0)
             {
                 List<string> menuOption = new() { "Back" };
-                Menu.Start("Show Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption);
+                Menu.Start("Showing Schedule\n\nThere are no movies scheduled at the moment, please come back later", menuOption);
 
                 return null;
             }
@@ -381,9 +378,9 @@ public static class ShowHandler
 
             int index;
             if (!isAdmin)
-                index = Menu.Start("Show Schedule\n\nSelect a date:", dates);
+                index = Menu.Start("Showing Schedule\n\nSelect a date to see the showings for that day:", dates);
             else
-                index = Menu.Start("Show Schedule\n\nSelect a date:", dates, true);
+                index = Menu.Start("Showing Schedule\n\nSelect a date to see the showings for that day:", dates, true);
 
 
             if (index == dates.Count || index == dates.Count - 1)
@@ -398,7 +395,7 @@ public static class ShowHandler
             List<string> movieMenuString = CreateListMovieStrings(showsForDate);
             movieMenuString.Add("Back");
 
-            index = Menu.Start($"Show Schedule\n\nShows on {dateString}:", movieMenuString, isAdmin);
+            index = Menu.Start($"Showing Schedule\n\nShows on {dateString}:", movieMenuString, isAdmin);
             if (index == movieMenuString.Count || index == movieMenuString.Count - 1)
                 continue;
 
@@ -478,7 +475,10 @@ public static class ShowHandler
         if (isAdmin)
             DisplayAsciiArt.AdminHeader();
         else
+        {
             DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+        }
 
         Console.WriteLine($"Showings of {movie.Title}\n");
 

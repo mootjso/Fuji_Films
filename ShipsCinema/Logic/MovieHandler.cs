@@ -231,7 +231,7 @@ public static class MovieHandler
 
         while (true)
         {
-            Console.WriteLine($"Are you sure you want to delete {movieToRemove.Title}? (Y/N)");
+            Console.WriteLine($"\nAre you sure you want to delete {movieToRemove.Title}?\n[Y] Yes, delete the movie\n[N] No, cancel");
             choice = Console.ReadKey(true).Key;
             switch (choice)
             {
@@ -244,7 +244,7 @@ public static class MovieHandler
                     );
                     JSONMethods.WriteToJSON(movies, FileName);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"{movieToRemove.Title} has been removed");
+                    Console.WriteLine($"\n{movieToRemove.Title} has been removed");
                     Console.ResetColor();
                     Console.WriteLine("Press any key to continue");
                     Console.ReadKey(true);
