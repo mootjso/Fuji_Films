@@ -1,9 +1,13 @@
 public static class AdminHandler
-{
+{   
     public static void StartMenu(User adminAccount)
     {
-        string MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Log Out" };
+        string MenuText;
+        if (adminAccount.Id == UserAccountsHandler.MainAdminId)
+            MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
+        else
+            MenuText = $"Welcome Crew Member!\n\nWhat would you like to do?";
+        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out" };
 
         while (true)
         {
@@ -13,7 +17,8 @@ public static class AdminHandler
             const int AddRemoveMovieOption = 1;
             const int AddRemoveShowOption = 2;
             const int TakeOutSeatsOption = 3;
-            const int LogOutOption = 4;
+            const int SetAdminRightsOption = 4;
+            const int LogOutOption = 5;
 
             switch (selection)
             {
@@ -32,6 +37,10 @@ public static class AdminHandler
                 case TakeOutSeatsOption:
                     Console.Clear();
                     TakeOutSeats(adminAccount);
+                    break;
+                case SetAdminRightsOption:
+                    Console.Clear();
+                    SetAdminRights(adminAccount);
                     break;
                 case LogOutOption:
                     Console.Clear();
@@ -71,7 +80,7 @@ public static class AdminHandler
                     break;
                 case 2:
                     Console.Clear();
-                    ChangeMovieDetails.EditMovieDescription();
+                    ChangeMovieDetails.EditMovieInfo();
                     break;
                 case 3:
                     Console.Clear();
@@ -95,5 +104,58 @@ public static class AdminHandler
         Theater theater = TheaterHandler.CreateOrGetTheater(show);
 
         TheaterHandler.SelectSeats(adminAccount, theater);
+    }
+
+    private static void SetAdminRights(User user) // Only the main admin is allowed to change rights
+    {
+        if (user.Id != UserAccountsHandler.MainAdminId)
+        {
+            DisplayAsciiArt.AdminHeader();
+            Console.WriteLine("Set Admin Rights\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Only the Main Admin is allowed to change user's rights.");
+            Console.ResetColor();
+            Console.WriteLine("\nPress any key to go back");
+            Console.ReadKey();
+            return;
+        }
+            
+        while (true)
+        {
+            User? selectedUser = UserAccountsHandler.SelectUserFromList();
+            if (selectedUser == null) // Back selected or Escape pressed
+                break;
+
+            Console.WriteLine($"\nChange the admin rights for {selectedUser.FirstName} {selectedUser.LastName}?\n[Y] Yes, change the Admin Rights\n[N] No, cancel");
+            while (true)
+            {
+                ConsoleKey pressedKey = Console.ReadKey(true).Key;
+                if (pressedKey == ConsoleKey.Y)
+                {
+                    UserAccountsHandler.ChangeUserAdminRights(selectedUser);
+                    if (selectedUser.IsAdmin)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} now has Admin rights");
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"\n{selectedUser.FirstName} {selectedUser.LastName} no longer has Admin rights");
+                    }
+
+                    Console.ResetColor();
+                    Console.WriteLine("\nPress any key to continue");
+                    Console.ReadKey();
+                    break;
+                }
+                else if (pressedKey == ConsoleKey.N)
+                {
+                    break;
+                }
+            }
+            
+        }
+        JSONMethods.WriteToJSON(LoginHandler.Users, LoginHandler.FileName);
     }
 }
