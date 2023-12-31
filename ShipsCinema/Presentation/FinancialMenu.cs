@@ -27,7 +27,7 @@
                     break;
                 }
                 string quarterLong = menuOptions[index];
-                string quarterShort = index == 0 ? "q1" : index == 1 ? "q2" : index == 2 ? "q3" : "q4";
+                int quarterShort = index == 0 ? 1 : index == 1 ? 2 : index == 2 ? 3 : 4;
 
                 while (true)
                 {
@@ -44,7 +44,7 @@
                     DisplayAsciiArt.AdminHeader();
                     Console.WriteLine("Financial Overview");
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n\nA new csv file has been created '{year}-{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
+                    Console.WriteLine($"\n\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
                     FinancialHandler.CSVCreater(year, quarterShort, infoBy);
                     Console.ForegroundColor = ConsoleColor.DarkGray;
                     Console.WriteLine("\n\nPress any key to continue");
