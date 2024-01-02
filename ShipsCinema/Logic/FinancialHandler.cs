@@ -17,6 +17,10 @@ public static class FinancialHandler
 
         string fileName = $"{year}-q{quarter}-{infoBy}.csv";
         string directoryPath = @"..\..\..\..\FinancialReports";
+        if (!Directory.Exists(directoryPath))
+        {
+            System.IO.Directory.CreateDirectory(directoryPath);
+        }
 
         string filePath = Path.Combine(directoryPath, fileName);
         using (var writer = new StreamWriter(filePath, false, new UTF8Encoding(true)))
