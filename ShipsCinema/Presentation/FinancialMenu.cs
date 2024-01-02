@@ -40,16 +40,20 @@
                     }
 
                     string infoBy = index == 0 ? "byTheater" : "byMovie";
-                    Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("Financial Overview");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
-                    FinancialHandler.CSVCreater(year, quarterShort, infoBy);
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine("\n\nPress any key to continue");
-                    Console.ReadKey();
-                    Console.ResetColor();
+                    bool fileCreated = FinancialHandler.CSVCreater(year, quarterShort, infoBy);
+
+                    if (fileCreated)
+                    {
+                        Console.Clear();
+                        DisplayAsciiArt.AdminHeader();
+                        Console.WriteLine("Financial Overview");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"\n\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
+                        Console.ResetColor();
+                        Console.WriteLine("\n\nPress any key to continue");
+                        Console.ReadKey();
+                        Console.ResetColor();
+                    }
                     return;
                 }
             }
