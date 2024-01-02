@@ -228,11 +228,13 @@ public class CheckOutHandler
         WriteHeaders();
         WriteBookingInfo(movie, show, seatsInfo);
         Console.WriteLine($"\n\nIs this information correct?\n[Y] Yes, continue to checkout\n[N] No, go back to seat selection\n");
-        ConsoleKey pressedKey = Console.ReadKey().Key;
-        if (pressedKey == ConsoleKey.Y)
-            return true;
-        
-        return false;
+        ConsoleKey pressedKey = Console.ReadKey(true).Key;
+        while (pressedKey != ConsoleKey.Y && pressedKey != ConsoleKey.N)
+        {
+            pressedKey = Console.ReadKey(true).Key;
+        }
+
+        return pressedKey == ConsoleKey.Y ? true : false;
     }
     
     public static (bool bookingCorrect, bool paymentConfirmed) CheckOut(Show selectedShow, List<Seat> seats)
