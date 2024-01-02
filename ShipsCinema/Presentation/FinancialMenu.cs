@@ -48,9 +48,9 @@
                         DisplayAsciiArt.AdminHeader();
                         Console.WriteLine("Financial Overview");
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\n\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
+                        Console.WriteLine($"\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
                         Console.ResetColor();
-                        Console.WriteLine("\n\nPress any key to continue");
+                        Console.WriteLine("\nPress any key to continue");
                         Console.ReadKey();
                         Console.ResetColor();
                     }

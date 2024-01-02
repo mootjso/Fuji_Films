@@ -30,7 +30,7 @@ public static class FinancialHandler
             {
                 if (infoBy == "byMovie")
                 {
-                    writer.WriteLine("Movie Title;Revenue (incl. btw);Revenue (excl. btw);Total Amount Tickets;Year;Quarter of the Year;");
+                    writer.WriteLine("Year;Quarter of the Year;Movie Title;Revenue (incl. btw);Revenue (excl. btw);Total Amount Tickets");
 
                     foreach (var data in revenueQuarterData)
                     {
@@ -39,7 +39,7 @@ public static class FinancialHandler
                             if (year == $"{data.YearDate}")
                             {
                                 double revenueWithoutBTW = data.TotalRevenue / 1.09;
-                                var line = $"{data.MovieTitle};€{data.TotalRevenue.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{data.TicketAmount};{data.YearDate};{data.QuarterYear}";
+                                var line = $"{data.YearDate};{data.QuarterYear};{data.MovieTitle};€{data.TotalRevenue.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{data.TicketAmount}";
 
                                 writer.WriteLine(line);
 
@@ -49,7 +49,7 @@ public static class FinancialHandler
                 }
                 else if (infoBy == "byTheater")
                 {
-                    writer.WriteLine("Theater number;Revenue (incl. btw);Revenue (excl. btw);Total Amount Tickets;Year;Quarter of the Year;");
+                    writer.WriteLine("Theater number;Year;Quarter;Revenue (incl. btw);Revenue (excl. btw);Total Amount Tickets");
 
                     double revenueBTW1 = 0;
                     double revenueWithoutBTW1 = 0;
@@ -113,9 +113,9 @@ public static class FinancialHandler
                             }
                         }
                     }
-                    var line1 = $"{1};€{revenueBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount1};{year};{quarter}";
-                    var line2 = $"{2};€{revenueBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount2};{year};{quarter}";
-                    var line3 = $"{3};€{revenueBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount3};{year};{quarter}";
+                    var line1 = $"{1};{year};{quarter};€{revenueBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount1}";
+                    var line2 = $"{2};{year};{quarter};€{revenueBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount2}";
+                    var line3 = $"{3};{year};{quarter};€{revenueBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount3}";
 
                     writer.WriteLine(line1);
                     writer.WriteLine(line2);
