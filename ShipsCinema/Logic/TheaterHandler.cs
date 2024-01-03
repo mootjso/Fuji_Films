@@ -188,6 +188,7 @@ public static class TheaterHandler
                                     {
                                         CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
                                         CheckOutHandler.RevenueQuarterYearIfStatement(ticket, ticket.Price, tickets.Count());
+                                        break;
                                     }
                                 }
                             }
