@@ -52,10 +52,8 @@ public static class Menu
                         selectedOption++;
                     break;
                 case ConsoleKey.Enter:
-                    inMenu = false;
                     return selectedOption;
                 case ConsoleKey.Escape: // Added to let user go to previous screen without adding extra menu option
-                    inMenu = false;
                     return options.Count;
             }
             Console.Clear();
