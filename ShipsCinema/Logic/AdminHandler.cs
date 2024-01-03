@@ -1,15 +1,18 @@
+using System.Security.Cryptography;
+
 public static class AdminHandler
 {   
-    public static void StartMenu(User adminAccount)
+    public static bool StartMenu(User adminAccount)
     {
+        bool runApp = true;
         string MenuText;
         if (adminAccount.Id == UserAccountsHandler.MainAdminId)
             MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
         else
             MenuText = $"Welcome Crew Member!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out" };
+        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out", "Shut Down App" };
 
-        while (true)
+        while (runApp)
         {
             int selection = Menu.Start(MenuText, MenuOptions, true);
 
@@ -19,6 +22,7 @@ public static class AdminHandler
             const int TakeOutSeatsOption = 3;
             const int SetAdminRightsOption = 4;
             const int LogOutOption = 5;
+            const int ShutDownOption = 6;
 
             switch (selection)
             {
@@ -49,11 +53,39 @@ public static class AdminHandler
                     Thread.Sleep(800);
                     Console.WriteLine("\nMay your guidance bring us waves of cinematic success! ");
                     Thread.Sleep(1500);
-                    return;
+                    return runApp;
+                case ShutDownOption:
+                    Console.Clear();
+                    DisplayAsciiArt.AdminHeader();
+                    Console.WriteLine("Are you sure you want to shut down the application? (Y/N)");
+                    ConsoleKey pressedKey = Console.ReadKey(true).Key;
+
+                    while (pressedKey != ConsoleKey.Y && pressedKey != ConsoleKey.N)
+                    {
+                        pressedKey = Console.ReadKey(true).Key;
+                    }
+                    if (pressedKey == ConsoleKey.Y)
+                    {
+                        Console.Write("\nShutting down");
+                        for (int i = 0; i < 3; i++)
+                        {
+                            Thread.Sleep(700);
+                            Console.Write(".");
+                        }
+                        Thread.Sleep(1500);
+                    
+                        Console.Clear();
+                        DisplayAsciiArt.AdminHeader();
+                        Console.WriteLine("Bye!");
+                        runApp = false;
+                    }
+
+                    break;
                 default:
                     break;
             }
         }
+        return runApp;
     }
 
     private static void EditMovieList()
