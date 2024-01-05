@@ -74,28 +74,28 @@ namespace LoginHandlerTest
     }
 
     [DataTestMethod]
-    [DataRow("3983748@outlook.com", true)]
-    [DataRow("John@outlook.com", true)]
-    [DataRow("johndoe@gmail.com", true)]
-    public void TestValidateEmailCorrect(string email, bool expectedOutput)
+    [DataRow("3983748@outlook.com")]
+    [DataRow("John@outlook.com")]
+    [DataRow("johndoe@gmail.com")]
+    public void TestValidateEmailCorrect(string email)
     {
         bool result = ValidateEmail.IsValid(email);
 
-        Assert.AreEqual(expectedOutput, result);
+        Assert.IsTrue(result);
     }
     
     [DataTestMethod]
-    [DataRow("Johnoutlook.com", false)]
-    [DataRow(null, false)]
-    [DataRow("John@.com", false)]
-    [DataRow("John@outlookcom", false)]
-    [DataRow("John@outlook.", false)]
-    [DataRow("@outlook.com", false)]
-    public void TestValidateEmailIncorrect(string email, bool expectedOutput)
+    [DataRow("Johnoutlook.com")]
+    [DataRow(null)]
+    [DataRow("John@.com")]
+    [DataRow("John@outlookcom")]
+    [DataRow("John@outlook.")]
+    [DataRow("@outlook.com")]
+    public void TestValidateEmailIncorrect(string email)
     {
         bool result = ValidateEmail.IsValid(email);
 
-        Assert.AreEqual(expectedOutput, result);
+        Assert.IsFalse(result);
     }
 }
 }
