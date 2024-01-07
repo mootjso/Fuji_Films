@@ -1,13 +1,17 @@
 ﻿using System.Globalization;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public static class FinancialHandler
 {
     public static List<string> GetYears()
     {
-        // TO BE IMPLEMENTED, GETTING ALL THE YEARS THAT THERE IS DATA FOR
-        return new List<string> { "2024" };
+        List<Revenue> revenues = JSONMethods.ReadJSON<Revenue>(CheckOutHandler.FileName).ToList();
+        List<Revenue> otherRevenues = JSONMethods.ReadJSON<Revenue>(CheckOutHandler.FileQuarterYearName).ToList();
+        revenues.AddRange(otherRevenues);
+        var years = revenues.Select(r => r.YearDate).Distinct().OrderDescending().ToList();
+        var yearsAsInt = years.Select(r => r.ToString()).ToList();
+        
+        return yearsAsInt;
     }
 
     public static bool CSVCreater(string year, int quarter, string infoBy)
