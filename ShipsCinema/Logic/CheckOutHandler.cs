@@ -47,7 +47,7 @@ public class CheckOutHandler
         }
     }
 
-    public static void RevenueQuarterYearIfStatement(Ticket ticket, double moneyAdded, int newTickets)
+    public static void RevenueQuarterYearIfStatement(Show selectedShow, double moneyAdded, int newTickets)
     {
         List<Revenue> revenuesPerShow = JSONMethods.ReadJSON<Revenue>(FileName).ToList();
         List<RevenueQuartly> quarterYearRevenues = JSONMethods
@@ -81,7 +81,7 @@ public class CheckOutHandler
             }
             else
             {
-                if (ticket.ShowId == revenue.ShowId)
+                if (selectedShow.Id == revenue.ShowId)
                 {
                     existingQuarterRevenue.TotalRevenue += moneyAdded;
                     existingQuarterRevenue.TicketAmount += newTickets;
