@@ -12,11 +12,13 @@ public static class FinancialHandler
 
     public static bool CSVCreater(string year, int quarter, string infoBy)
     {
+        int yearAsInt = Int32.Parse(year);
+
         List<RevenueQuartly> revenueQuarterData = JSONMethods.ReadJSON<RevenueQuartly>(CheckOutHandler.FileQuarterYearName).ToList();
         List<Revenue> revenueData = JSONMethods.ReadJSON<Revenue>(CheckOutHandler.FileName).ToList();
 
         string fileName = $"{year}-q{quarter}-{infoBy}.csv";
-        string directoryPath = @"..\..\..\..\FinancialReports";
+        string directoryPath = "FinancialReports";
         if (!Directory.Exists(directoryPath))
         {
             System.IO.Directory.CreateDirectory(directoryPath);
@@ -38,8 +40,10 @@ public static class FinancialHandler
                         {
                             if (year == $"{data.YearDate}")
                             {
+                                int ticketAmount = GetTicketAmountForMovie(yearAsInt, quarter, data.MovieId);
+
                                 double revenueWithoutBTW = data.TotalRevenue / 1.09;
-                                var line = $"{data.YearDate};{data.QuarterYear};{data.MovieTitle};€{data.TotalRevenue.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{data.TicketAmount}";
+                                var line = $"{data.YearDate};{data.QuarterYear};{data.MovieTitle};€{data.TotalRevenue.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{ticketAmount}";
 
                                 writer.WriteLine(line);
 
@@ -63,6 +67,7 @@ public static class FinancialHandler
                     double revenueWithoutBTW3 = 0;
                     int TicketAmount3 = 0;
 
+                    // Determine revenue per theater
                     foreach (var data in revenueData)
                     {
                         int QuarterCheck = CheckOutHandler.DetermineQuarter(data.MonthDate);
@@ -88,31 +93,15 @@ public static class FinancialHandler
                                         revenueWithoutBTW3 = data.TotalRevenue / 1.09;
                                         break;
                                 }
-
-                                foreach (var revenue in revenueQuarterData)
-                                {
-                                    if (quarter == revenue.QuarterYear)
-                                    {
-                                        if (year == $"{data.YearDate}")
-                                        {
-                                            switch (show.TheaterNumber)
-                                            {
-                                                case 1:
-                                                    TicketAmount1 += revenue.TicketAmount;
-                                                    break;
-                                                case 2:
-                                                    TicketAmount2 += revenue.TicketAmount;
-                                                    break;
-                                                case 3:
-                                                    TicketAmount3 += revenue.TicketAmount;
-                                                    break;
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         }
                     }
+
+                    // Determine amount of tickets per theater
+                    TicketAmount1 = GetTicketAmountForTheater(yearAsInt, quarter, 1);
+                    TicketAmount2 = GetTicketAmountForTheater(yearAsInt, quarter, 2);
+                    TicketAmount3 = GetTicketAmountForTheater(yearAsInt, quarter, 3);
+
                     var line1 = $"{1};{year};{quarter};€{revenueBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW1.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount1}";
                     var line2 = $"{2};{year};{quarter};€{revenueBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW2.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount2}";
                     var line3 = $"{3};{year};{quarter};€{revenueBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};€{revenueWithoutBTW3.ToString("N2", CultureInfo.GetCultureInfo("nl-NL"))};{TicketAmount3}";
@@ -136,5 +125,35 @@ public static class FinancialHandler
             Console.ReadKey();
         }
         return false;
+    }
+
+    private static bool IsInQuarter(int year, int quarter, DateTime date)
+    {
+        DateTime quarterStart = new DateTime(year, (quarter - 1) * 3 + 1, 1);
+        DateTime quarterEnd = quarterStart.AddMonths(3).AddDays(-1);
+
+        return date >= quarterStart && date <= quarterEnd;
+    }
+
+    private static int GetTicketAmountForTheater(int year, int quarter, int theaterNum)
+    {
+        var showsInTheaterOne = ShowHandler.Shows
+                        .Where(s => s.TheaterNumber == theaterNum && IsInQuarter(year, quarter, s.DateAndTime))
+                        .Select(s => s.Id).ToList();
+
+        return TicketHandler.Tickets
+            .Where(t => showsInTheaterOne.Contains(t.ShowId))
+            .Count();
+    }
+
+    private static int GetTicketAmountForMovie(int year, int quarter, int movieId)
+    {
+        var showIdsForMovie = ShowHandler.Shows
+                                    .Where(s => IsInQuarter(year, quarter, s.DateAndTime) && s.MovieId == movieId)
+                                    .Select(s => s.Id).ToList();
+
+        return TicketHandler.Tickets
+            .Where(t => showIdsForMovie.Contains(t.ShowId))
+            .Count();
     }
 }
