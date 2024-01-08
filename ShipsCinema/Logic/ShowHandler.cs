@@ -466,11 +466,6 @@ public static class ShowHandler
         CultureInfo englishCulture = new CultureInfo("en-US");
         Console.Clear();
 
-        //var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
-        //var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
-        //var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
-
-
         var shows = JSONMethods.ReadJSON<Show>(FileName)
             .Where(s => s.DateAndTime >= DateTime.Now && s.MovieId == movie.Id)
             .OrderBy(s => s.DateAndTime).ToList();
