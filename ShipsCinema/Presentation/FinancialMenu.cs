@@ -27,7 +27,7 @@
                     break;
                 }
                 string quarterLong = menuOptions[index];
-                string quarterShort = index == 0 ? "q1" : index == 1 ? "q2" : index == 2 ? "q3" : "q4";
+                int quarterShort = index == 0 ? 1 : index == 1 ? 2 : index == 2 ? 3 : 4;
 
                 while (true)
                 {
@@ -40,15 +40,20 @@
                     }
 
                     string infoBy = index == 0 ? "byTheater" : "byMovie";
-                    Console.Clear();
-                    DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("Financial Overview");
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"\n\nA new csv file has been created '{year}-{quarterShort}-{infoBy}.csv' in the folder FOLDERNAME");
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.WriteLine("\n\nPress any key to continue");
-                    Console.ReadKey();
-                    Console.ResetColor();
+                    bool fileCreated = FinancialHandler.CSVCreater(year, quarterShort, infoBy);
+
+                    if (fileCreated)
+                    {
+                        Console.Clear();
+                        DisplayAsciiArt.AdminHeader();
+                        Console.WriteLine("Financial Overview");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
+                        Console.ResetColor();
+                        Console.WriteLine("\nPress any key to continue");
+                        Console.ReadKey();
+                        Console.ResetColor();
+                    }
                     return;
                 }
             }
