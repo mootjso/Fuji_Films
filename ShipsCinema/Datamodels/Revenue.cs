@@ -21,12 +21,14 @@ public class RevenueQuartly
     public double TotalRevenue;
     public int QuarterYear;
     public int YearDate;
-    public RevenueQuartly(int movieId, string movieTitle, double totalRevenue, int quarterYear, int yearDate)
+    public int TicketAmount;
+    public RevenueQuartly(int movieId, string movieTitle, double totalRevenue, int quarterYear, int yearDate, int ticketAmount)
     {
         MovieId = movieId;
         MovieTitle = movieTitle;
         TotalRevenue = totalRevenue;
         QuarterYear = quarterYear;
         YearDate = yearDate;
+        TicketAmount = ticketAmount;
     }
 }

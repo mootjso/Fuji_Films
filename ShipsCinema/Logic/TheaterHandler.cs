@@ -182,14 +182,12 @@ public static class TheaterHandler
                                 TicketHandler.Tickets.AddRange(tickets);
                                 JSONMethods.WriteToJSON(TicketHandler.Tickets, TicketHandler.FileName);
                                 JSONMethods.WriteToJSON(Theaters, FileName);
-                                foreach (var ticket in tickets)
-                                {
-                                    if (ticket.ShowId == selectedShow.Id)
-                                    {
-                                        CheckOutHandler.AddToExistingRevenue(ticket.ShowId, ticket.Price);
-                                        CheckOutHandler.RevenueQuarterYearIfStatement(ticket, ticket.Price);
-                                    }
-                                }
+
+                                double totalPriceTickets = tickets.Sum(t => t.Price);
+                                int totalAmountTickets = tickets.Count();
+
+                                CheckOutHandler.AddToExistingRevenue(selectedShow.Id, totalPriceTickets);
+                                CheckOutHandler.RevenueQuarterYearIfStatement(selectedShow, totalPriceTickets, totalAmountTickets);
                             }
                         }
                         JSONMethods.WriteToJSON(Theaters, FileName);
