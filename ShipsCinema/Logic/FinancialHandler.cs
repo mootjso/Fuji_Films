@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Text;
+
 public static class FinancialHandler
 {
     public static List<string> GetYears()
@@ -114,7 +117,7 @@ public static class FinancialHandler
             }
             return true;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
