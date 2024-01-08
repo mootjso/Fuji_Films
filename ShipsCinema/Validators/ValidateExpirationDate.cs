@@ -13,6 +13,8 @@
 
         if (dateParts.Length == 2 && int.TryParse(dateParts[0], out int month) && int.TryParse(dateParts[1], out int year))
         {
+            if (month > 12 || month < 1 || year < 1 || year > 99)
+                return (false, false);
             DateTime parsedExpirationDate = new DateTime(2000 + year, month, 1).AddMonths(1).AddDays(-1);
             DateTime currentDate = DateTime.Now;
 
