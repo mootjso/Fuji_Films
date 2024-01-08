@@ -1,6 +1,3 @@
-﻿using System.Globalization;
-using System.Text;
-
 public static class FinancialHandler
 {
     public static List<string> GetYears()
