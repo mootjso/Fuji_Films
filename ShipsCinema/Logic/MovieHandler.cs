@@ -128,7 +128,7 @@ public static class MovieHandler
         return Menu.MenuPagination(menuOptionsFull, menuText, messageWhenEmpty, func, menuOptionsFullObjects, isAdmin);
     }
 
-    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false)
+    public static void MovieSelectionMenu(Movie movie, bool isAdmin = false, User? user = null)
     {
         List<string> menuOptions = new() { "View Details", "View Showings", "Back" };
         string menuText = $"{movie.Title}\n\nSelect an option:";
@@ -139,7 +139,7 @@ public static class MovieHandler
                 DisplayMovieDetails(movie, isAdmin);
                 break;
             case 1:
-                ShowHandler.PrintMovieDates(movie, isAdmin);
+                ShowHandler.PrintMovieDates(movie, isAdmin, user);
                 break;
             case 2:
                 return;
@@ -310,7 +310,7 @@ public static class MovieHandler
             Console.ResetColor();
             Console.Write($"{information}: ");
             Console.ForegroundColor = Program.InputColor;
-            string userInput = Console.ReadLine();
+            string? userInput = Console.ReadLine();
             Console.ResetColor();
             if (userInput == "q")
                 return -1;

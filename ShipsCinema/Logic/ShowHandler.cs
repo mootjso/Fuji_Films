@@ -293,7 +293,6 @@ public static class ShowHandler
 
     public static void RemoveShow()
     {
-
         string messageWhenEmpty = "Showing Schedule\n\nThere are currently no shows scheduled";
         string menuText = $"Showing Schedule\n\nSelect a date to see showings for that day:";
 
@@ -428,7 +427,7 @@ public static class ShowHandler
         return sortedDateStrings;
     }
 
-    public static List<string> CreateListMovieStrings(List<Show> shows, int theaterNumber = -1)
+    public static List<string> CreateListMovieStrings(List<Show> shows, int theaterNumber = -1, bool includeDate = false)
     // Creates list of formatted strings: Start time - end time Theater Title
     {
         List<string> movieMenuStrings = new();
@@ -438,12 +437,19 @@ public static class ShowHandler
             validShows.Add(show);
         }
         validShows = validShows.OrderBy(s => s.DateAndTime).ToList(); // Intermediary list to order by theater number if that's wanted
+
         foreach (var show in validShows)
         {
             Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
             if (show.TheaterNumber == theaterNumber || theaterNumber == -1)
-                movieMenuStrings.Add($"{show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
+            {
+                if (includeDate)
+                    movieMenuStrings.Add($"{show.DateAndTime.Date.ToString("d")} | {show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
+                else
+                    movieMenuStrings.Add($"{show.StartTimeString} - {show.EndTimeString} | Theater {show.TheaterNumber} | {movie.Title}  ");
+            }
         }
+        
         return movieMenuStrings;
     }
 
@@ -462,50 +468,48 @@ public static class ShowHandler
         return sortedDateStrings;
     }
 
-    public static void PrintMovieDates(Movie movie, bool isAdmin = false)
+    public static void PrintMovieDates(Movie movie, bool isAdmin = false, User? user = null)
     {
         CultureInfo englishCulture = new CultureInfo("en-US");
         Console.Clear();
 
-        var shows = JSONMethods.ReadJSON<Show>(FileName).Where(s => s.DateAndTime >= DateTime.Now);
-        var showsFiltered = shows.Where(s => s.MovieId == movie.Id).OrderBy(s => s.DateAndTime);
-        var showsFilteredGrouped = showsFiltered.GroupBy(s => s.DateString);
-        DateTime date;
+        var shows = JSONMethods.ReadJSON<Show>(FileName)
+            .Where(s => s.DateAndTime >= DateTime.Now && s.MovieId == movie.Id)
+            .OrderBy(s => s.DateAndTime).ToList();
 
-        if (isAdmin)
-            DisplayAsciiArt.AdminHeader();
-        else
+        var showsStrings = CreateListMovieStrings(shows, -1, true);
+
+        if (!shows.Any())
         {
-            DisplayAsciiArt.Header();
-            AdHandler.DisplaySnacks();
-        }
-
-        Console.WriteLine($"Showings of {movie.Title}\n");
-
-        foreach (var day in showsFilteredGrouped)
-        {
-            date = day.First().DateAndTime;
-            Console.WriteLine($"{date.DayOfWeek} {date.Day} {date.ToString("MMMM", englishCulture)} {date:yyyy}");
-
-            foreach (var show in day)
+            if (isAdmin)
+                DisplayAsciiArt.AdminHeader();
+            else
             {
-                Console.WriteLine($"  {show.StartTimeString} - Auditorium {show.TheaterNumber}");
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
             }
-            Console.WriteLine();
-        }
-
-        if (!showsFiltered.Any())
-        {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"{movie.Title} has not been scheduled yet");
             Console.ResetColor();
+            Console.WriteLine("\nPress any key to go back");
+            Console.ReadKey();
+        }
+        else
+        {
+            showsStrings.Add("Back");
+            string menuHeaderString = $"Select a showing of {movie.Title} to make a reservation.\n";
+            int index = Menu.Start(menuHeaderString, showsStrings, isAdmin);
+            if (index == showsStrings.Count || index == showsStrings.Count - 1) { }
+            else
+            {
+                Show selectedShow = shows[index];
+                Theater theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id)!;
+                if (user != null)
+                    TheaterHandler.SelectSeats(user, theater);
+                return;
+            }
         }
 
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.WriteLine("\nPress any key to go back");
-        Console.ResetColor();
-
-        Console.ReadKey();
         MovieHandler.MovieSelectionMenu(movie, isAdmin);
     }
 
