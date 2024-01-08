@@ -287,7 +287,6 @@ public static class ShowHandler
 
     public static void RemoveShow()
     {
-
         string messageWhenEmpty = "Showing Schedule\n\nThere are currently no shows scheduled";
         string menuText = $"Showing Schedule\n\nSelect a date to see showings for that day:";
 
@@ -480,6 +479,13 @@ public static class ShowHandler
 
         if (!shows.Any())
         {
+            if (user.IsAdmin)
+                DisplayAsciiArt.AdminHeader();
+            else
+            {
+                DisplayAsciiArt.Header();
+                AdHandler.DisplaySnacks();
+            }
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"{movie.Title} has not been scheduled yet");
             Console.ResetColor();
