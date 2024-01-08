@@ -57,7 +57,7 @@ public class Program
                 {
                     case 0:
                         Console.Clear();
-                        MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m));
+                        MovieHandler.ViewCurrentMovies(m => MovieHandler.MovieSelectionMenu(m, false, loggedInUser), false);
                         break;
                     case 1:
                         CheckOutHandler.AddShowToRevenue();

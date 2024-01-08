@@ -66,8 +66,8 @@ public class CheckOutHandler
 
             if (existingQuarterRevenue == null)
             {
-                Show? show = ShowHandler.GetShowById(revenue.ShowId);
-                Movie? movie = MovieHandler.GetMovieById(show.MovieId);
+                Show show = ShowHandler.GetShowById(revenue.ShowId)!;
+                Movie movie = MovieHandler.GetMovieById(show.MovieId)!;
 
                 RevenueQuartly newRevenueQuarter = new RevenueQuartly(
                     movie.Id,
