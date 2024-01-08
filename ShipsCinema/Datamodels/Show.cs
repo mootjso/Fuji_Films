@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-public class Show
+public class Show 
 {
-    public int Id;
+    public int Id { get; set; }
     public int MovieId;
     public int TheaterNumber;
     public DateTime DateAndTime;

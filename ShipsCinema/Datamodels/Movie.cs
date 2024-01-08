@@ -1,4 +1,4 @@
-﻿public class Movie
+﻿public class Movie : HasID
 {
     public int Id { get; set; }
     public static int HighestId { get; set; }
