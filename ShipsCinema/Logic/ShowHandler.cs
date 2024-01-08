@@ -479,7 +479,7 @@ public static class ShowHandler
 
         if (!shows.Any())
         {
-            if (user.IsAdmin)
+            if (isAdmin)
                 DisplayAsciiArt.AdminHeader();
             else
             {
