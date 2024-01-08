@@ -46,10 +46,14 @@ public static class Menu
                 case ConsoleKey.UpArrow:
                     if (selectedOption > 0)
                         selectedOption--;
+                    else if (selectedOption == 0)
+                        selectedOption = options.Count - 1;
                     break;
                 case ConsoleKey.DownArrow:
                     if (selectedOption < options.Count - 1)
                         selectedOption++;
+                    else if (selectedOption == options.Count - 1)
+                        selectedOption = 0;
                     break;
                 case ConsoleKey.Enter:
                     return selectedOption;
