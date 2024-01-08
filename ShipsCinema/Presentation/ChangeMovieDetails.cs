@@ -54,7 +54,7 @@ public static class ChangeMovieDetails
             else if (index >= 0 && index < movieTitles.Count)
             {
                 string selectedTitle = movieTitles[index].Split("|")[0].Trim().Replace("...", "");
-                Movie selectedMovieToEdit = null;
+                Movie? selectedMovieToEdit = null;
 
                 foreach (Movie movie in movies)
                 {
@@ -65,7 +65,7 @@ public static class ChangeMovieDetails
                     }
                 }
 
-                EditMovieDetail(selectedMovieToEdit, movies);
+                EditMovieDetail(selectedMovieToEdit!, movies);
 
             }
         }
@@ -101,7 +101,7 @@ public static class ChangeMovieDetails
             else
             {
                 bool rightInput = false;
-                string newValue;
+                string? newValue;
                 string selectedOption = menuOptions[selectedIndex].Substring(0, menuOptions[selectedIndex].IndexOf(':'));
 
                 do
@@ -120,7 +120,7 @@ public static class ChangeMovieDetails
                     } 
                     Console.CursorVisible = false;
 
-                    if (ValidateInput(selectedOption, newValue))
+                    if (ValidateInput(selectedOption, newValue!))
                     {
                         rightInput = true;
                     }
@@ -154,7 +154,7 @@ public static class ChangeMovieDetails
                 if (confirmChangeChoice == 'Y')
                 {
                     // Update the movie detail
-                    UpdateMovieDetail(selectedMovieToEdit, selectedOption, newValue);
+                    UpdateMovieDetail(selectedMovieToEdit, selectedOption, newValue!);
 
                     // Save changes to JSON file
                     string updatedJson = JsonConvert.SerializeObject(movies, Formatting.Indented);
