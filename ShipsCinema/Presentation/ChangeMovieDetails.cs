@@ -144,8 +144,12 @@ public static class ChangeMovieDetails
                 Console.CursorVisible = false;
 
                 Console.Write("\n[Y] Confirm Changes\n[N] Cancel Changes");
-                char? confirmChangeChoice = char.ToUpper(Console.ReadKey().KeyChar);
+                char? confirmChangeChoice = char.ToUpper(Console.ReadKey(true).KeyChar);
                 Console.CursorVisible = false;
+                while (confirmChangeChoice != 'Y' && confirmChangeChoice != 'N')
+                {
+                    confirmChangeChoice = char.ToUpper(Console.ReadKey(true).KeyChar);
+                }
 
                 if (confirmChangeChoice == 'Y')
                 {
