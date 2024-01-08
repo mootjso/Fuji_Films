@@ -102,10 +102,14 @@ public static class ReservationHandler
             }
 
             string overviewMenuText = "Choose a movie from your reservations:\n";
+            overviewMenuOptions.Add(" Back");
             // Hier maak de menu met de films
             int movieIndex = Menu.Start(overviewMenuText, overviewMenuOptions);
-            if (movieIndex == overviewMenuOptions.Count) // User presses left arrow key
+            
+            // Back selected or Escape key pressed
+            if (movieIndex == overviewMenuOptions.Count || movieIndex == overviewMenuOptions.Count - 1)
                 return;
+
             string selectedMovie = overviewMenuOptions[movieIndex];
 
             Show showForReservation = null;
