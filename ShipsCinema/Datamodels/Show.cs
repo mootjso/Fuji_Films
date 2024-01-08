@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-public class Show 
+public class Show : HasID
 {
     public int Id { get; set; }
     public int MovieId;
