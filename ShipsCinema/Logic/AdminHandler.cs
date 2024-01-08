@@ -57,7 +57,7 @@ public static class AdminHandler
                 case ShutDownOption:
                     Console.Clear();
                     DisplayAsciiArt.AdminHeader();
-                    Console.WriteLine("Are you sure you want to shut down the application? (Y/N)");
+                    Console.WriteLine("Shut Down App\n\nAre you sure you want to shut down the application?\n[Y] Yes, shut down\n[N] No, cancel");
                     ConsoleKey pressedKey = Console.ReadKey(true).Key;
 
                     while (pressedKey != ConsoleKey.Y && pressedKey != ConsoleKey.N)
@@ -75,8 +75,6 @@ public static class AdminHandler
                         Thread.Sleep(1500);
                     
                         Console.Clear();
-                        DisplayAsciiArt.AdminHeader();
-                        Console.WriteLine("Bye!");
                         runApp = false;
                     }
 
