@@ -10,7 +10,7 @@ public static class AdminHandler
             MenuText = $"Welcome Captain!\n\nWhat would you like to do?";
         else
             MenuText = $"Welcome Crew Member!\n\nWhat would you like to do?";
-        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove", "Take Out Seat(s)", "Set Admin Rights", "Log Out", "Shut Down App" };
+        List<string> MenuOptions = new() { "Financial Reports", "Movies: Add/Remove/Edit/View", "Showings: Add/Remove/View", "Take Out Seat(s)", "Set Admin Rights", "Log Out", "Shut Down App" };
 
         while (runApp)
         {

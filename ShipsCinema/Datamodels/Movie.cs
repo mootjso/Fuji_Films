@@ -1,4 +1,4 @@
-﻿public class Movie
+﻿public class Movie : HasID
 {
     public int Id { get; set; }
     public string Title { get; set; }

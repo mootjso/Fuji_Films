@@ -269,6 +269,10 @@ public static class ShowHandler
         {
             Console.WriteLine($"\nAre you sure you want to delete this showing?\n[Y] Yes, remove it\n[N] No, cancel");
             choice = Console.ReadKey(true).Key;
+            while (choice != ConsoleKey.Y && choice != ConsoleKey.N)
+            {
+                choice = Console.ReadKey(true).Key;
+            }
             switch (choice)
             {
                 case ConsoleKey.Y:
@@ -286,7 +290,7 @@ public static class ShowHandler
                     Console.ReadKey();
                     return true;
                 case ConsoleKey.N:
-                    return false;
+                    return false; 
             }
         }
     }
