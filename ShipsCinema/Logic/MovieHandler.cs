@@ -55,7 +55,11 @@ public static class MovieHandler
         if (isAdmin)
             DisplayAsciiArt.AdminHeader();
         else
+        {
             DisplayAsciiArt.Header();
+            AdHandler.DisplaySnacks();
+        }
+            
         Console.WriteLine("Current Movies\n");
         PrintInfo(movie);
 

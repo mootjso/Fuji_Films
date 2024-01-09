@@ -46,7 +46,7 @@ public class LoginHandler
             {
                 Console.CursorVisible = true;
                 Console.ForegroundColor = Program.InputColor;
-                emailInput = Console.ReadLine()?.ToLower();
+                emailInput = Console.ReadLine()?.ToLower().Trim();
                 Console.ResetColor();
                 Console.CursorVisible = false;
             }
@@ -208,7 +208,7 @@ public class LoginHandler
             {
                 Console.CursorVisible = true;
                 Console.ForegroundColor = Program.InputColor;
-                email = Console.ReadLine()?.ToLower();
+                email = Console.ReadLine()?.ToLower().Trim();
                 Console.ResetColor();
                 Console.CursorVisible = false;
                 if (email == "q")
