@@ -134,6 +134,7 @@ public static class ShowHandler
             
             Shows.Add(show);
             JSONMethods.WriteToJSON(Shows, FileName);
+            TheaterHandler.CreateOrGetTheater(show);
             
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
