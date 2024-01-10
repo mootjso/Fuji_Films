@@ -42,7 +42,7 @@ public static class TheaterHandler
     }
 
     public static void SelectSeats(User user, Theater theater)
-    {   
+    {
         foreach (var seat in theater.Seats)
             if (!seat.IsReserved)
                 seat.UserId = -1;

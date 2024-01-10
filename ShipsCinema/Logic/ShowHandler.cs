@@ -510,9 +510,7 @@ public static class ShowHandler
                 Show selectedShow = shows[index];
                 Theater? theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id);
                 if (theater == null)
-                {
                     theater = TheaterHandler.CreateOrGetTheater(selectedShow);
-                }
 
                 if (user != null)
                     TheaterHandler.SelectSeats(user, theater);
