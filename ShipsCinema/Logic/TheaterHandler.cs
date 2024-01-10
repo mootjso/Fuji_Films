@@ -97,7 +97,9 @@ public static class TheaterHandler
             if (!user.IsAdmin)
             {
                 totalPrice = TicketHandler.GetTotalPrice(tickets);
-                Console.WriteLine($"Total price of reservation: {totalPrice} EUR\n");
+                Console.Write($"Total price of reservation: ");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write(totalPrice + " EUR\n");
             }
 
             WriteControlsInfo(user);
@@ -353,7 +355,14 @@ public static class TheaterHandler
             Console.Write("\nO: Your seat(s) from previous reservations\n");
 
             Console.ResetColor();
-            Console.WriteLine($"Current seat: {selectedSeat}\n");
+            Console.Write($"Current seat: Row ");
+            Console.ForegroundColor= ConsoleColor.Magenta;
+            Console.Write($"[{selectedSeat.Row + 1}]");
+            Console.ResetColor();
+            Console.Write($", Seat ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write($"[{selectedSeat.Column + 1}]\n");
+            Console.ResetColor();
         }
         else
         {
