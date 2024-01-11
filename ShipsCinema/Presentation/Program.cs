@@ -15,6 +15,7 @@ public class Program
             while (loggedInUser == null)
             {
                 DisplayAsciiArt.Standby();
+                DisplayAsciiArt.OpeningLogo();
 
                 int selection = Menu.Start(menuText, menuOptions);
                 switch (selection)
