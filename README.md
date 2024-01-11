@@ -30,7 +30,7 @@ Additionally, a default user account is available for testing:
 For granting admin privileges to user accounts, follow these steps:
 
 1. Login to the default admin account noted above.
-2. Navigate to `Give Admin Rights` in the application.
+2. Navigate to `Set Admin Rights` in the application.
 3. Select a user to grant them admin privileges.
 
 **Note:** Only the default admin has the authority to assign admin privileges to user accounts.
