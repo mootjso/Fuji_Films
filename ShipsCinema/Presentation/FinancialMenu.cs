@@ -48,7 +48,7 @@
                         DisplayAsciiArt.AdminHeader();
                         Console.WriteLine("Financial Overview");
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports");
+                        Console.WriteLine($"\nA new csv file has been created '{year}-q{quarterShort}-{infoBy}.csv' in the folder FinancialReports, \nInside the path: Fuji_Films/ShipsCinema/bin/Debug/net7.0/FinancialReports");
                         Console.ResetColor();
                         Console.WriteLine("\nPress any key to continue");
                         Console.ReadKey();
