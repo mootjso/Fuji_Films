@@ -29,14 +29,14 @@ Additionally, a default user account is available for testing:
 ## Admin Account Management
 For granting admin privileges to user accounts, follow these steps:
 
-1. Add a new account in `ShipsCinema > Datasources > UserAccounts` with all the required attributes.
-2. Change the "IsAdmin" attribute from false to true in `ShipsCinema/Datasources/UserAccounts`.
-3. Save your changes and restart the solution to apply them.
+1. Login to the default admin account noted above.
+2. Navigate to `Give Admin Rights` in the application.
+3. Select a user to grant them admin privileges.
 
 **Note:** Only the default admin has the authority to assign admin privileges to user accounts.
 
 ## Additional Information
-- While using the application, please note that sometimes lowering the zoom below 100% may be necessary for the application to function properly.
+- While using the application, please note that sometimes lowering the zoom below 100% may be necessary for the application to function properly. The overview of seats does not fit on the entire screen when the console is zoomed in too much, you can use `Ctrl` + `-` to zoom out.  
 
 - Financial Reports are located in different places:
   - For Visual Studio, you can find them in the bin folder.
