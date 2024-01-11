@@ -3,21 +3,6 @@
 ## Description
 ShipsCinema is a dynamic theatre application showcasing a diverse collection of movies. It provides a seamless user experience, enabling functionalities like account registration and login, movie selection, showtime scheduling, seat booking, checkout, and reservation overview.
 
-## Prerequisites
-To work effectively with this project, you need **Visual Studio** with NuGet Packages and **Newtonsoft.json** for handling JSON files.
-
-## Setting Up
-
-### Installing NuGet in Visual Studio
-To integrate NuGet into Visual Studio, follow these detailed instructions:
-(https://learn.microsoft.com/en-us/azure/devops/artifacts/nuget/consume?view=azure-devops&tabs=windows).
-
-### Installing Newtonsoft.Json
-Once NuGet is set up, proceed to install Newtonsoft.Json:
-1. Launch Visual Studio.
-2. Go to `Project > Manage NuGet Packages...`
-3. Look for `Newtonsoft.Json` by James Newton-King and select `Install`.
-
 ### Key Directories ###
 
 ### ShipsCinema Folder
