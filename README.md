@@ -39,6 +39,5 @@ For granting admin privileges to user accounts, follow these steps:
 - While using the application, please note that sometimes lowering the zoom below 100% may be necessary for the application to function properly. The overview of seats does not fit on the entire screen when the console is zoomed in too much, you can use `Ctrl` + `-` to zoom out.  
 
 - Financial Reports are located in different places:
-  - For Visual Studio, you can find them in the bin folder.
-  - For Visual Studio Code, navigate from the Main folder to "Fuji Films> ShipsCinema," and you will find the "Financial Reports" there.
-
+  - For Visual Studio, you can find them in `ShipsCinema\bin\Debug\net7.0\FinancialReports`
+  - For Visual Studio Code, you can find them in `ShipsCinema\FinancialReports`
