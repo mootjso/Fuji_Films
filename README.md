@@ -40,5 +40,5 @@ For granting admin privileges to user accounts, follow these steps:
 
 - Financial Reports are located in different places:
   - For Visual Studio, you can find them in the bin folder.
-  - For Visual Studio Code, navigate to the Main folder under "Fuji Films," and you will find the "Financial Reports" there.
+  - For Visual Studio Code, navigate from the Main folder to "Fuji Films> ShipsCinema," and you will find the "Financial Reports" there.
 
