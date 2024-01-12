@@ -6,7 +6,7 @@
     {
         FadeInEffect(AsciiArt.logo);
 
-        Thread.Sleep(2600);
+        Thread.Sleep(1800);
         Console.Clear();
     }
 

@@ -134,6 +134,7 @@ public static class ShowHandler
             
             Shows.Add(show);
             JSONMethods.WriteToJSON(Shows, FileName);
+            TheaterHandler.CreateOrGetTheater(show);
             
             Console.Clear();
             DisplayAsciiArt.AdminHeader();
@@ -507,7 +508,10 @@ public static class ShowHandler
             else
             {
                 Show selectedShow = shows[index];
-                Theater theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id)!;
+                Theater? theater = TheaterHandler.GetTheaterByShowId(selectedShow.Id);
+                if (theater == null)
+                    theater = TheaterHandler.CreateOrGetTheater(selectedShow);
+
                 if (user != null)
                     TheaterHandler.SelectSeats(user, theater);
                 return;
